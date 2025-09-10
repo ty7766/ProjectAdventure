@@ -27,13 +27,13 @@ public class PlayerController : MonoBehaviour
                     moveDirection = Vector3.right;
                     break;
                 case 1:
-                    moveDirection = Vector3.forward;
+                    moveDirection = Vector3.back;
                     break;
                 case 2:
                     moveDirection = Vector3.left;
                     break;
                 case 3:
-                    moveDirection = Vector3.back;
+                    moveDirection = Vector3.forward;
                     break;
             }
 
