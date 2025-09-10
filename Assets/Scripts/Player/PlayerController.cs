@@ -6,8 +6,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float moveSpeed = 5.0f;
 
-    public Transform cameraTransform;
-
     void Update()
     {
         PlayerMove();
@@ -16,19 +14,30 @@ public class PlayerController : MonoBehaviour
     //플레이어 이동
     public void PlayerMove()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
+        float horizontalInput = Input.GetAxis("Horizontal"); // A: -1, D: 1
 
-        if(Mathf.Abs(horizontalInput) > 0.1f)
+        if (Mathf.Abs(horizontalInput) > 0.1f)
         {
-            // 카메라의 회전 각도 반영하여 횡이동
-            float roundedY = Mathf.Round(cameraTransform.eulerAngles.y / 90.0f) * 90.0f;
+            Vector3 moveDirection = Vector3.zero;
 
-            Quaternion cameraRotation = Quaternion.Euler(0, roundedY, 0);
+            //카메라의 바라보는 각도에 따라 플레이어 횡이동 변경
+            switch (CameraController.directionState)
+            {
+                case 0:
+                    moveDirection = Vector3.right;
+                    break;
+                case 1:
+                    moveDirection = Vector3.forward;
+                    break;
+                case 2:
+                    moveDirection = Vector3.left;
+                    break;
+                case 3:
+                    moveDirection = Vector3.back;
+                    break;
+            }
 
-            Vector3 moveDirection = cameraRotation * Vector3.right * horizontalInput;
-
-            //플레이어 가속
-            transform.Translate(moveDirection * moveSpeed * Time.deltaTime, Space.World);
+            transform.Translate(moveDirection * horizontalInput * moveSpeed * Time.deltaTime, Space.World);
         }
     }
 }
