@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
     //--- Fields ---//
     [SerializeField]
     private PlayerMovement movement;
+    [SerializeField]
     private PlayerProperties properties;
     private bool isAlive = true;
 
@@ -26,6 +27,8 @@ public class PlayerController : MonoBehaviour
         {
             Dead();
         }
+
+        HandleInputs();
     }
 
     private void FixedUpdate()
@@ -40,4 +43,12 @@ public class PlayerController : MonoBehaviour
         isAlive = false;
     }
 
+    private void HandleInputs()
+    {
+        if (movement != null)
+        {
+            Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
+            movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
+        }
+    }
 }

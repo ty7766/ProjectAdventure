@@ -8,6 +8,8 @@ public class PlayerProperties : MonoBehaviour
     private int health = 3;
     [SerializeField]
     private float stamina = 100.0f;
+    [SerializeField]
+    private float turnSpeed = 15f;
 
     //--- Properties ---//
     public int Health
@@ -26,5 +28,11 @@ public class PlayerProperties : MonoBehaviour
     {
         get { return stamina; }
         set { stamina = Mathf.Clamp(value, 0.0f, 100.0f); } // Clamp stamina between 0 and 100
+    }
+
+    public float TurnSpeed
+    {
+        get { return turnSpeed; }
+        set { turnSpeed = Mathf.Max(0.0f, value); } // Ensure turn speed is non-negative
     }
 }
