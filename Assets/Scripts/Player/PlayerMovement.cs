@@ -18,6 +18,12 @@ public class PlayerMovement : MonoBehaviour
         col = GetComponent<Collider>();
     }
 
+    public void ResetSpeed()
+    {
+        rb.linearVelocity = Vector3.zero;
+        animator.SetFloat("Speed", 1);
+    }
+
     public void Move(Vector3 direction, float speed, float turnSpeed)
     {
         // 1. ¹Ù´Ú Ã¼Å© (Raycast ½ô)

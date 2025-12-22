@@ -828,12 +828,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3810248897519560485, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: groundCheckDist
-      value: 1
+      value: 0.25
       objectReference: {fileID: 0}
     - target: {fileID: 3810248897519560485, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: groundLayer.m_Bits
-      value: 1
+      value: 4294967295
       objectReference: {fileID: 0}
+    - target: {fileID: 8123782475422646877, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+      propertyPath: skinnedMeshRenderer
+      value: 
+      objectReference: {fileID: 6348337578081327899}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.9611998
@@ -879,6 +883,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+--- !u!137 &6348337578081327899 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 8048908101749801786, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+  m_PrefabInstance: {fileID: 2480830229494606188}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
