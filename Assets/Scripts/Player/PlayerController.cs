@@ -28,7 +28,11 @@ public class PlayerController : MonoBehaviour
             Dead();
         }
 
-        HandleInputs();
+        if(movement != null)
+        {
+            HandleInputs();
+        }
+
     }
 
     private void FixedUpdate()
@@ -45,9 +49,9 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputs()
     {
-        if (movement != null)
+        Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
+        if(inputDirection != Vector3.zero)
         {
-            Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
             movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
         }
     }
