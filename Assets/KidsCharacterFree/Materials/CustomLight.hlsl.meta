@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 7ff75d68643f942a383a5816b30ac5ab
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 242192
+  packageName: Kids character Free
+  packageVersion: 1.0
+  assetPath: Assets/KidsCharacterFree/Materials/CustomLight.hlsl
+  uploadId: 829392
