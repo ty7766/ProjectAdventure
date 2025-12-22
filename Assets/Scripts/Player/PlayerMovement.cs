@@ -6,6 +6,8 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private Collider col;
+    bool b_isJumping = false;
+
 
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayer; // 바닥으로 인식할 레이어 (Inspector에서 설정!)
@@ -22,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb.linearVelocity = Vector3.zero;
         animator.SetFloat("Speed", 1);
+        b_isJumping = false;
     }
 
     public void Move(Vector3 direction, float speed, float turnSpeed)
@@ -64,7 +67,11 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             // 공중에 뜸 - 제어 불가 - 낙하 애니메이션 실행
-            animator.SetTrigger("Jump");
+            if (!b_isJumping)
+            {
+                animator.SetTrigger("Jump");
+                b_isJumping = true;
+            }
         }
     }
 }

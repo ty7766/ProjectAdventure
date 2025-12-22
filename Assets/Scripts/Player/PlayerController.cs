@@ -15,9 +15,13 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     //--- Fields ---//
+    [SerializeField]
+    private float respawnDelay = 2.0f;
     private Vector3 respawnPoint;
     private bool isAlive = true;
-    
+    private bool isMovable = true;
+
+
     //--- Unity Methods ---//
     private void Start()
     {
@@ -26,7 +30,7 @@ public class PlayerController : MonoBehaviour
             Debug.LogWarning("Animator component not found on Player.");
         }
 
-        respawnPoint = transform.position;
+        SetRespawnPoint();
     }
 
     private void Update()
@@ -56,20 +60,13 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void Respawn()
-    {
-        TakeDamage(1);
-        movement.ResetSpeed();
-        if(isAlive)anim.SetTrigger("GetUp");
-        this.transform.position = respawnPoint;
-    }
-
     private void FixedUpdate()
     {
         
     }
 
     //--- Public Methods ---//
+    // 데미지 적용
     public void TakeDamage(int damage)
     {
         if(!isAlive)
@@ -85,6 +82,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    //리스폰 위치 재설정 패밀리(추후 확장성)
+    public void SetRespawnPoint(Vector3 newRespawnPoint)
+    {
+        respawnPoint = newRespawnPoint;
+    }
+    public void SetRespawnPoint()
+    {
+        respawnPoint = this.transform.position;
+    }
+
     //--- Private Methods ---//
     private void Dead()
     {
@@ -94,8 +101,25 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("Dead");
     }
 
+    private void Respawn()
+    {
+        TakeDamage(1);
+        if (isAlive) anim.SetTrigger("GetUp");
+        movement.ResetSpeed();
+        this.transform.position = respawnPoint;
+
+        //Disable Player Movement for a short duration
+        isMovable = false;
+        StartCoroutine(EnableMovementAfterDelay(respawnDelay));
+    }
+
     private void HandleInputs()
     {
+        if (!isMovable)
+        {
+            return;
+        }
+
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
         if(inputDirection != Vector3.zero)
         {
@@ -103,12 +127,20 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+
+    //--- Coroutines ---//
     private IEnumerator ApplyDamageFeedback(SkinnedMeshRenderer renderer, float duration, Color flashColor)
     {
         Color originalColor = renderer.material.color;
         renderer.material.color = flashColor;
         yield return new WaitForSeconds(duration);
         renderer.material.color = originalColor;
+    }
+
+    private IEnumerator EnableMovementAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        isMovable = true;
     }
 
 }
