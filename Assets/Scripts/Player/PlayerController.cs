@@ -15,9 +15,9 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     //--- Fields ---//
-    [SerializeField]
+    [SerializeField] [Header("리스폰후 경직시간")]
     private float respawnDelay = 2.0f;
-    [SerializeField]
+    [SerializeField] [Header("피격 후 무적시간")]
     private float invincibleTime = 3.0f;
     private float invTimer = 0;
     private Vector3 respawnPoint;
@@ -48,12 +48,6 @@ public class PlayerController : MonoBehaviour
             Respawn();
         }
 
-        if (properties.Health <= 0)
-        {
-            Dead();
-            return;
-        }
-
         if(movement != null)
         {
             HandleInputs();
@@ -75,6 +69,11 @@ public class PlayerController : MonoBehaviour
         properties.Health -= damage;
         StartCoroutine(ApplyDamageFeedback(skinnedMeshRenderer, 0.1f, Color.red));
         invTimer = 0f;
+
+        if (properties.Health <= 0)
+        {
+            Dead();
+        }
     }
 
     //Update checkpoint
