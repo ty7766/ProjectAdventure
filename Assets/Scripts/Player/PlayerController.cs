@@ -15,8 +15,15 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     //--- Fields ---//
-    [SerializeField]
+    [SerializeField] [Header("ë¦¬ìŠ¤í°í›„ ê²½ì§ì‹œê°„")]
     private float respawnDelay = 2.0f;
+    [SerializeField] [Header("í”¼ê²© í›„ ë¬´ì ì‹œê°„")]
+    private float invincibleTime = 3.0f;
+    private float invTimer;
+    [SerializeField] [Header("í”¼ê²© í›„ ê²½ì§ì‹œê°„")]
+    private float stunTime = 0.39f;
+    private WaitForSeconds stunDelay;
+
     private Vector3 respawnPoint;
     private bool isAlive = true;
     private bool isMovable = true;
@@ -31,10 +38,17 @@ public class PlayerController : MonoBehaviour
         }
 
         SetRespawnPoint();
+        stunDelay = new WaitForSeconds(stunTime);
+        invTimer = invincibleTime;
     }
 
     private void Update()
     {
+        if(!isMovable)
+        {
+            movement.Move(Vector3.zero, properties.Speed, properties.TurnSpeed);
+        }
+
         if(!isAlive)
         {
             return;
@@ -45,44 +59,40 @@ public class PlayerController : MonoBehaviour
             Respawn();
         }
 
-        if (properties.Health <= 0)
-        {
-            Dead();
-            return;
-        }
-
         if(movement != null)
         {
             HandleInputs();
         }
 
+        UpdateTimer();
 
-
-    }
-
-    private void FixedUpdate()
-    {
-        
     }
 
     //--- Public Methods ---//
-    // µ¥¹ÌÁö Àû¿ë
+    // Apply Damage
     public void TakeDamage(int damage)
     {
-        if(!isAlive)
+        if(!isAlive || invTimer < invincibleTime)
         {
             return;
         }
 
         properties.Health -= damage;
-        StartCoroutine(ApplyDamageFeedback(skinnedMeshRenderer, 0.1f, Color.red));
+
+        invTimer = 0f;
+
         if (properties.Health <= 0)
         {
             Dead();
+        }else
+        {
+            anim.SetTrigger("Damage");
+            isMovable = false;
+            StartCoroutine(EnableMovementAfterDelay(stunDelay));
         }
     }
 
-    //¸®½ºÆù À§Ä¡ Àç¼³Á¤ ÆĞ¹Ğ¸®(ÃßÈÄ È®Àå¼º)
+    //Update checkpoint
     public void SetRespawnPoint(Vector3 newRespawnPoint)
     {
         respawnPoint = newRespawnPoint;
@@ -97,19 +107,21 @@ public class PlayerController : MonoBehaviour
     {
         // Handle player death logic
         isAlive = false;
+        isMovable = false;
         movement.ResetSpeed();
         anim.SetTrigger("Dead");
     }
 
+    //reset player position to respawnpoint with damage penalty
     private void Respawn()
     {
+        isMovable = false;
+        movement.TeleportTo(respawnPoint);
         TakeDamage(1);
         if (isAlive) anim.SetTrigger("GetUp");
-        movement.ResetSpeed();
-        this.transform.position = respawnPoint;
+        
 
         //Disable Player Movement for a short duration
-        isMovable = false;
         StartCoroutine(EnableMovementAfterDelay(respawnDelay));
     }
 
@@ -121,25 +133,30 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
-        if(inputDirection != Vector3.zero)
-        {
-            movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
+        movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
+
+        //For Debug : Simulate Damage Scenario
+        if(Input.GetKeyDown(KeyCode.Space)){
+            Debug.Log("Damage Taken Simulated");
+            TakeDamage(1);
         }
+    }
+
+    private void UpdateTimer(){
+        invTimer += Time.deltaTime;
     }
 
 
     //--- Coroutines ---//
-    private IEnumerator ApplyDamageFeedback(SkinnedMeshRenderer renderer, float duration, Color flashColor)
-    {
-        Color originalColor = renderer.material.color;
-        renderer.material.color = flashColor;
-        yield return new WaitForSeconds(duration);
-        renderer.material.color = originalColor;
-    }
-
     private IEnumerator EnableMovementAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        isMovable = true;
+    }
+
+    private IEnumerator EnableMovementAfterDelay(WaitForSeconds wfs)
+    {
+        yield return wfs;
         isMovable = true;
     }
 
