@@ -7,12 +7,16 @@ public class PlayerMovement : MonoBehaviour
     private Animator animator;
     private Collider col;
     bool b_isJumping = false;
+    private Vector3 direction;
+    private float speed;
+    private float turnSpeed;
 
 
     [Header("Ground Detection")]
     [SerializeField] private LayerMask groundLayer; 
     [SerializeField] private float groundCheckDist = 0.1f;
 
+    //--- Unity Methods ---//
     private void Start()
     {
         /*
@@ -34,24 +38,13 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //player rigidbody status reset
-    public void ResetSpeed()
+    private void Update()
     {
-        rb.linearVelocity = Vector3.zero;
-        animator.SetFloat("Speed", 1);
-        b_isJumping = false;
+        ChangeViewDirection();
     }
 
-    //tp player to desired position
-    public void TeleportTo(Vector3 position)
+    private void FixedUpdate()
     {
-        ResetSpeed(); //reset rigidbody properties to pretend unintentionall movements
-        rb.position = position; //move position based on rigidbody
-    }
-
-    public void Move(Vector3 direction, float speed, float turnSpeed)
-    {
-
         //ground check
         Vector3 rayOrigin = col.bounds.center;
         float rayLength = col.bounds.extents.y + groundCheckDist;
@@ -72,11 +65,6 @@ public class PlayerMovement : MonoBehaviour
 
             float animSpeed = rb.linearVelocity.magnitude;
             animator.SetFloat("Speed", Mathf.Clamp(animSpeed, 1f, speed));
-            if (direction != Vector3.zero)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
-            }
         }
         else
         {
@@ -86,6 +74,40 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetTrigger("Jump");
                 b_isJumping = true;
             }
+        }
+
+    }
+
+    //--- Public Methods ---//
+    //player rigidbody status reset
+    public void ResetSpeed()
+    {
+        rb.linearVelocity = Vector3.zero;
+        animator.SetFloat("Speed", 1);
+        b_isJumping = false;
+    }
+
+    //tp player to desired position
+    public void TeleportTo(Vector3 position)
+    {
+        rb.position = position; //move position based on rigidbody
+        ResetSpeed(); //reset rigidbody properties to pretend unintentionall movements
+    }
+
+    public void Move(Vector3 direction, float speed, float turnSpeed)
+    {
+        this.direction = direction;
+        this.speed = speed;
+        this.turnSpeed = turnSpeed;
+    }
+
+    //--- Private Helper ---//
+    private void ChangeViewDirection()
+    {
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
     }
 }

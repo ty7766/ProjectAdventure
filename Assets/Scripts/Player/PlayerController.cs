@@ -98,13 +98,13 @@ public class PlayerController : MonoBehaviour
     //reset player position to respawnpoint with damage penalty
     private void Respawn()
     {
+        isMovable = false;
         movement.TeleportTo(respawnPoint);
         TakeDamage(1);
         if (isAlive) anim.SetTrigger("GetUp");
         
 
         //Disable Player Movement for a short duration
-        isMovable = false;
         StartCoroutine(EnableMovementAfterDelay(respawnDelay));
     }
 
@@ -112,14 +112,12 @@ public class PlayerController : MonoBehaviour
     {
         if (!isMovable)
         {
+            movement.Move(Vector3.zero, properties.Speed, properties.TurnSpeed);
             return;
         }
 
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
-        if(inputDirection != Vector3.zero)
-        {
-            movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
-        }
+        movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
 
         //For Debug : Simulate Damage Scenario
         if(Input.GetKeyDown(KeyCode.Space)){
