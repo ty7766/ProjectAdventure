@@ -20,14 +20,16 @@ public class PlayerMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         col = GetComponent<Collider>();
         */
-        if(!TryGetComponent<Rigidbody>(out rb)){
+        if(!TryGetComponent<Rigidbody>(out rb))
+        {
             Debug.LogWarning("Rigidbody Component not found on player");
         }
         if(!TryGetComponent<Animator>(out animator))
         {
             Debug.LogWarning("Animator Component not found on player");
         }
-        if(!Try GetComponent<Collider>(out col)){
+        if(!TryGetComponent<Collider>(out col))
+        {
             Debug.LogWarning("Collider Component not found on player");
         }
     }
@@ -41,7 +43,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //tp player to desired position
-    public void TeleportTo(vector3 position)
+    public void TeleportTo(Vector3 position)
     {
         ResetSpeed(); //reset rigidbody properties to pretend unintentionall movements
         rb.position = position; //move position based on rigidbody

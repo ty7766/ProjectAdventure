@@ -17,6 +17,9 @@ public class PlayerController : MonoBehaviour
     //--- Fields ---//
     [SerializeField]
     private float respawnDelay = 2.0f;
+    [SerializeField]
+    private float invincibleTime = 3.0f;
+    private float invTimer = 0;
     private Vector3 respawnPoint;
     private bool isAlive = true;
     private bool isMovable = true;
@@ -56,7 +59,7 @@ public class PlayerController : MonoBehaviour
             HandleInputs();
         }
 
-
+        UpdateTimer();
 
     }
 
@@ -64,13 +67,14 @@ public class PlayerController : MonoBehaviour
     // Apply Damage
     public void TakeDamage(int damage)
     {
-        if(!isAlive)
+        if(!isAlive || invTimer < invincibleTime)
         {
             return;
         }
 
         properties.Health -= damage;
         StartCoroutine(ApplyDamageFeedback(skinnedMeshRenderer, 0.1f, Color.red));
+        invTimer = 0f;
     }
 
     //Update checkpoint
@@ -95,9 +99,9 @@ public class PlayerController : MonoBehaviour
     //reset player position to respawnpoint with damage penalty
     private void Respawn()
     {
+        movement.TeleportTo(respawnPoint);
         TakeDamage(1);
         if (isAlive) anim.SetTrigger("GetUp");
-        movement.TeleportTo(respawnPoint);
         
 
         //Disable Player Movement for a short duration
@@ -117,6 +121,16 @@ public class PlayerController : MonoBehaviour
         {
             movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
         }
+
+        //For Debug : Simulate Damage Scenario
+        if(Input.GetKeyDown(KeyCode.Space)){
+            Debug.Log("Damage Taken Simulated");
+            TakeDamage(1);
+        }
+    }
+
+    private void UpdateTimer(){
+        invTimer += Time.deltaTime;
     }
 
 
@@ -125,6 +139,7 @@ public class PlayerController : MonoBehaviour
     {
         //TODO : Need to implementation for damage feedback with shader
         Debug.Log($"Damage Taken! Remain Health : {properties.Health}");
+        yield return new WaitForSeconds(1);
     }
 
     private IEnumerator EnableMovementAfterDelay(float delay)
