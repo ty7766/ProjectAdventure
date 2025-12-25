@@ -60,11 +60,6 @@ public class PlayerController : MonoBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-        
-    }
-
     //--- Public Methods ---//
     // Apply Damage
     public void TakeDamage(int damage)
