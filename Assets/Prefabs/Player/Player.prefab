@@ -416,7 +416,8 @@ MonoBehaviour:
   properties: {fileID: 4949414615787084936}
   skinnedMeshRenderer: {fileID: 8048908101749801786}
   respawnDelay: 1.5
-  invincibleTime: 3
+  invincibleTime: 2.39
+  stunTime: 0.39
 --- !u!1 &1653475845376044346
 GameObject:
   m_ObjectHideFlags: 0

@@ -814,8 +814,8 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8123782475422646877, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
-      propertyPath: stunTime
-      value: 0.39
+      propertyPath: invincibleTime
+      value: 2.39
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
