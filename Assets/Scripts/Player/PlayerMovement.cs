@@ -15,16 +15,36 @@ public class PlayerMovement : MonoBehaviour
 
     private void Start()
     {
+        /*
         rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         col = GetComponent<Collider>();
+        */
+        if(!TryGetComponent<Rigidbody>(out rb)){
+            Debug.LogWarning("Rigidbody Component not found on player");
+        }
+        if(!TryGetComponent<Animator>(out animator))
+        {
+            Debug.LogWarning("Animator Component not found on player");
+        }
+        if(!Try GetComponent<Collider>(out col)){
+            Debug.LogWarning("Collider Component not found on player");
+        }
     }
 
+    //player rigidbody status reset
     public void ResetSpeed()
     {
         rb.linearVelocity = Vector3.zero;
         animator.SetFloat("Speed", 1);
         b_isJumping = false;
+    }
+
+    //tp player to desired position
+    public void TeleportTo(vector3 position)
+    {
+        ResetSpeed(); //reset rigidbody properties to pretend unintentionall movements
+        rb.position = position; //move position based on rigidbody
     }
 
     public void Move(Vector3 direction, float speed, float turnSpeed)

@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //--- Public Methods ---//
-    // 데미지 적용
+    // Apply Damage
     public void TakeDamage(int damage)
     {
         if(!isAlive)
@@ -76,13 +76,9 @@ public class PlayerController : MonoBehaviour
 
         properties.Health -= damage;
         StartCoroutine(ApplyDamageFeedback(skinnedMeshRenderer, 0.1f, Color.red));
-        if (properties.Health <= 0)
-        {
-            Dead();
-        }
     }
 
-    //리스폰 위치 재설정 패밀리(추후 확장성)
+    //Update checkpoint
     public void SetRespawnPoint(Vector3 newRespawnPoint)
     {
         respawnPoint = newRespawnPoint;
@@ -105,8 +101,8 @@ public class PlayerController : MonoBehaviour
     {
         TakeDamage(1);
         if (isAlive) anim.SetTrigger("GetUp");
-        movement.ResetSpeed();
-        this.transform.position = respawnPoint;
+        movement.TeleportTo(respawnPoint);
+        
 
         //Disable Player Movement for a short duration
         isMovable = false;
