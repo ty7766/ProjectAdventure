@@ -92,6 +92,7 @@ public class PlayerController : MonoBehaviour
         anim.SetTrigger("Dead");
     }
 
+    //reset player position to respawnpoint with damage penalty
     private void Respawn()
     {
         TakeDamage(1);
@@ -122,10 +123,8 @@ public class PlayerController : MonoBehaviour
     //--- Coroutines ---//
     private IEnumerator ApplyDamageFeedback(SkinnedMeshRenderer renderer, float duration, Color flashColor)
     {
-        Color originalColor = renderer.material.color;
-        renderer.material.color = flashColor;
-        yield return new WaitForSeconds(duration);
-        renderer.material.color = originalColor;
+        //TODO : Need to implementation for damage feedback with shader
+        Debug.Log($"Damage Taken! Remain Health : {properties.Health}");
     }
 
     private IEnumerator EnableMovementAfterDelay(float delay)
