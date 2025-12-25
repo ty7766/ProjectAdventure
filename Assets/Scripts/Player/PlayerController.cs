@@ -19,7 +19,11 @@ public class PlayerController : MonoBehaviour
     private float respawnDelay = 2.0f;
     [SerializeField] [Header("피격 후 무적시간")]
     private float invincibleTime = 3.0f;
-    private float invTimer = 0;
+    private float invTimer;
+    [SerializeField] [Header("피격 후 경직시간")]
+    private float stunTime = 0.39f;
+    private WaitForSeconds stunDelay;
+
     private Vector3 respawnPoint;
     private bool isAlive = true;
     private bool isMovable = true;
@@ -34,10 +38,17 @@ public class PlayerController : MonoBehaviour
         }
 
         SetRespawnPoint();
+        stunDelay = new WaitForSeconds(stunTime);
+        invTimer = invincibleTime;
     }
 
     private void Update()
     {
+        if(!isMovable)
+        {
+            movement.Move(Vector3.zero, properties.Speed, properties.TurnSpeed);
+        }
+
         if(!isAlive)
         {
             return;
@@ -67,12 +78,17 @@ public class PlayerController : MonoBehaviour
         }
 
         properties.Health -= damage;
-        StartCoroutine(ApplyDamageFeedback(skinnedMeshRenderer, 0.1f, Color.red));
+
         invTimer = 0f;
 
         if (properties.Health <= 0)
         {
             Dead();
+        }else
+        {
+            anim.SetTrigger("Damage");
+            isMovable = false;
+            StartCoroutine(EnableMovementAfterDelay(stunDelay));
         }
     }
 
@@ -91,6 +107,7 @@ public class PlayerController : MonoBehaviour
     {
         // Handle player death logic
         isAlive = false;
+        isMovable = false;
         movement.ResetSpeed();
         anim.SetTrigger("Dead");
     }
@@ -112,7 +129,6 @@ public class PlayerController : MonoBehaviour
     {
         if (!isMovable)
         {
-            movement.Move(Vector3.zero, properties.Speed, properties.TurnSpeed);
             return;
         }
 
@@ -132,16 +148,15 @@ public class PlayerController : MonoBehaviour
 
 
     //--- Coroutines ---//
-    private IEnumerator ApplyDamageFeedback(SkinnedMeshRenderer renderer, float duration, Color flashColor)
-    {
-        //TODO : Need to implementation for damage feedback with shader
-        Debug.Log($"Damage Taken! Remain Health : {properties.Health}");
-        yield return new WaitForSeconds(1);
-    }
-
     private IEnumerator EnableMovementAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+        isMovable = true;
+    }
+
+    private IEnumerator EnableMovementAfterDelay(WaitForSeconds wfs)
+    {
+        yield return wfs;
         isMovable = true;
     }
 
