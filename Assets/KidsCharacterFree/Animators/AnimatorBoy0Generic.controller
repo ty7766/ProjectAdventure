@@ -403,10 +403,10 @@ AnimatorState:
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 8e9fa8f0d519f4f509097135b0190438, type: 2}
   m_Tag: 
-  m_SpeedParameter: 
+  m_SpeedParameter: StunTime
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
-  m_TimeParameter: Speed
+  m_TimeParameter: StunTime
 --- !u!206 &3865685181777376833
 BlendTree:
   m_ObjectHideFlags: 1
