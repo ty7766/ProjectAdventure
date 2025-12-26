@@ -37,7 +37,7 @@ public class MapGuideLine : MonoBehaviour
     }
 
     //SpawnPoint 자동 정렬
-    [ContextMenu("위치 자동 정렬 (클릭)")]
+    [ContextMenu("위치 자동 정렬")]
     public void AlignPositions()
     {
         if(spawnPointToAlign == null || spawnPointToAlign.Length == 0)
