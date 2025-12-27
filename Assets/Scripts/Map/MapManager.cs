@@ -4,7 +4,6 @@ using UnityEngine;
 public class PathGroup
 {
     public string groupName = "New Path Group";
-    public KeyCode triggerKey;
     public Transform spawnPoint;
     public GameObject[] pathPrefabs;
 
@@ -16,7 +15,14 @@ public class PathGroup
 
 public class MapManager : MonoBehaviour
 {
+    [Header("맵 선택 이펙트 설정")]
+    public Transform selectionCursor;
+    public Vector3 cursorOffset = new Vector3(0, 0, 0);
+
+    [Header("맵 그룹 설정")]
     public PathGroup[] pathGroups;
+
+    private int selectedSlotIndex = 0;
 
     void Start()
     {
@@ -28,32 +34,71 @@ public class MapManager : MonoBehaviour
                 // 각 그룹의 0번째(첫 번째) 맵 생성 (Init)
                 SpawnPath(group, group.currentPathIndex);
             }
-            else
-            {
-                Debug.LogError($"MapManager의 '{group.groupName}' 그룹에 Prefabs 또는 Spawn Point가 설정되지 않았습니다!");
-            }
         }
+
+        UpdateCursorPosition();
     }
 
     void Update()
     {
-        //모든 PathGroup 을 순회하며 키 입력을 확인
-        foreach (PathGroup group in pathGroups)
-        {
-            //triggerKey가 눌렸는지 확인
-            if (Input.GetKeyDown(group.triggerKey))
-            {
-                group.currentPathIndex = (group.currentPathIndex + 1) % group.pathPrefabs.Length;
+        if (pathGroups.Length == 0) return;
+        HandleSelectionInput();
+        HandleMapChangeInput();
+    }
 
-                //맵 교체
-                SpawnPath(group, group.currentPathIndex);
-            }
+    //맵 선택 기능
+    void HandleSelectionInput()
+    {
+        bool selectionChanged = false;
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            selectedSlotIndex--;
+            if (selectedSlotIndex < 0)
+                selectedSlotIndex = pathGroups.Length - 1;
+
+            selectionChanged = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            selectedSlotIndex++;
+            if (selectedSlotIndex >= pathGroups.Length)
+                selectedSlotIndex = 0;
+
+            selectionChanged = true;
+        }
+
+        //선택 되었을 때만 이펙트 생성
+        if (selectionChanged)
+        {
+            UpdateCursorPosition();
         }
     }
 
+    //커서 이펙트를 선택된 맵으로 이동
+    void UpdateCursorPosition()
+    {
+        if (selectionCursor == null) return;
+
+        Transform targetSpawnPoint = pathGroups[selectedSlotIndex].spawnPoint;
+        selectionCursor.position = targetSpawnPoint.position + cursorOffset;
+    }
+
+    //선택된 맵 변경
+    void HandleMapChangeInput()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            PathGroup targetGroup = pathGroups[selectedSlotIndex];
+            if (targetGroup.pathPrefabs.Length == 0) return;
+
+            targetGroup.currentPathIndex = (targetGroup.currentPathIndex + 1) % targetGroup.pathPrefabs.Length;
+            SpawnPath(targetGroup, targetGroup.currentPathIndex);
+        }
+    }
     void SpawnPath(PathGroup group, int index)
     {
-        // 1. 이 'group'의 현재 활성화된 길이 있다면 파괴
+        //이 'group'의 현재 활성화된 길이 있다면 파괴
         if (group.currentActivePath != null)
         {
             Destroy(group.currentActivePath);
@@ -66,6 +111,6 @@ public class MapManager : MonoBehaviour
         group.currentActivePath = Instantiate(pathPrefabToSpawn, group.spawnPoint.position, group.spawnPoint.rotation);
         group.currentActivePath.transform.SetParent(this.transform);
 
-        Debug.Log($"[{group.groupName}] '{pathPrefabToSpawn.name}' (으)로 길 교체! (트리거 키: {group.triggerKey})");
+        Debug.Log($"[슬롯 변경] {group.groupName} -> {pathPrefabToSpawn.name}");
     }
 }
