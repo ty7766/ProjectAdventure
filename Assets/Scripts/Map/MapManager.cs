@@ -85,6 +85,12 @@ public class MapManager : MonoBehaviour
         if (selectionCursor == null) return;
 
         Transform targetSpawnPoint = pathGroups[selectedSlotIndex].spawnPoint;
+        //SpawnPoint가 할당되지 않은 맵 방지
+        if (targetSpawnPoint == null)
+        {
+            Debug.LogWarning($"[MapManager] PathGroup[{selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            return;
+        }
         selectionCursor.position = targetSpawnPoint.position + cursorOffset;
     }
 
