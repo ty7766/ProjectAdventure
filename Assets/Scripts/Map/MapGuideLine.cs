@@ -23,13 +23,13 @@ public class MapGuideLine : MonoBehaviour
         Gizmos.color = gizmoColor;
 
         //기준점 설정 (설정되지 않으면 해당 오브젝트 기준으로 정렬)
-        Vector3 basePoisition = (originTransform != null) ? originTransform.position : transform.position;
+        Vector3 basePosition = (originTransform != null) ? originTransform.position : transform.position;
 
         int count = (spawnPointToAlign != null && spawnPointToAlign.Length > 0) ? spawnPointToAlign.Length : 5;
         for(int i = 0; i < count; i++)
         {
             //현재는 -z 방향으로 맵이 이어지므로 -z 축으로 설정
-            Vector3 pos = CalculatePosition(basePoisition, i);
+            Vector3 pos = CalculatePosition(basePosition, i);
             //박스 및 중심점 그리기
             Gizmos.DrawWireCube(pos, tileSize);
             Gizmos.DrawSphere(pos, 0.3f);
