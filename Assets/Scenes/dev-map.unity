@@ -859,6 +859,7 @@ MonoBehaviour:
     - {fileID: 7266772805334686185, guid: dddb1c22da1885f4abd4ddd911841c16, type: 3}
     currentActivePath: {fileID: 0}
     currentPathIndex: 0
+  detectionSize: {x: 10, y: 1, z: 8}
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
