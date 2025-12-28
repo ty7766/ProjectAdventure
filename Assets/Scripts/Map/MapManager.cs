@@ -124,8 +124,8 @@ public class MapManager : MonoBehaviour
         {
             if(col.CompareTag("Player"))
                 return true;
-            return false;
         }
+        return false;
     }
 
     void SpawnPath(PathGroup group, int index)
