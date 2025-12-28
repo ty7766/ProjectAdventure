@@ -119,6 +119,12 @@ public class MapManager : MonoBehaviour
     //플레이어 감지용 메소드
     bool CheckPlayerOnMap(PathGroup group)
     {
+        //SpawnPoint가 할당되지 않은 맵 방지
+        if (group.spawnPoint == null)
+        {
+            Debug.LogWarning($"[MapManager] '{group.groupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
+            return false;
+        }
         //해당 슬롯 위치에 가상 박스를 만들어 검사
         Collider[] hitColliders = Physics.OverlapBox(
             group.spawnPoint.position,
