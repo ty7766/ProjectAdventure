@@ -22,6 +22,10 @@ public class MapManager : MonoBehaviour
     [Header("맵 그룹 설정")]
     public PathGroup[] pathGroups;
 
+    [Header("맵 변경 안전장치 설정")]
+    //해당 맵 사이즈로 변경 필수
+    public Vector3 detectionSize = new Vector3(0, 0, 0);
+
     private int selectedSlotIndex = 0;
 
     void Start()
@@ -81,6 +85,12 @@ public class MapManager : MonoBehaviour
         if (selectionCursor == null) return;
 
         Transform targetSpawnPoint = pathGroups[selectedSlotIndex].spawnPoint;
+        //SpawnPoint가 할당되지 않은 맵 방지
+        if (targetSpawnPoint == null)
+        {
+            Debug.LogWarning($"[MapManager] PathGroup[{selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            return;
+        }
         selectionCursor.position = targetSpawnPoint.position + cursorOffset;
     }
 
@@ -90,12 +100,46 @@ public class MapManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E))
         {
             PathGroup targetGroup = pathGroups[selectedSlotIndex];
+
+            //플레이어가 해당 맵 위에 있는지 확인
+            if (CheckPlayerOnMap(targetGroup))
+            {
+                Debug.Log("플레이어가 현재 해당 맵 위에 있습니다.");
+                Debug.Log("해당 맵을 교체할 수 없습니다!");
+                return;
+            }
+
             if (targetGroup.pathPrefabs.Length == 0) return;
 
             targetGroup.currentPathIndex = (targetGroup.currentPathIndex + 1) % targetGroup.pathPrefabs.Length;
             SpawnPath(targetGroup, targetGroup.currentPathIndex);
         }
     }
+
+    //플레이어 감지용 메소드
+    bool CheckPlayerOnMap(PathGroup group)
+    {
+        //SpawnPoint가 할당되지 않은 맵 방지
+        if (group.spawnPoint == null)
+        {
+            Debug.LogWarning($"[MapManager] '{group.groupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
+            return false;
+        }
+        //해당 슬롯 위치에 가상 박스를 만들어 검사
+        Collider[] hitColliders = Physics.OverlapBox(
+            group.spawnPoint.position,
+            detectionSize * 0.5f,
+            group.spawnPoint.rotation);
+
+        //감지된 물체 중 Player 태그 검사
+        foreach(Collider col in hitColliders)
+        {
+            if(col.CompareTag("Player"))
+                return true;
+        }
+        return false;
+    }
+
     void SpawnPath(PathGroup group, int index)
     {
         //이 'group'의 현재 활성화된 길이 있다면 파괴
