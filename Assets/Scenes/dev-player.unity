@@ -733,9 +733,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7e8c1df9e19c9924c80e14242eba6c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectionCursor: {fileID: 0}
+  cursorOffset: {x: 0, y: 0, z: 0}
   pathGroups:
   - groupName: Map1
-    triggerKey: 101
     spawnPoint: {fileID: 1516804858}
     pathPrefabs:
     - {fileID: 2319492445605664422, guid: 331b4e4d21c12db4298711faca94cbcd, type: 3}
@@ -743,7 +744,6 @@ MonoBehaviour:
     currentActivePath: {fileID: 0}
     currentPathIndex: 0
   - groupName: Map2
-    triggerKey: 114
     spawnPoint: {fileID: 1191166737}
     pathPrefabs:
     - {fileID: 6904452847002661255, guid: c3c4fd847147ea148b2abca0539411ba, type: 3}
@@ -751,6 +751,7 @@ MonoBehaviour:
     - {fileID: 7266772805334686185, guid: dddb1c22da1885f4abd4ddd911841c16, type: 3}
     currentActivePath: {fileID: 0}
     currentPathIndex: 0
+  detectionSize: {x: 0, y: 0, z: 0}
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
@@ -812,6 +813,10 @@ PrefabInstance:
     - target: {fileID: 1435634289576837414, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 4949414615787084936, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+      propertyPath: turnSpeed
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8123782475422646877, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: invincibleTime
