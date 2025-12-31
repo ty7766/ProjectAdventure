@@ -36,10 +36,19 @@ public abstract class SpecialObject : MonoBehaviour
             if(isRespawnable)
             {
                 // 2. 오브젝트 비활성화
-                col.enabled = false;
-                rend.enabled = false;
-                // 3. 일정 시간 후 재생성
-                StartCoroutine(RespawnAfterSeconds(respawnTime));
+                if(col != null && rend != null)
+                {
+                    col.enabled = false;
+                    rend.enabled = false;
+                    // 3. 일정 시간 후 재생성
+                    StartCoroutine(RespawnAfterSeconds(respawnTime));
+                }
+                else
+                {
+                    Debug.LogWarning("Collider or Renderer is null in SpecialObject. Destroy Instead!");
+                    Destroy(gameObject); //리스폰 로직 대신 파괴 수행
+                }
+
             }
             else
             {
