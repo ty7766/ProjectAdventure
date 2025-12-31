@@ -8,6 +8,11 @@ public class GemObject : SpecialObject
 
     protected override void ApplyEffect(GameObject player)
     {
+        if(stageManager == null)
+        {
+            Debug.LogWarning("StageManager reference is missing in GemObject.");
+            return;
+        }
         stageManager.CollectGem();
     }
 }

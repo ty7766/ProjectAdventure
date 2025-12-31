@@ -24,6 +24,13 @@ public class StageManager : MonoBehaviour
     {
         // Implement stage clear logic here (e.g., show UI, stop player movement)
         Debug.Log("Stage Cleared!");
-        playerController.DisableMovement();
+        if(playerController != null)
+        { 
+            playerController.DisableMovement();
+        }
+        else
+        {
+            Debug.LogWarning("PlayerController reference is missing in StageManager.");
+        }
     }
 }
