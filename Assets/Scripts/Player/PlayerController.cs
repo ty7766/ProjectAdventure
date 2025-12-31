@@ -139,7 +139,8 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
-        movement.Move(inputDirection, properties.Speed, properties.TurnSpeed);
+        Quaternion camRotation = Quaternion.Euler(0, -60, 0);
+        movement.Move(camRotation * inputDirection, properties.Speed, properties.TurnSpeed);
 
         //For Debug : Simulate Damage Scenario
         if(Input.GetKeyDown(KeyCode.Space)){
