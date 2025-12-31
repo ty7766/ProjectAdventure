@@ -50,6 +50,7 @@ public class PlayerMovement : MonoBehaviour
         Vector3 rayOrigin = col.bounds.center;
         float rayLength = col.bounds.extents.y + groundCheckDist;
         bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer);
+        animator.SetBool("isGround", isGrounded);
 
         //debug raycast (scene view)
         Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
