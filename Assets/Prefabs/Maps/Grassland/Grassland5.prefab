@@ -119,6 +119,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5345981825447384336}
     m_Modifications:
+    - target: {fileID: 3664450762201173716, guid: e9e8aced683c486449d8c5daf675f93b, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3664450762201173723, guid: e9e8aced683c486449d8c5daf675f93b, type: 3}
       propertyPath: m_Name
       value: PP_Meadow_Flat_Water_01
@@ -173,6 +177,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4148217819854099553, guid: e9e8aced683c486449d8c5daf675f93b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4241535205936780613, guid: e9e8aced683c486449d8c5daf675f93b, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
