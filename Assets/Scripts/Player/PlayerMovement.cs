@@ -41,15 +41,19 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (col == null || animator == null || rb == null)
+        {
+            return;
+        }
+
         //ground check
-        Vector3? rayOrigin = col?.bounds.center;
-        float? rayLength = col?.bounds.extents.y + groundCheckDist;
-        bool isGrounded = Physics.Raycast((Vector3)rayOrigin, Vector3.down, out RaycastHit hit, (float)rayLength, groundLayer);
+        Vector3 rayOrigin = col.bounds.center;
+        float rayLength = col.bounds.extents.y + groundCheckDist;
+        bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer);
         animator?.SetBool("isGround", isGrounded);
 
-
         //debug raycast (scene view)
-        Debug.DrawRay((Vector3)rayOrigin, Vector3.down * (float)rayLength, isGrounded ? Color.green : Color.red);
+        Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
 
 
         if (isGrounded)
