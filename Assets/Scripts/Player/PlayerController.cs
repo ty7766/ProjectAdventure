@@ -142,11 +142,14 @@ public class PlayerController : MonoBehaviour
         Quaternion camRotation = Quaternion.Euler(0, -60, 0);
         movement.Move(camRotation * inputDirection, properties.Speed, properties.TurnSpeed);
 
+
+#if UNITY_EDITOR
         //For Debug : Simulate Damage Scenario
-        if(Input.GetKeyDown(KeyCode.Space)){
+        if (Input.GetKeyDown(KeyCode.Space)){
             Debug.Log("Damage Taken Simulated");
             TakeDamage(1);
         }
+#endif
     }
 
     private void UpdateTimer(){
