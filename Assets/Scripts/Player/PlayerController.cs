@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Processors;
@@ -100,6 +100,12 @@ public class PlayerController : MonoBehaviour
     public void SetRespawnPoint()
     {
         respawnPoint = this.transform.position;
+    }
+
+    //Disable player movement
+    public void DisableMovement()
+    {
+        isMovable = false;
     }
 
     //--- Private Methods ---//
