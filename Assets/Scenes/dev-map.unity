@@ -560,6 +560,18 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
       value: 3.0060616
       objectReference: {fileID: 0}
@@ -758,7 +770,7 @@ MonoBehaviour:
   originTransform: {fileID: 0}
   spawnPointToAlign:
   - {fileID: 1516804858}
-  tileSize: {x: 12, y: 4, z: 10}
+  tileSize: {x: 12, y: 1, z: 10}
   startOffset: {x: 0, y: 0, z: 0}
   gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &1663817822
@@ -907,9 +919,11 @@ MonoBehaviour:
     - {fileID: 8507357804397431983, guid: a133e3174402f244180a60cb0fdadf3d, type: 3}
     - {fileID: 717346594924164287, guid: af9ec3d934f33384bbff93e0a0bf9c58, type: 3}
     - {fileID: 4443707147317842450, guid: 25989b2221c07c749a1147a0727941bf, type: 3}
+    - {fileID: 7164062192564962146, guid: 7753a3e9a4e871c469ec2af9c8389dfb, type: 3}
+    - {fileID: 1718555028674836333, guid: e3b9192c12807d54893e65f9efb403a3, type: 3}
     currentActivePath: {fileID: 0}
     currentPathIndex: 0
-  detectionSize: {x: 12, y: 1, z: 10}
+  detectionSize: {x: 12, y: 4, z: 10}
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
