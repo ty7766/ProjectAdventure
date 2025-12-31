@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 8123782475422646877}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -383,7 +383,7 @@ MonoBehaviour:
   speed: 5
   health: 3
   stamina: 100
-  turnSpeed: 15
+  turnSpeed: 30
 --- !u!114 &3810248897519560485
 MonoBehaviour:
   m_ObjectHideFlags: 0
