@@ -20,11 +20,6 @@ public class PlayerMovement : MonoBehaviour
     //--- Unity Methods ---//
     private void Start()
     {
-        /*
-        rb = GetComponent<Rigidbody>();
-        animator = GetComponent<Animator>();
-        col = GetComponent<Collider>();
-        */
         if(!TryGetComponent<Rigidbody>(out rb))
         {
             Debug.LogWarning("Rigidbody Component not found on player");
@@ -46,10 +41,16 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (col == null || animator == null || rb == null)
+        {
+            return;
+        }
+
         //ground check
         Vector3 rayOrigin = col.bounds.center;
         float rayLength = col.bounds.extents.y + groundCheckDist;
         bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer);
+        animator?.SetBool("isGround", isGrounded);
 
         //debug raycast (scene view)
         Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
