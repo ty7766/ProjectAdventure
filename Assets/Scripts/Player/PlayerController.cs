@@ -170,4 +170,16 @@ public class PlayerController : MonoBehaviour
         isMovable = true;
     }
 
+    //지속 장판 관련
+    private void OnTriggerStay(Collider other)
+    {
+        //데드존에 지속적으로 있을 때
+        if(other.CompareTag("Dead"))
+        {
+            //Stay는 매 프레임 실행
+            //but 무적시간으로 영향 X
+            Debug.Log("데드 오브젝트에 접근했습니다");
+            TakeDamage(1);
+        }
+    }
 }
