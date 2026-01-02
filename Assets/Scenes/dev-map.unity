@@ -182,7 +182,7 @@ Camera:
   far clip plane: 1000
   field of view: 40
   orthographic: 1
-  orthographic size: 5.5
+  orthographic size: 5
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -206,13 +206,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.12940954, y: 0.8365163, z: -0.22414392, w: 0.48296285}
-  m_LocalPosition: {x: -5.467, y: 7.7, z: 13.051}
+  m_LocalRotation: {x: 0.14845252, y: 0.7912401, z: -0.21201217, w: 0.55403227}
+  m_LocalPosition: {x: -5.74, y: 7.7, z: 12.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 30, y: 120, z: 0}
+  m_LocalEulerAnglesHint: {x: 30, y: 110, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -492,7 +492,7 @@ Transform:
   m_GameObject: {fileID: 769704401}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.18, y: -5.416297, z: 4.572}
+  m_LocalPosition: {x: 4.18, y: -5.416297, z: -7.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -655,6 +655,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1516804858}
+  - {fileID: 1635724485}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1278221713
@@ -774,9 +775,41 @@ MonoBehaviour:
   originTransform: {fileID: 0}
   spawnPointToAlign:
   - {fileID: 1516804858}
+  - {fileID: 1635724485}
   tileSize: {x: 12, y: 1, z: 10}
   startOffset: {x: 0, y: 0, z: 0}
   gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+--- !u!1 &1635724484
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1635724485}
+  m_Layer: 0
+  m_Name: PathSpawnPoint2
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1635724485
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635724484}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.201763, y: -2.4268632, z: -10.345562}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1133851749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1663817822
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,6 +958,16 @@ MonoBehaviour:
     - {fileID: 4443707147317842450, guid: 25989b2221c07c749a1147a0727941bf, type: 3}
     - {fileID: 7164062192564962146, guid: 7753a3e9a4e871c469ec2af9c8389dfb, type: 3}
     - {fileID: 1718555028674836333, guid: e3b9192c12807d54893e65f9efb403a3, type: 3}
+    currentActivePath: {fileID: 0}
+    currentPathIndex: 0
+  - groupName: Map2
+    spawnPoint: {fileID: 1635724485}
+    pathPrefabs:
+    - {fileID: 8201682014230367498, guid: 94fd454697b894c4bbc075a4ac6520e5, type: 3}
+    - {fileID: 8521698158416923414, guid: 7074887939fdecb44bb5d79914fc95c1, type: 3}
+    - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
+    - {fileID: 5024839322967423167, guid: 3e68ae10c7330f146b394fc4042347c8, type: 3}
+    - {fileID: 265998197849684176, guid: 50c914683a686c24fbbec3666239e8be, type: 3}
     currentActivePath: {fileID: 0}
     currentPathIndex: 0
   detectionSize: {x: 12, y: 4, z: 10}
