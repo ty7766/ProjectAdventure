@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class EffectField : MonoBehaviour
 {
     [Header("플레이어 효과 컨트롤러")]
