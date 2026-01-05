@@ -52,8 +52,9 @@ public class PlayerMovement : MonoBehaviour
         bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, groundLayer);
         animator?.SetBool("isGround", isGrounded);
 
-        //debug raycast (scene view)
+#if UNITY_EDITOR
         Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
+#endif
 
 
         if (isGrounded)
@@ -81,7 +82,6 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //--- Public Methods ---//
-    //player rigidbody status reset
     public void ResetSpeed()
     {
         rb.linearVelocity = Vector3.zero;
@@ -89,11 +89,10 @@ public class PlayerMovement : MonoBehaviour
         b_isJumping = false;
     }
 
-    //tp player to desired position
     public void TeleportTo(Vector3 position)
     {
-        rb.position = position; //move position based on rigidbody
-        ResetSpeed(); //reset rigidbody properties to pretend unintentionall movements
+        rb.position = position;
+        ResetSpeed();
     }
 
     public void Move(Vector3 direction, float speed, float turnSpeed)
