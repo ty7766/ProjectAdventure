@@ -9,11 +9,20 @@ public enum EffectType
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effects/Status Effect")]
 public class StatusEffect : ScriptableObject
 {
+    /// <summary>
+    /// 효과의 종류를 정의합니다. (예: 이동 속도, 공격력 등)
+    /// </summary>
     public EffectType Type;
 
     [Header("합연산 시 더해질 수치 (예: 2.0)")]
+    /// <summary>
+    /// 합연산 시 기본값에 더해질 절대적인 수치입니다.
+    /// </summary>
     public float AdditiveValue;
     [Header("배율연산 시 사용 (예: 0.3이면 30% 증가)")]
+    /// <summary>
+    /// 배율 연산 시 사용되는 계수입니다. (예: 0.3은 30% 증가를 의미)
+    /// </summary>
     public float MultiplierValue;
 
     [Header("효과 지속 시간 (초)")]

@@ -6,6 +6,7 @@ using UnityEngine;
 public class PlayerEffectController : MonoBehaviour
 {
     //--- Components ---//
+    [SerializeField]
     private PlayerProperties _properties;
 
     //--- Fields ---//
@@ -85,7 +86,6 @@ public class PlayerEffectController : MonoBehaviour
     }
     private void CalculateSpeed()
     {
-        // Enum을 사용하여 필터링 (Type == EffectType.Speed)
         float totalMultiplier = _activeEffects
             .Where(e => e.Data.Type == EffectType.Speed)
             .Sum(e => e.Data.MultiplierValue);
@@ -94,12 +94,14 @@ public class PlayerEffectController : MonoBehaviour
             .Where(e => e.Data.Type == EffectType.Speed)
             .Sum(e => e.Data.AdditiveValue);
 
+        // 최종 이동 속도 계산 수식 : (기본속도 * (1 + 증가율 효과 합)) + 고정증가량 합
         _properties.Speed = (_baseSpeed * (1.0f + totalMultiplier)) + totalAdditive;
     }
     private void UpdateFinalStats()
     {
-        // 1. 이동 속도 계산
         CalculateSpeed();
+
+        //TODO : 다른 스탯들도 여기에 추가
     }
 
 }
