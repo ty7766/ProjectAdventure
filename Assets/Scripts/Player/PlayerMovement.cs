@@ -46,6 +46,42 @@ public class PlayerMovement : MonoBehaviour
             return;
         }
 
+        ApplyMovement();
+    }
+
+    //--- Public Methods ---//
+    public void ResetSpeed()
+    {
+        rb.linearVelocity = Vector3.zero;
+        animator.SetFloat("Speed", 1);
+        b_isJumping = false;
+    }
+
+    public void TeleportTo(Vector3 position)
+    {
+        rb.position = position;
+        ResetSpeed();
+    }
+
+    public void Move(Vector3 direction, float speed, float turnSpeed)
+    {
+        this.direction = direction;
+        this.speed = speed;
+        this.turnSpeed = turnSpeed;
+    }
+
+    //--- Private Helper ---//
+    private void ChangeViewDirection()
+    {
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
+        }
+    }
+
+    private void ApplyMovement()
+    {
         //ground check
         Vector3 rayOrigin = col.bounds.center;
         float rayLength = col.bounds.extents.y + groundCheckDist;
@@ -77,38 +113,6 @@ public class PlayerMovement : MonoBehaviour
                 animator.SetTrigger("Jump");
                 b_isJumping = true;
             }
-        }
-
-    }
-
-    //--- Public Methods ---//
-    public void ResetSpeed()
-    {
-        rb.linearVelocity = Vector3.zero;
-        animator.SetFloat("Speed", 1);
-        b_isJumping = false;
-    }
-
-    public void TeleportTo(Vector3 position)
-    {
-        rb.position = position;
-        ResetSpeed();
-    }
-
-    public void Move(Vector3 direction, float speed, float turnSpeed)
-    {
-        this.direction = direction;
-        this.speed = speed;
-        this.turnSpeed = turnSpeed;
-    }
-
-    //--- Private Helper ---//
-    private void ChangeViewDirection()
-    {
-        if (direction != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, turnSpeed * Time.deltaTime);
         }
     }
 }
