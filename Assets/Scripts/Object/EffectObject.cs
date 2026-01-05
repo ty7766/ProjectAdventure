@@ -16,6 +16,6 @@ public class EffectObject : SpecialObject
             Debug.LogWarning($"itemEffect is missing in {this.gameObject.name}");
             return;
         }
-        _playerEffectController.ApplyEffect(_itemEffect);
+        _playerEffectController?.ApplyEffect(_itemEffect);
     }
 }

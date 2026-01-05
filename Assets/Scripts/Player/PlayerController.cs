@@ -37,10 +37,7 @@ public class PlayerController : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        if(!TryGetComponent<Animator>(out _animator))
-        {
-            Debug.LogWarning("Animator component not found on Player.");
-        }
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
