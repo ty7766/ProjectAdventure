@@ -30,8 +30,8 @@ public class PlayerEffectController : MonoBehaviour
     /// <param name="effectData"></param>
     public void ApplyEffect(StatusEffect effectData)
     {
-        var existing = _activeEffects.Find(e => e.data == effectData);
-        if (existing != null && !effectData.isStackable)
+        var existing = _activeEffects.Find(e => e.Data == effectData);
+        if (existing != null && !effectData.IsStackable)
         {
             existing.RefreshDuration();
         }
@@ -57,10 +57,10 @@ public class PlayerEffectController : MonoBehaviour
     /// <param name="effectData"></param>
     public void StopPermanentEffect(StatusEffect effectData)
     {
-        var effect = _activeEffects.Find(e => e.data == effectData && e.isPermanent);
+        var effect = _activeEffects.Find(e => e.Data == effectData && e.IsPermanent);
         if (effect != null)
         {
-            effect.isPermanent = false;
+            effect.IsPermanent = false;
             effect.RefreshDuration(); // 이때부터 N초 카운트다운
         }
     }
@@ -71,10 +71,10 @@ public class PlayerEffectController : MonoBehaviour
         bool changed = false;
         for (int i = _activeEffects.Count - 1; i >= 0; i--)
         {
-            if (_activeEffects[i].isPermanent) continue;
+            if (_activeEffects[i].IsPermanent) continue;
 
-            _activeEffects[i].remainingDuration -= Time.deltaTime;
-            if (_activeEffects[i].remainingDuration <= 0)
+            _activeEffects[i].RemainingDuration -= Time.deltaTime;
+            if (_activeEffects[i].RemainingDuration <= 0)
             {
                 _activeEffects.RemoveAt(i);
                 changed = true;
@@ -87,8 +87,8 @@ public class PlayerEffectController : MonoBehaviour
     {
         // 최종 이동속도 값 계산, 합연산 적용
         float totalSpeedMod = _activeEffects
-            .Where(e => e.data.effectName == "SpeedBoost")
-            .Sum(e => e.data.value);
+            .Where(e => e.Data.EffectName == "SpeedBoost")
+            .Sum(e => e.Data.Value);
         _properties.Speed = _baseSpeed + totalSpeedMod;
 
         //TODO : 다른 스탯들도 여기서 처리
