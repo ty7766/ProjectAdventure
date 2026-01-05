@@ -6,7 +6,6 @@ using UnityEngine;
 public class PlayerEffectController : MonoBehaviour
 {
     //--- Components ---//
-    [SerializeField]
     private PlayerProperties _properties;
 
     //--- Fields ---//
