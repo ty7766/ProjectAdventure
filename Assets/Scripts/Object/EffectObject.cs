@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class ItemObject : SpecialObject
+public class EffectObject : SpecialObject
 {
 
     [Header("플레이어 효과 컨트롤러")]
