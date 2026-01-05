@@ -83,13 +83,22 @@ public class PlayerEffectController : MonoBehaviour
 
         if (changed) UpdateFinalStats();
     }
+    // 최종 이동속도 값 계산, 합연산 적용
     private void UpdateFinalStats()
     {
-        // 최종 이동속도 값 계산, 합연산 적용
-        float totalSpeedMod = _activeEffects
+        // 1. 모든 "SpeedBoost" 효과의 증가비율(Multiplier) 합산
+        float totalMultiplier = _activeEffects
             .Where(e => e.Data.EffectName == "SpeedBoost")
-            .Sum(e => e.Data.Value);
-        _properties.Speed = _baseSpeed + totalSpeedMod;
+            .Sum(e => e.Data.MultiplierValue);
+
+        // 2. 모든 "SpeedBoost" 효과의 고정치(Additive) 합산
+        float totalAdditive = _activeEffects
+            .Where(e => e.Data.EffectName == "SpeedBoost")
+            .Sum(e => e.Data.AdditiveValue);
+
+        // 3. 최종 계산: (기본속도 * (1 + 0.3 + 0.1)) + 고정증가치
+        // 예: 5.0 * (1.4) + 0 = 7.0
+        _properties.Speed = (_baseSpeed * (1.0f + totalMultiplier)) + totalAdditive;
 
         //TODO : 다른 스탯들도 여기서 처리
     }
