@@ -1,9 +1,15 @@
 ﻿using UnityEngine;
 
+public enum EffectType
+{
+    None,
+    Speed
+}
+
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effects/Status Effect")]
 public class StatusEffect : ScriptableObject
 {
-    public string EffectName;
+    public EffectType Type;
 
     [Header("합연산 시 더해질 수치 (예: 2.0)")]
     public float AdditiveValue;
