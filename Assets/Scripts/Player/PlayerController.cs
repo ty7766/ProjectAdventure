@@ -69,7 +69,6 @@ public class PlayerController : MonoBehaviour
     }
 
     //--- Public Methods ---//
-    // Apply Damage
     public void TakeDamage(int damage)
     {
         if(!isAlive || invTimer < invincibleTime)
@@ -92,7 +91,6 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    //Update checkpoint
     public void SetRespawnPoint(Vector3 newRespawnPoint)
     {
         respawnPoint = newRespawnPoint;
@@ -102,7 +100,6 @@ public class PlayerController : MonoBehaviour
         respawnPoint = this.transform.position;
     }
 
-    //Disable player movement
     public void DisableMovement()
     {
         isMovable = false;
@@ -144,7 +141,6 @@ public class PlayerController : MonoBehaviour
 
 
 #if UNITY_EDITOR
-        //For Debug : Simulate Damage Scenario
         if (Input.GetKeyDown(KeyCode.Space)){
             Debug.Log("Damage Taken Simulated");
             TakeDamage(1);
