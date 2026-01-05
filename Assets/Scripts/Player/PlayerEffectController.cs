@@ -49,7 +49,7 @@ public class PlayerEffectController : MonoBehaviour
     {
         var existing = _activeEffects.Find(e => e.Data == effectData);
 
-        if (existing != null)
+        if (existing != null && !effectData.IsStackable)
         {
 
             existing.IsPermanent = true;
