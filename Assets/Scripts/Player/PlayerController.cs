@@ -3,6 +3,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem.Processors;
 
+[RequireComponent(typeof(PlayerMovement))]
+[RequireComponent(typeof(PlayerProperties))]
+[RequireComponent(typeof(Animator))]
 public class PlayerController : MonoBehaviour
 {
     //--- Componenents ---//
@@ -10,8 +13,6 @@ public class PlayerController : MonoBehaviour
     private PlayerMovement movement;
     [SerializeField]
     private PlayerProperties properties;
-    [SerializeField]
-    private SkinnedMeshRenderer skinnedMeshRenderer;
     private Animator anim;
 
     //--- Fields ---//
@@ -30,13 +31,16 @@ public class PlayerController : MonoBehaviour
 
 
     //--- Unity Methods ---//
-    private void Start()
+    private void Awake()
     {
         if(!TryGetComponent<Animator>(out anim))
         {
             Debug.LogWarning("Animator component not found on Player.");
         }
+    }
 
+    private void Start()
+    {
         SetRespawnPoint();
         stunDelay = new WaitForSeconds(stunTime);
         invTimer = invincibleTime;

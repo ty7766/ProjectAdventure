@@ -1,6 +1,9 @@
 ﻿
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Collider))]
 public class PlayerMovement : MonoBehaviour
 {
     //--- Fields ---//
@@ -18,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float groundCheckDist = 0.1f;
 
     //--- Unity Methods ---//
-    private void Start()
+    private void Awake()
     {
         if(!TryGetComponent<Rigidbody>(out rb))
         {
