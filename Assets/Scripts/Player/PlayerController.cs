@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
     //--- Fields ---//
     [SerializeField] [Header("이동 카메라 각도 보정치")]
     private float _cameraAngleOffset = -75f;
+    [SerializeField] [Header("플레이어 낙사 임계치 Y좌표")]
+    private float _fallThresholdY = -10f;
     [SerializeField] [Header("리스폰후 경직시간")]
     private float _respawnDelay = 2.0f;
     [SerializeField] [Header("피격 후 무적시간")]
@@ -60,7 +62,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (this.transform.position.y < -10f)
+        if (this.transform.position.y < _fallThresholdY)
         {
             Respawn();
         }
@@ -93,7 +95,8 @@ public class PlayerController : MonoBehaviour
         if (_properties.Health <= 0)
         {
             Dead();
-        }else
+        }
+        else
         {
             _animator.SetTrigger("Damage");
             _isMovable = false;
@@ -116,16 +119,16 @@ public class PlayerController : MonoBehaviour
         _respawnPoint = this.transform.position;
     }
     /// <summary>
-    /// 플레이어의 이동을 비활성화합니다.
+    /// 플레이어의 조작을 비활성화합니다.
     /// </summary>
-    public void DisableMovement()
+    public void DisablePlayerControl()
     {
         _isMovable = false;
     }
     /// <summary>
-    /// 플레이어의 이동을 활성화합니다.
+    /// 플레이어의 조작을 활성화합니다.
     /// </summary>
-    public void EnableMovement()
+    public void EnablePlayerControl()
     {
         _isMovable = true;
     }
@@ -146,8 +149,10 @@ public class PlayerController : MonoBehaviour
         _isMovable = false;
         _movement.TeleportTo(_respawnPoint);
         TakeDamage(1);
-        if (_isAlive) _animator.SetTrigger("GetUp");
-        
+        if (_isAlive)
+        {
+            _animator.SetTrigger("GetUp");
+        }
 
         //Disable Player Movement for a short duration
         StartCoroutine(EnableMovementAfterDelay(_respawnDelay));
