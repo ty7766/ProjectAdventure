@@ -3,9 +3,6 @@
 [RequireComponent(typeof(Collider))]
 public class EffectObject : SpecialObject
 {
-
-    [Header("플레이어 효과 컨트롤러")]
-    [SerializeField] private PlayerEffectController _playerEffectController;
     [Header("아이템 효과")]
     [SerializeField] private StatusEffect _itemEffect;
 
@@ -16,6 +13,9 @@ public class EffectObject : SpecialObject
             Debug.LogWarning($"itemEffect is missing in {this.gameObject.name}");
             return;
         }
-        _playerEffectController?.ApplyEffect(_itemEffect);
+        if(player.TryGetComponent<PlayerEffectController>(out var controller))
+        {
+            controller.ApplyEffect(_itemEffect);
+        }
     }
 }
