@@ -10,32 +10,32 @@ public class PlayerController : MonoBehaviour
 {
     //--- Componenents ---//
     [SerializeField]
-    private PlayerMovement movement;
+    private PlayerMovement _movement;
     [SerializeField]
-    private PlayerProperties properties;
-    private Animator anim;
+    private PlayerProperties _properties;
+    private Animator _animator;
 
     //--- Fields ---//
     [SerializeField] [Header("이동 카메라 각도 보정치")]
-    private float cameraAngleOffset = -75f;
+    private float _cameraAngleOffset = -75f;
     [SerializeField] [Header("리스폰후 경직시간")]
-    private float respawnDelay = 2.0f;
+    private float _respawnDelay = 2.0f;
     [SerializeField] [Header("피격 후 무적시간")]
-    private float invincibleTime = 3.0f;
-    private float invTimer;
+    private float _invincibleTime = 3.0f;
+    private float _invTimer;
     [SerializeField] [Header("피격 후 경직시간")]
-    private float stunTime = 0.39f;
-    private WaitForSeconds stunDelay;
+    private float _stunTime = 0.39f;
+    private WaitForSeconds _stunDelay;
 
-    private Vector3 respawnPoint;
-    private bool isAlive = true;
-    private bool isMovable = true;
+    private Vector3 _respawnPoint;
+    private bool _isAlive = true;
+    private bool _isMovable = true;
 
 
     //--- Unity Methods ---//
     private void Awake()
     {
-        if(!TryGetComponent<Animator>(out anim))
+        if(!TryGetComponent<Animator>(out _animator))
         {
             Debug.LogWarning("Animator component not found on Player.");
         }
@@ -44,18 +44,18 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         SetRespawnPoint();
-        stunDelay = new WaitForSeconds(stunTime);
-        invTimer = invincibleTime;
+        _stunDelay = new WaitForSeconds(_stunTime);
+        _invTimer = _invincibleTime;
     }
 
     private void Update()
     {
-        if(!isMovable)
+        if(!_isMovable)
         {
-            movement.Move(Vector3.zero, properties.Speed, properties.TurnSpeed);
+            _movement.Move(Vector3.zero, _properties.Speed, _properties.TurnSpeed);
         }
 
-        if(!isAlive)
+        if(!_isAlive)
         {
             return;
         }
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
             Respawn();
         }
 
-        if(movement != null)
+        if(_movement != null)
         {
             HandleInputs();
         }
@@ -75,75 +75,94 @@ public class PlayerController : MonoBehaviour
     }
 
     //--- Public Methods ---//
+    /// <summary>
+    /// 플레이어에게 데미지를 적용합니다. 일반적으로 데미지는 1이어야 하지만 기획에 따라 다를 수 있습니다.
+    /// </summary>
+    /// <param name="damage">적용 데미지 양</param>
     public void TakeDamage(int damage)
     {
-        if(!isAlive || invTimer < invincibleTime)
+        if(!_isAlive || _invTimer < _invincibleTime)
         {
             return;
         }
 
-        properties.Health -= damage;
+        _properties.Health -= damage;
 
-        invTimer = 0f;
+        _invTimer = 0f;
 
-        if (properties.Health <= 0)
+        if (_properties.Health <= 0)
         {
             Dead();
         }else
         {
-            anim.SetTrigger("Damage");
-            isMovable = false;
-            StartCoroutine(EnableMovementAfterDelay(stunDelay));
+            _animator.SetTrigger("Damage");
+            _isMovable = false;
+            StartCoroutine(EnableMovementAfterDelay(_stunDelay));
         }
     }
-
+    /// <summary>
+    /// 플레이어의 복구 위치를 지정된 위치로 설정합니다.
+    /// </summary>
+    /// <param name="newRespawnPoint">새로운 스폰 지점</param>
     public void SetRespawnPoint(Vector3 newRespawnPoint)
     {
-        respawnPoint = newRespawnPoint;
+        _respawnPoint = newRespawnPoint;
     }
+    /// <summary>
+    /// 플레이어의 복구 위치를 현재 위치로 설정합니다.
+    /// </summary>
     public void SetRespawnPoint()
     {
-        respawnPoint = this.transform.position;
+        _respawnPoint = this.transform.position;
     }
-
+    /// <summary>
+    /// 플레이어의 이동을 비활성화합니다.
+    /// </summary>
     public void DisableMovement()
     {
-        isMovable = false;
+        _isMovable = false;
+    }
+    /// <summary>
+    /// 플레이어의 이동을 활성화합니다.
+    /// </summary>
+    public void EnableMovement()
+    {
+        _isMovable = true;
     }
 
     //--- Private Methods ---//
     private void Dead()
     {
         // Handle player death logic
-        isAlive = false;
-        isMovable = false;
-        movement.ResetSpeed();
-        anim.SetTrigger("Dead");
+        _isAlive = false;
+        _isMovable = false;
+        _movement.ResetMovements();
+        _animator.SetTrigger("Dead");
     }
 
     //reset player position to respawnpoint with damage penalty
     private void Respawn()
     {
-        isMovable = false;
-        movement.TeleportTo(respawnPoint);
+        _isMovable = false;
+        _movement.TeleportTo(_respawnPoint);
         TakeDamage(1);
-        if (isAlive) anim.SetTrigger("GetUp");
+        if (_isAlive) _animator.SetTrigger("GetUp");
         
 
         //Disable Player Movement for a short duration
-        StartCoroutine(EnableMovementAfterDelay(respawnDelay));
+        StartCoroutine(EnableMovementAfterDelay(_respawnDelay));
     }
 
     private void HandleInputs()
     {
-        if (!isMovable)
+        if (!_isMovable)
         {
             return;
         }
 
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
-        Quaternion camRotation = Quaternion.Euler(0,cameraAngleOffset, 0);
-        movement.Move(camRotation * inputDirection, properties.Speed, properties.TurnSpeed);
+        Quaternion camRotation = Quaternion.Euler(0,_cameraAngleOffset, 0);
+        _movement.Move(camRotation * inputDirection, _properties.Speed, _properties.TurnSpeed);
 
 
 #if UNITY_EDITOR
@@ -155,7 +174,7 @@ public class PlayerController : MonoBehaviour
     }
 
     private void UpdateTimer(){
-        invTimer += Time.deltaTime;
+        _invTimer += Time.deltaTime;
     }
 
 
@@ -163,13 +182,13 @@ public class PlayerController : MonoBehaviour
     private IEnumerator EnableMovementAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
-        isMovable = true;
+        _isMovable = true;
     }
 
     private IEnumerator EnableMovementAfterDelay(WaitForSeconds wfs)
     {
         yield return wfs;
-        isMovable = true;
+        _isMovable = true;
     }
 
     //지속 장판 관련
