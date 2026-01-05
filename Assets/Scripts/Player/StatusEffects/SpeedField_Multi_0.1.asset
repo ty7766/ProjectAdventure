@@ -16,4 +16,4 @@ MonoBehaviour:
   AdditiveValue: 0
   MultiplierValue: 0.1
   Duration: 1
-  IsStackable: 1
+  IsStackable: 0
