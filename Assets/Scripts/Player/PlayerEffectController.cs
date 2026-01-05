@@ -47,8 +47,20 @@ public class PlayerEffectController : MonoBehaviour
     /// <param name="effectData"></param>
     public void StartPermanentEffect(StatusEffect effectData)
     {
-        var effect = new ActiveEffect(effectData, true);
-        _activeEffects.Add(effect);
+        var existing = _activeEffects.Find(e => e.Data == effectData);
+
+        if (existing != null)
+        {
+
+            existing.IsPermanent = true;
+            existing.RefreshDuration();
+        }
+        else
+        {
+            var effect = new ActiveEffect(effectData, true);
+            _activeEffects.Add(effect);
+        }
+
         UpdateFinalStats();
     }
     /// <summary>
