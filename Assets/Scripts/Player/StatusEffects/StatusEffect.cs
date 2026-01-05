@@ -46,6 +46,11 @@ public class ActiveEffect
     /// <param name="isPermanent">발판의 효과인 경우 <see langword="true"/> 즉발성 아이템/스킬의 효과라면 <see langword="false"/></param>
     public ActiveEffect(StatusEffect data, bool isPermanent = false)
     {
+        if(data == null)
+        {
+            Debug.LogError("ActiveEffect initialized with null StatusEffect data.");
+            return;
+        }
         Data = data;
         RemainingDuration = data.Duration;
         IsPermanent = isPermanent;
