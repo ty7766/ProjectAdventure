@@ -16,6 +16,8 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     //--- Fields ---//
+    [SerializeField] [Header("이동 카메라 각도 보정치")]
+    private float cameraAngleOffset = -75f;
     [SerializeField] [Header("리스폰후 경직시간")]
     private float respawnDelay = 2.0f;
     [SerializeField] [Header("피격 후 무적시간")]
@@ -140,7 +142,7 @@ public class PlayerController : MonoBehaviour
         }
 
         Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
-        Quaternion camRotation = Quaternion.Euler(0, -60, 0);
+        Quaternion camRotation = Quaternion.Euler(0,cameraAngleOffset, 0);
         movement.Move(camRotation * inputDirection, properties.Speed, properties.TurnSpeed);
 
 
