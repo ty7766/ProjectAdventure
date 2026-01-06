@@ -26,7 +26,7 @@ public class StageManager : MonoBehaviour
         Debug.Log("Stage Cleared!");
         if(playerController != null)
         { 
-            playerController.DisableMovement();
+            playerController.DisablePlayerControl();
         }
         else
         {
