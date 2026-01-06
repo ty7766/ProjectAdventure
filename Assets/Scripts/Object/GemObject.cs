@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(Collider))]
 public class GemObject : SpecialObject
 {
     [Header("Components")]

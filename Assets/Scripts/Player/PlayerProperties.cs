@@ -1,38 +1,38 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerProperties : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 5.0f;
+    private float _speed = 5.0f;
     [SerializeField]
-    private int health = 3;
+    private int _health = 3;
     [SerializeField]
-    private float stamina = 100.0f;
+    private float _stamina = 100.0f;
     [SerializeField]
-    private float turnSpeed = 15f;
+    private float _turnSpeed = 15f;
 
     //--- Properties ---//
     public int Health
     {
-        get { return health; }
-        set { health = Mathf.Max(0, value); } // Ensure health doesn't go below 0
+        get { return _health; }
+        set { _health = Mathf.Max(0, value); } // Ensure health doesn't go below 0
     }
 
     public float Speed
     {
-        get { return speed; }
-        set { speed = Mathf.Max(0.0f, value); } // Ensure speed is non-negative
+        get { return _speed; }
+        set { _speed = Mathf.Max(0.0f, value); } // Ensure speed is non-negative
     }
 
     public float Stamina
     {
-        get { return stamina; }
-        set { stamina = Mathf.Clamp(value, 0.0f, 100.0f); } // Clamp stamina between 0 and 100
+        get { return _stamina; }
+        set { _stamina = Mathf.Clamp(value, 0.0f, 100.0f); } // Clamp stamina between 0 and 100
     }
 
     public float TurnSpeed
     {
-        get { return turnSpeed; }
-        set { turnSpeed = Mathf.Max(0.0f, value); } // Ensure turn speed is non-negative
+        get { return _turnSpeed; }
+        set { _turnSpeed = Mathf.Max(0.0f, value); } // Ensure turn speed is non-negative
     }
 }
