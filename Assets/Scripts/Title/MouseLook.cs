@@ -18,14 +18,28 @@ public class MouseLook : MonoBehaviour
     private float _planeDistance = 2.0f;
 
     private Animator _anim;
+    private Camera _mainCamera;
     private Vector3 _currentLookPos;
     private Vector3 _targetLookPos;
     private Vector3 _velocity;
 
     void Start()
     {
-        _anim = GetComponent<Animator>();
         _currentLookPos = transform.position + transform.forward;
+    }
+
+    private void Awake()
+    {
+        _anim = GetComponent<Animator>();
+        if(Camera.main == null)
+        {
+            Debug.LogError("메인 카메라를 찾을수가 없습니다. 오브젝트를 비활성화합니다.");
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            _mainCamera = Camera.main;
+        }
     }
 
     void Update()
@@ -35,9 +49,9 @@ public class MouseLook : MonoBehaviour
 
     private void LookAtMouse()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Vector3 planePoint = transform.position + (-Camera.main.transform.forward * _planeDistance);
-        Plane plane = new Plane(-Camera.main.transform.forward, planePoint);
+        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        Vector3 planePoint = transform.position + (-_mainCamera.transform.forward * _planeDistance);
+        Plane plane = new Plane(-_mainCamera.transform.forward, planePoint);
 
         float distance;
         if (plane.Raycast(ray, out distance))
@@ -76,15 +90,15 @@ public class MouseLook : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawSphere(_targetLookPos, 0.2f); // 0.2f는 공 크기
 
-        if (Camera.main != null)
+        if (_mainCamera != null)
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawRay(transform.position, -Camera.main.transform.forward * 2.0f);
+            Gizmos.DrawRay(transform.position, -_mainCamera.transform.forward * 2.0f);
         }
 
         Gizmos.color = Color.yellow;
-        if (Camera.main != null)
-            Gizmos.DrawLine(Camera.main.transform.position, _targetLookPos);
+        if (_mainCamera != null)
+            Gizmos.DrawLine(_mainCamera.transform.position, _targetLookPos);
     }
 #endif
 }
