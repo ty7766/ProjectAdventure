@@ -1,42 +1,53 @@
 using UnityEngine;
 
+//PathGroup 데이터 클래스
 [System.Serializable]
 public class PathGroup
 {
-    public string groupName = "New Path Group";
-    public Transform spawnPoint;
-    public GameObject[] pathPrefabs;
+    private const string DefaultGroupName = "New Path Group";
+
+    public string GroupName = DefaultGroupName;
+    public Transform SpawnPoint;
+    public GameObject[] PathPrefabs;
 
     [HideInInspector]
-    public GameObject currentActivePath;
+    public GameObject CurrentActivePath;
     [HideInInspector]
-    public int currentPathIndex = 0;
+    public int CurrentPathIndex = 0;
 }
 
 public class MapManager : MonoBehaviour
 {
     [Header("맵 선택 이펙트 설정")]
-    public Transform selectionCursor;
-    public Vector3 cursorOffset = new Vector3(0, 0, 0);
+    [SerializeField]
+    private Transform _selectionCursor;
+    [SerializeField]
+    private Vector3 _cursorOffset = Vector3.zero;
 
     [Header("맵 그룹 설정")]
-    public PathGroup[] pathGroups;
+    private PathGroup[] _pathGroups;
 
     [Header("맵 변경 안전장치 설정")]
+    [SerializeField]
     //해당 맵 사이즈로 변경 필수
-    public Vector3 detectionSize = new Vector3(0, 0, 0);
+    private Vector3 _detectionSize = Vector3.zero;
 
-    private int selectedSlotIndex = 0;
+    private int _selectedSlotIndex = 0;
 
     void Start()
     {
-        // 등록된 모든 'PathGroup'을 순회하며 맵 생성
-        foreach (PathGroup group in pathGroups)
+        if(_pathGroups == null)
         {
-            if (group.pathPrefabs.Length > 0 && group.spawnPoint != null)
+            return;
+        }
+
+        // 등록된 모든 'PathGroup'을 순회하며 맵 생성
+        foreach (PathGroup group in _pathGroups)
+        {
+            if (group.PathPrefabs.Length > 0 && group.SpawnPoint != null)
             {
                 // 각 그룹의 0번째(첫 번째) 맵 생성 (Init)
-                SpawnPath(group, group.currentPathIndex);
+                SpawnPath(group, group.CurrentPathIndex);
             }
         }
 
@@ -45,29 +56,39 @@ public class MapManager : MonoBehaviour
 
     void Update()
     {
-        if (pathGroups.Length == 0) return;
+        if (_pathGroups == null || _pathGroups.Length == 0)
+        {
+            return;
+        }
+
         HandleSelectionInput();
         HandleMapChangeInput();
     }
 
-    //맵 선택 기능
+    /// <summary>
+    /// 화살표로 맵 선택 기능 제공
+    /// </summary>
     void HandleSelectionInput()
     {
         bool selectionChanged = false;
 
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            selectedSlotIndex--;
-            if (selectedSlotIndex < 0)
-                selectedSlotIndex = pathGroups.Length - 1;
+            _selectedSlotIndex--;
+            if (_selectedSlotIndex < 0)
+            {
+                _selectedSlotIndex = _pathGroups.Length - 1;
+            }
 
             selectionChanged = true;
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            selectedSlotIndex++;
-            if (selectedSlotIndex >= pathGroups.Length)
-                selectedSlotIndex = 0;
+            _selectedSlotIndex++;
+            if (_selectedSlotIndex >= _pathGroups.Length)
+            {
+                _selectedSlotIndex = 0;
+            }
 
             selectionChanged = true;
         }
@@ -79,27 +100,34 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    //커서 이펙트를 선택된 맵으로 이동
+    /// <summary>
+    /// 커서 이펙트를 선택된 맵으로 이동
+    /// </summary>
     void UpdateCursorPosition()
     {
-        if (selectionCursor == null) return;
+        if (_selectionCursor == null)
+        {
+            return;
+        }
 
-        Transform targetSpawnPoint = pathGroups[selectedSlotIndex].spawnPoint;
+        Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
         //SpawnPoint가 할당되지 않은 맵 방지
         if (targetSpawnPoint == null)
         {
-            Debug.LogWarning($"[MapManager] PathGroup[{selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            Debug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
             return;
         }
-        selectionCursor.position = targetSpawnPoint.position + cursorOffset;
+        _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
     }
 
-    //선택된 맵 변경
+    /// <summary>
+    /// 커서로 선택된 해당 맵을 변경
+    /// </summary>
     void HandleMapChangeInput()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            PathGroup targetGroup = pathGroups[selectedSlotIndex];
+            PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
 
             //플레이어가 해당 맵 위에 있는지 확인
             if (CheckPlayerOnMap(targetGroup))
@@ -109,52 +137,63 @@ public class MapManager : MonoBehaviour
                 return;
             }
 
-            if (targetGroup.pathPrefabs.Length == 0) return;
+            if (targetGroup.PathPrefabs.Length == 0)
+            {
+                return;
+            }
 
-            targetGroup.currentPathIndex = (targetGroup.currentPathIndex + 1) % targetGroup.pathPrefabs.Length;
-            SpawnPath(targetGroup, targetGroup.currentPathIndex);
+            targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + 1) % targetGroup.PathPrefabs.Length;
+            SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
         }
     }
 
-    //플레이어 감지용 메소드
+    /// <summary>
+    /// 플레이어가 선택된 맵 안에 있는지 감지
+    /// </summary>
+    /// <param name="group"></param>
+    /// <returns></returns>
     bool CheckPlayerOnMap(PathGroup group)
     {
         //SpawnPoint가 할당되지 않은 맵 방지
-        if (group.spawnPoint == null)
+        if (group.SpawnPoint == null)
         {
-            Debug.LogWarning($"[MapManager] '{group.groupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
+            Debug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
             return false;
         }
         //해당 슬롯 위치에 가상 박스를 만들어 검사
         Collider[] hitColliders = Physics.OverlapBox(
-            group.spawnPoint.position,
-            detectionSize * 0.5f,
-            group.spawnPoint.rotation);
+            group.SpawnPoint.position,
+            _detectionSize * 0.5f,
+            group.SpawnPoint.rotation);
 
-        //감지된 물체 중 Player 태그 검사
         foreach(Collider col in hitColliders)
         {
             if(col.CompareTag("Player"))
+            {
                 return true;
+            }
         }
         return false;
     }
 
+    /// <summary>
+    /// 선택된 맵 그룹 중 다음 인덱스에 있는 맵을 가져오기
+    /// </summary>
+    /// <param name="group"></param>
+    /// <param name="index"></param>
     void SpawnPath(PathGroup group, int index)
     {
-        //이 'group'의 현재 활성화된 길이 있다면 파괴
-        if (group.currentActivePath != null)
+        if (group.CurrentActivePath != null)
         {
-            Destroy(group.currentActivePath);
+            Destroy(group.CurrentActivePath);
         }
 
-        // 2. 이 'group'의 프리팹 배열에서 'index'번째 프리팹을 가져오기
-        GameObject pathPrefabToSpawn = group.pathPrefabs[index];
+        GameObject pathPrefabToSpawn = group.PathPrefabs[index];
 
-        // 3. 이 'group'의 'spawnPoint' 위치/회전 값으로 새 길을 생성
-        group.currentActivePath = Instantiate(pathPrefabToSpawn, group.spawnPoint.position, group.spawnPoint.rotation);
-        group.currentActivePath.transform.SetParent(this.transform);
+        //이 'group'의 'spawnPoint' 위치/회전 값으로 새 길을 생성
+        group.CurrentActivePath = Instantiate(pathPrefabToSpawn, group.SpawnPoint.position, group.SpawnPoint.rotation);
+        group.CurrentActivePath.transform.SetParent(this.transform);
 
-        Debug.Log($"[슬롯 변경] {group.groupName} -> {pathPrefabToSpawn.name}");
+        Debug.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
     }
 }
