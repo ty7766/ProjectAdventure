@@ -25,6 +25,7 @@ public class MapManager : MonoBehaviour
     private Vector3 _cursorOffset = Vector3.zero;
 
     [Header("맵 그룹 설정")]
+    [SerializeField]
     private PathGroup[] _pathGroups;
 
     [Header("맵 변경 안전장치 설정")]
@@ -65,10 +66,7 @@ public class MapManager : MonoBehaviour
         HandleMapChangeInput();
     }
 
-    /// <summary>
-    /// 화살표로 맵 선택 기능 제공
-    /// </summary>
-    void HandleSelectionInput()
+    private void HandleSelectionInput()
     {
         bool selectionChanged = false;
 
@@ -99,11 +97,7 @@ public class MapManager : MonoBehaviour
             UpdateCursorPosition();
         }
     }
-
-    /// <summary>
-    /// 커서 이펙트를 선택된 맵으로 이동
-    /// </summary>
-    void UpdateCursorPosition()
+    private void UpdateCursorPosition()
     {
         if (_selectionCursor == null)
         {
@@ -120,10 +114,7 @@ public class MapManager : MonoBehaviour
         _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
     }
 
-    /// <summary>
-    /// 커서로 선택된 해당 맵을 변경
-    /// </summary>
-    void HandleMapChangeInput()
+    private void HandleMapChangeInput()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -147,12 +138,7 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 플레이어가 선택된 맵 안에 있는지 감지
-    /// </summary>
-    /// <param name="group"></param>
-    /// <returns></returns>
-    bool CheckPlayerOnMap(PathGroup group)
+    private bool CheckPlayerOnMap(PathGroup group)
     {
         //SpawnPoint가 할당되지 않은 맵 방지
         if (group.SpawnPoint == null)
@@ -176,12 +162,7 @@ public class MapManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// 선택된 맵 그룹 중 다음 인덱스에 있는 맵을 가져오기
-    /// </summary>
-    /// <param name="group"></param>
-    /// <param name="index"></param>
-    void SpawnPath(PathGroup group, int index)
+    private void SpawnPath(PathGroup group, int index)
     {
         if (group.CurrentActivePath != null)
         {
