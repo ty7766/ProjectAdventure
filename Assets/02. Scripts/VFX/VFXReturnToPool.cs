@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections;
 
 public class VFXReturnToPool : MonoBehaviour
@@ -12,9 +12,9 @@ public class VFXReturnToPool : MonoBehaviour
     }
 
     /// <summary>
-    /// »ı¼º ½Ã Manager°¡ TypeÀ» ¾Ë·ÁÁÖ´Â ¸Ş¼Òµå
+    /// ìƒì„± ì‹œ Managerê°€ Typeì„ ì•Œë ¤ì£¼ëŠ” ë©”ì†Œë“œ
     /// </summary>
-    /// <param name="type">VFXÅ¸ÀÔ</param>
+    /// <param name="type">VFXíƒ€ì…</param>
     public void Setup(VFXType type)
     {
         _myType = type;
@@ -27,7 +27,7 @@ public class VFXReturnToPool : MonoBehaviour
 
     private IEnumerator CheckIfAlive()
     {
-        //ÆÄÆ¼Å¬ÀÌ Àç»ıÁßÀÌ¸é ´ë±â
+        //íŒŒí‹°í´ì´ ì¬ìƒì¤‘ì´ë©´ ëŒ€ê¸°
         if (_ps != null)
         {
             yield return new WaitWhile(() => _ps.IsAlive(true));
@@ -37,7 +37,7 @@ public class VFXReturnToPool : MonoBehaviour
             yield return new WaitForSeconds(2.0f);
         }
 
-        //ÆÄÆ¼Å¬ ³¡³ª¸é ¹İ³³
+        //íŒŒí‹°í´ ëë‚˜ë©´ ë°˜ë‚©
         if (VFXManager.Instance != null)
         {
             VFXManager.Instance.ReturnToPool(_myType, this.gameObject);

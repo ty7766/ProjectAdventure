@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using System.Collections.Generic;
 
 public class VFXManager : MonoBehaviour
@@ -13,7 +13,7 @@ public class VFXManager : MonoBehaviour
         public int PoolSize;
     }
 
-    [Header("ÀÌÆåÆ® µî·Ï (Inspector")]
+    [Header("ì´í™íŠ¸ ë“±ë¡ (Inspector")]
     [SerializeField]
     private List<VFXData> _vfxList;
 
@@ -34,10 +34,10 @@ public class VFXManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÌÆåÆ® »ı¼º
+    /// ì´í™íŠ¸ ìƒì„±
     /// </summary>
-    /// <param name="type">VFXÅ¸ÀÔ</param>
-    /// <param name="position">ÀÌÆåÆ® »ı¼ºµÉ À§Ä¡</param>
+    /// <param name="type">VFXíƒ€ì…</param>
+    /// <param name="position">ì´í™íŠ¸ ìƒì„±ë  ìœ„ì¹˜</param>
     public void PlayVFX(VFXType type, Vector3 position)
     {
         if(!_poolDict.ContainsKey(type))
@@ -45,7 +45,7 @@ public class VFXManager : MonoBehaviour
             return;
         }
 
-        //´ë±â¿­ ºñ¾úÀ¸¸é Ãß°¡ »ı¼º
+        //ëŒ€ê¸°ì—´ ë¹„ì—ˆìœ¼ë©´ ì¶”ê°€ ìƒì„±
         if (_poolDict[type].Count == 0)
         {
             var data = _vfxList.Find(x => x.Type == type);
@@ -55,7 +55,7 @@ public class VFXManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"VFXManager: ÇÁ¸®ÆÕ Å¸ÀÔ {type} ÀÌ null ÀÔ´Ï´Ù. »õ ¿ÀºêÁ§Æ®¸¦ »ı¼ºÇÒ ¼ö ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"VFXManager: í”„ë¦¬íŒ¹ íƒ€ì… {type} ì´ null ì…ë‹ˆë‹¤. ìƒˆ ì˜¤ë¸Œì íŠ¸ë¥¼ ìƒì„±í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤.");
                 return;
             }
         }
@@ -67,17 +67,17 @@ public class VFXManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÀÌÆåÆ®¸¦ Ç®¿¡ ¹İ³³
+    /// ì´í™íŠ¸ë¥¼ í’€ì— ë°˜ë‚©
     /// </summary>
-    /// <param name="type">VFXÅ¸ÀÔ</param>
-    /// <param name="obj">¹İ³³ÇÒ ÀÌÆåÆ®</param>
+    /// <param name="type">VFXíƒ€ì…</param>
+    /// <param name="obj">ë°˜ë‚©í•  ì´í™íŠ¸</param>
     public void ReturnToPool(VFXType type, GameObject obj)
     {
         obj.SetActive(false);
         _poolDict[type].Enqueue(obj);
     }
 
-    //¼³Á¤µÈ °³¼ö¸¸Å­ ¹Ì¸® »ı¼º
+    //ì„¤ì •ëœ ê°œìˆ˜ë§Œí¼ ë¯¸ë¦¬ ìƒì„±
     private void InitializePool()
     {
         foreach(var data in _vfxList)

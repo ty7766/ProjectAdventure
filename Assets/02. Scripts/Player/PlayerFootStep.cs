@@ -1,14 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
 public class PlayerFootstep : MonoBehaviour
 {
-    [Header("¹ß »À´ë ¿¬°á (Hierarchy¿¡¼­ µå·¡±×)")]
+    [Header("ë°œ ë¼ˆëŒ€ ì—°ê²° (Hierarchyì—ì„œ ë“œë˜ê·¸)")]
     [SerializeField]
     private Transform _leftFoot;  //Toe.Ctrl.L
     [SerializeField]
     private Transform _rightFoot; //Toe.Ctrl.R
 
-    [Header("¼³Á¤")]
+    [Header("ì„¤ì •")]
     [SerializeField]
     private LayerMask _groundLayer;
     [SerializeField]
@@ -16,9 +16,9 @@ public class PlayerFootstep : MonoBehaviour
 
 
     /// <summary>
-    /// ¾Ö´Ï¸ŞÀÌ¼Ç ÀÌº¥Æ®¿¡¼­ È£ÃâÇÒ ÇÔ¼ö (0: ¿ŞÂÊ, 1: ¿À¸¥ÂÊ)
+    /// ì• ë‹ˆë©”ì´ì…˜ ì´ë²¤íŠ¸ì—ì„œ í˜¸ì¶œí•  í•¨ìˆ˜ (0: ì™¼ìª½, 1: ì˜¤ë¥¸ìª½)
     /// </summary>
-    /// <param name="isLeft">¿ŞÂÊ¹ß ¿À¸¥ÂÊ¹ß ±¸ºĞÇÏ±â À§ÇÑ º¯¼ö</param>
+    /// <param name="isLeft">ì™¼ìª½ë°œ ì˜¤ë¥¸ìª½ë°œ êµ¬ë¶„í•˜ê¸° ìœ„í•œ ë³€ìˆ˜</param>
     public void OnFootstep(int isLeft)
     {
         Transform foot = (isLeft == 0) ? _leftFoot : _rightFoot;
@@ -31,7 +31,7 @@ public class PlayerFootstep : MonoBehaviour
         {
             if (System.Enum.TryParse(hit.collider.tag, out VFXType groundType))
             {
-                //´« ÀÌÆåÆ® ¹ß»ı ½ÇÇà
+                //ëˆˆ ì´í™íŠ¸ ë°œìƒ ì‹¤í–‰
                 if(VFXManager.Instance != null)
                 {
                     VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
