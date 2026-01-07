@@ -3,15 +3,15 @@ using UnityEngine;
 public class PlayerFootstep : MonoBehaviour
 {
     [Header("발 뼈대 연결 (Hierarchy에서 드래그)")]
-    [SerializeField] 
+    [SerializeField]
     private Transform _leftFoot;  //Toe.Ctrl.L
-    [SerializeField] 
+    [SerializeField]
     private Transform _rightFoot; //Toe.Ctrl.R
 
     [Header("설정")]
-    [SerializeField] 
+    [SerializeField]
     private LayerMask _groundLayer;
-    [SerializeField] 
+    [SerializeField]
     private float _rayDistance = 0.3f;
 
 
