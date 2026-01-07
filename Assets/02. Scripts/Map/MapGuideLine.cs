@@ -61,7 +61,10 @@ public class MapGuideLine : MonoBehaviour
                 _spawnPointToAlign[i].position = CalculatePosition(basePosition, i);
             }
         }
+        #if UNITY_EDITOR
         Debug.Log("모든 SpawnPoint 정렬 완료!");
+        #endif
+
     }
     private Vector3 CalculatePosition(Vector3 basePos, int index)
     {

@@ -108,7 +108,9 @@ public class MapManager : MonoBehaviour
         //SpawnPoint가 할당되지 않은 맵 방지
         if (targetSpawnPoint == null)
         {
+#if UNITY_EDITOR
             Debug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+#endif
             return;
         }
         _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
@@ -123,8 +125,10 @@ public class MapManager : MonoBehaviour
             //플레이어가 해당 맵 위에 있는지 확인
             if (CheckPlayerOnMap(targetGroup))
             {
+                #if UNITY_EDITOR
                 Debug.Log("플레이어가 현재 해당 맵 위에 있습니다.");
                 Debug.Log("해당 맵을 교체할 수 없습니다!");
+                #endif
                 return;
             }
 
@@ -143,7 +147,9 @@ public class MapManager : MonoBehaviour
         //SpawnPoint가 할당되지 않은 맵 방지
         if (group.SpawnPoint == null)
         {
+#if UNITY_EDITOR
             Debug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
+#endif
             return false;
         }
         //해당 슬롯 위치에 가상 박스를 만들어 검사
@@ -175,6 +181,8 @@ public class MapManager : MonoBehaviour
         group.CurrentActivePath = Instantiate(pathPrefabToSpawn, group.SpawnPoint.position, group.SpawnPoint.rotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
+#if UNITY_EDITOR
         Debug.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
+#endif
     }
 }
