@@ -38,5 +38,9 @@ public class VFXReturnToPool : MonoBehaviour
         }
 
         //파티클 끝나면 반납
-        VFXManager.Instance.ReturnToPool(_myType, this.gameObject);    }
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.ReturnToPool(_myType, this.gameObject);
+        }
+    }
 }
