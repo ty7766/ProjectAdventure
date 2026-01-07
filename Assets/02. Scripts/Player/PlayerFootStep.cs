@@ -32,7 +32,10 @@ public class PlayerFootstep : MonoBehaviour
             if (System.Enum.TryParse(hit.collider.tag, out VFXType groundType))
             {
                 //´« ÀÌÆåÆ® ¹ß»ý ½ÇÇà
-                VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
+                if(VFXManager.Instance != null)
+                {
+                    VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
+                }
             }
         }
     }
