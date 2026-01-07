@@ -53,7 +53,13 @@ public class VFXManager : MonoBehaviour
             {
                 CreateNewObject(type, data.Prefab);
             }
+            else
+            {
+                Debug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
+                return;
+            }
         }
+
 
         GameObject obj = _poolDict[type].Dequeue();
         obj.transform.position = position;
