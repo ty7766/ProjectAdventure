@@ -1,23 +1,23 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
-//°¢ ¸ÊÀÇ ¹üÀ§¸¦ º¸¿©ÁÖ´Â °¡»ó °¡ÀÌµå¶óÀÎ
+//ê° ë§µì˜ ë²”ìœ„ë¥¼ ë³´ì—¬ì£¼ëŠ” ê°€ìƒ ê°€ì´ë“œë¼ì¸
 public class MapGuideLine : MonoBehaviour
 {
-    [Header("±âÁØÁ¡ ¼³Á¤")]
+    [Header("ê¸°ì¤€ì  ì„¤ì •")]
     [SerializeField]
     private Transform _originTransform;
 
-    [Header("Á¤·ÄÇÒ SpawnPoint")]
+    [Header("ì •ë ¬í•  SpawnPoint")]
     [SerializeField]
     private Transform[] _spawnPointToAlign;
 
-    [Header("¸Ê ¼³Á¤")]
+    [Header("ë§µ ì„¤ì •")]
     [SerializeField]
     private Vector3 _tileSize = new Vector3(15, 1, 10);
     [SerializeField]
-    private Vector3 _startOffset = Vector3.zero;  //½ÃÀÛÀ§Ä¡ º¸Á¤
+    private Vector3 _startOffset = Vector3.zero;  //ì‹œì‘ìœ„ì¹˜ ë³´ì •
 
-    [Header("°¡ÀÌµå¶óÀÎ »ö»ó")]
+    [Header("ê°€ì´ë“œë¼ì¸ ìƒ‰ìƒ")]
     [SerializeField]
     private Color _gizmoColor = Color.yellow;
 
@@ -25,13 +25,13 @@ public class MapGuideLine : MonoBehaviour
     {
         Gizmos.color = _gizmoColor;
 
-        //±âÁØÁ¡ ¼³Á¤ (¼³Á¤µÇÁö ¾ÊÀ¸¸é ÇØ´ç ¿ÀºêÁ§Æ® ±âÁØÀ¸·Î Á¤·Ä)
+        //ê¸°ì¤€ì  ì„¤ì • (ì„¤ì •ë˜ì§€ ì•Šìœ¼ë©´ í•´ë‹¹ ì˜¤ë¸Œì íŠ¸ ê¸°ì¤€ìœ¼ë¡œ ì •ë ¬)
         Vector3 basePosition = (_originTransform != null) ? _originTransform.position : transform.position;
 
         int count = (_spawnPointToAlign != null && _spawnPointToAlign.Length > 0) ? _spawnPointToAlign.Length : 5;
         for(int i = 0; i < count; i++)
         {
-            //ÇöÀç´Â -z ¹æÇâÀ¸·Î ¸ÊÀÌ ÀÌ¾îÁö¹Ç·Î -z ÃàÀ¸·Î ¼³Á¤
+            //í˜„ì¬ëŠ” -z ë°©í–¥ìœ¼ë¡œ ë§µì´ ì´ì–´ì§€ë¯€ë¡œ -z ì¶•ìœ¼ë¡œ ì„¤ì •
             Vector3 pos = CalculatePosition(basePosition, i);
             Gizmos.DrawWireCube(pos, _tileSize);
             Gizmos.DrawSphere(pos, 0.3f);
@@ -40,14 +40,14 @@ public class MapGuideLine : MonoBehaviour
 
 
     /// <summary>
-    /// SpawnPoint ¹è¿­¿¡ µî·ÏµÈ ¿ÀºêÁ§Æ®µéÀ» ¼³Á¤µÈ Å¸ÀÏ Å©±â¿¡ ¸ÂÃç ÀÏ·Ä·Î ÀÚµ¿ Á¤·Ä
+    /// SpawnPoint ë°°ì—´ì— ë“±ë¡ëœ ì˜¤ë¸Œì íŠ¸ë“¤ì„ ì„¤ì •ëœ íƒ€ì¼ í¬ê¸°ì— ë§ì¶° ì¼ë ¬ë¡œ ìë™ ì •ë ¬
     /// </summary>
-    [ContextMenu("À§Ä¡ ÀÚµ¿ Á¤·Ä")]
+    [ContextMenu("ìœ„ì¹˜ ìë™ ì •ë ¬")]
     public void AlignPositions()
     {
         if(_spawnPointToAlign == null || _spawnPointToAlign.Length == 0)
         {
-            Debug.LogWarning("Á¤·ÄÇÒ ´ë»ó (SpawnPoint) °¡ ºñ¾îÀÖ½À´Ï´Ù.");
+            Debug.LogWarning("ì •ë ¬í•  ëŒ€ìƒ (SpawnPoint) ê°€ ë¹„ì–´ìˆìŠµë‹ˆë‹¤.");
             return;
         }
 
@@ -55,13 +55,16 @@ public class MapGuideLine : MonoBehaviour
 
         for(int i = 0; i < _spawnPointToAlign.Length;i++)
         {
-            //°è»êµÈ Áß½É À§Ä¡·Î °­Á¦ ÀÌµ¿
+            //ê³„ì‚°ëœ ì¤‘ì‹¬ ìœ„ì¹˜ë¡œ ê°•ì œ ì´ë™
             if (_spawnPointToAlign[i] != null)
             {
                 _spawnPointToAlign[i].position = CalculatePosition(basePosition, i);
             }
         }
-        Debug.Log("¸ğµç SpawnPoint Á¤·Ä ¿Ï·á!");
+        #if UNITY_EDITOR
+        Debug.Log("ëª¨ë“  SpawnPoint ì •ë ¬ ì™„ë£Œ!");
+        #endif
+
     }
     private Vector3 CalculatePosition(Vector3 basePos, int index)
     {

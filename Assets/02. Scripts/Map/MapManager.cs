@@ -1,6 +1,6 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 
-//PathGroup µ¥ÀÌÅÍ Å¬·¡½º
+//PathGroup ë°ì´í„° í´ë˜ìŠ¤
 [System.Serializable]
 public class PathGroup
 {
@@ -18,18 +18,19 @@ public class PathGroup
 
 public class MapManager : MonoBehaviour
 {
-    [Header("¸Ê ¼±ÅÃ ÀÌÆåÆ® ¼³Á¤")]
+    [Header("ë§µ ì„ íƒ ì´í™íŠ¸ ì„¤ì •")]
     [SerializeField]
     private Transform _selectionCursor;
     [SerializeField]
     private Vector3 _cursorOffset = Vector3.zero;
 
-    [Header("¸Ê ±×·ì ¼³Á¤")]
+    [Header("ë§µ ê·¸ë£¹ ì„¤ì •")]
+    [SerializeField]
     private PathGroup[] _pathGroups;
 
-    [Header("¸Ê º¯°æ ¾ÈÀüÀåÄ¡ ¼³Á¤")]
+    [Header("ë§µ ë³€ê²½ ì•ˆì „ì¥ì¹˜ ì„¤ì •")]
     [SerializeField]
-    //ÇØ´ç ¸Ê »çÀÌÁî·Î º¯°æ ÇÊ¼ö
+    //í•´ë‹¹ ë§µ ì‚¬ì´ì¦ˆë¡œ ë³€ê²½ í•„ìˆ˜
     private Vector3 _detectionSize = Vector3.zero;
 
     private int _selectedSlotIndex = 0;
@@ -41,12 +42,12 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        // µî·ÏµÈ ¸ğµç 'PathGroup'À» ¼øÈ¸ÇÏ¸ç ¸Ê »ı¼º
+        // ë“±ë¡ëœ ëª¨ë“  'PathGroup'ì„ ìˆœíšŒí•˜ë©° ë§µ ìƒì„±
         foreach (PathGroup group in _pathGroups)
         {
             if (group.PathPrefabs.Length > 0 && group.SpawnPoint != null)
             {
-                // °¢ ±×·ìÀÇ 0¹øÂ°(Ã¹ ¹øÂ°) ¸Ê »ı¼º (Init)
+                // ê° ê·¸ë£¹ì˜ 0ë²ˆì§¸(ì²« ë²ˆì§¸) ë§µ ìƒì„± (Init)
                 SpawnPath(group, group.CurrentPathIndex);
             }
         }
@@ -65,10 +66,7 @@ public class MapManager : MonoBehaviour
         HandleMapChangeInput();
     }
 
-    /// <summary>
-    /// È­»ìÇ¥·Î ¸Ê ¼±ÅÃ ±â´É Á¦°ø
-    /// </summary>
-    void HandleSelectionInput()
+    private void HandleSelectionInput()
     {
         bool selectionChanged = false;
 
@@ -93,17 +91,13 @@ public class MapManager : MonoBehaviour
             selectionChanged = true;
         }
 
-        //¼±ÅÃ µÇ¾úÀ» ¶§¸¸ ÀÌÆåÆ® »ı¼º
+        //ì„ íƒ ë˜ì—ˆì„ ë•Œë§Œ ì´í™íŠ¸ ìƒì„±
         if (selectionChanged)
         {
             UpdateCursorPosition();
         }
     }
-
-    /// <summary>
-    /// Ä¿¼­ ÀÌÆåÆ®¸¦ ¼±ÅÃµÈ ¸ÊÀ¸·Î ÀÌµ¿
-    /// </summary>
-    void UpdateCursorPosition()
+    private void UpdateCursorPosition()
     {
         if (_selectionCursor == null)
         {
@@ -111,29 +105,30 @@ public class MapManager : MonoBehaviour
         }
 
         Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
-        //SpawnPoint°¡ ÇÒ´çµÇÁö ¾ÊÀº ¸Ê ¹æÁö
+        //SpawnPointê°€ í• ë‹¹ë˜ì§€ ì•Šì€ ë§µ ë°©ì§€
         if (targetSpawnPoint == null)
         {
-            Debug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]ÀÇ spawnPoint°¡ ¼³Á¤µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+#if UNITY_EDITOR
+            Debug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]ì˜ spawnPointê°€ ì„¤ì •ë˜ì§€ ì•Šì•˜ìŠµë‹ˆë‹¤.");
+#endif
             return;
         }
         _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
     }
 
-    /// <summary>
-    /// Ä¿¼­·Î ¼±ÅÃµÈ ÇØ´ç ¸ÊÀ» º¯°æ
-    /// </summary>
-    void HandleMapChangeInput()
+    private void HandleMapChangeInput()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
             PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
 
-            //ÇÃ·¹ÀÌ¾î°¡ ÇØ´ç ¸Ê À§¿¡ ÀÖ´ÂÁö È®ÀÎ
+            //í”Œë ˆì´ì–´ê°€ í•´ë‹¹ ë§µ ìœ„ì— ìˆëŠ”ì§€ í™•ì¸
             if (CheckPlayerOnMap(targetGroup))
             {
-                Debug.Log("ÇÃ·¹ÀÌ¾î°¡ ÇöÀç ÇØ´ç ¸Ê À§¿¡ ÀÖ½À´Ï´Ù.");
-                Debug.Log("ÇØ´ç ¸ÊÀ» ±³Ã¼ÇÒ ¼ö ¾ø½À´Ï´Ù!");
+                #if UNITY_EDITOR
+                Debug.Log("í”Œë ˆì´ì–´ê°€ í˜„ì¬ í•´ë‹¹ ë§µ ìœ„ì— ìˆìŠµë‹ˆë‹¤.");
+                Debug.Log("í•´ë‹¹ ë§µì„ êµì²´í•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!");
+                #endif
                 return;
             }
 
@@ -147,20 +142,17 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// ÇÃ·¹ÀÌ¾î°¡ ¼±ÅÃµÈ ¸Ê ¾È¿¡ ÀÖ´ÂÁö °¨Áö
-    /// </summary>
-    /// <param name="group"></param>
-    /// <returns></returns>
-    bool CheckPlayerOnMap(PathGroup group)
+    private bool CheckPlayerOnMap(PathGroup group)
     {
-        //SpawnPoint°¡ ÇÒ´çµÇÁö ¾ÊÀº ¸Ê ¹æÁö
+        //SpawnPointê°€ í• ë‹¹ë˜ì§€ ì•Šì€ ë§µ ë°©ì§€
         if (group.SpawnPoint == null)
         {
-            Debug.LogWarning($"[MapManager] '{group.GroupName}' ±×·ì¿¡ Spawn Point°¡ ¾ø½À´Ï´Ù! Inspector¸¦ È®ÀÎÇÏ¼¼¿ä.");
+#if UNITY_EDITOR
+            Debug.LogWarning($"[MapManager] '{group.GroupName}' ê·¸ë£¹ì— Spawn Pointê°€ ì—†ìŠµë‹ˆë‹¤! Inspectorë¥¼ í™•ì¸í•˜ì„¸ìš”.");
+#endif
             return false;
         }
-        //ÇØ´ç ½½·Ô À§Ä¡¿¡ °¡»ó ¹Ú½º¸¦ ¸¸µé¾î °Ë»ç
+        //í•´ë‹¹ ìŠ¬ë¡¯ ìœ„ì¹˜ì— ê°€ìƒ ë°•ìŠ¤ë¥¼ ë§Œë“¤ì–´ ê²€ì‚¬
         Collider[] hitColliders = Physics.OverlapBox(
             group.SpawnPoint.position,
             _detectionSize * 0.5f,
@@ -176,12 +168,7 @@ public class MapManager : MonoBehaviour
         return false;
     }
 
-    /// <summary>
-    /// ¼±ÅÃµÈ ¸Ê ±×·ì Áß ´ÙÀ½ ÀÎµ¦½º¿¡ ÀÖ´Â ¸ÊÀ» °¡Á®¿À±â
-    /// </summary>
-    /// <param name="group"></param>
-    /// <param name="index"></param>
-    void SpawnPath(PathGroup group, int index)
+    private void SpawnPath(PathGroup group, int index)
     {
         if (group.CurrentActivePath != null)
         {
@@ -190,10 +177,12 @@ public class MapManager : MonoBehaviour
 
         GameObject pathPrefabToSpawn = group.PathPrefabs[index];
 
-        //ÀÌ 'group'ÀÇ 'spawnPoint' À§Ä¡/È¸Àü °ªÀ¸·Î »õ ±æÀ» »ı¼º
+        //ì´ 'group'ì˜ 'spawnPoint' ìœ„ì¹˜/íšŒì „ ê°’ìœ¼ë¡œ ìƒˆ ê¸¸ì„ ìƒì„±
         group.CurrentActivePath = Instantiate(pathPrefabToSpawn, group.SpawnPoint.position, group.SpawnPoint.rotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
-        Debug.Log($"[½½·Ô º¯°æ] {group.GroupName} -> {pathPrefabToSpawn.name}");
+#if UNITY_EDITOR
+        Debug.Log($"[ìŠ¬ë¡¯ ë³€ê²½] {group.GroupName} -> {pathPrefabToSpawn.name}");
+#endif
     }
 }

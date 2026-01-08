@@ -272,6 +272,7 @@ GameObject:
   - component: {fileID: 4949414615787084936}
   - component: {fileID: 3810248897519560485}
   - component: {fileID: 8123782475422646877}
+  - component: {fileID: 1355756777541619086}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -380,10 +381,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43027956e4e826643af8c207b90d3321, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  health: 3
-  stamina: 100
-  turnSpeed: 30
+  _speed: 5
+  _health: 3
+  _stamina: 100
+  _turnSpeed: 15
 --- !u!114 &3810248897519560485
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -396,10 +397,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2232e392aa689034aa7463584e044c91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  groundLayer:
+  _groundLayer:
     serializedVersion: 2
-    m_Bits: 4294967295
-  groundCheckDist: 0.25
+    m_Bits: 0
+  _groundCheckDist: 0.1
 --- !u!114 &8123782475422646877
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -412,12 +413,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04572a6bc5476746a96c83477e7df0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movement: {fileID: 3810248897519560485}
-  properties: {fileID: 4949414615787084936}
-  skinnedMeshRenderer: {fileID: 8048908101749801786}
-  respawnDelay: 1.5
-  invincibleTime: 2.39
-  stunTime: 0.39
+  _movement: {fileID: 0}
+  _properties: {fileID: 0}
+  _cameraAngleOffset: -75
+  _fallThresholdY: -10
+  _respawnDelay: 2
+  _invincibleTime: 3
+  _stunTime: 0.39
+--- !u!114 &1355756777541619086
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435634289576837414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 066e1a0b00a495049b8536f2a3b32891, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _leftFoot: {fileID: 4389821700216938659}
+  _rightFoot: {fileID: 8988884001281369726}
+  _groundLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  _rayDistance: 0.3
 --- !u!1 &1653475845376044346
 GameObject:
   m_ObjectHideFlags: 0
