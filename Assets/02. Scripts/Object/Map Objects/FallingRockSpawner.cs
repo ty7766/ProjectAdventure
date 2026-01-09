@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+//TODO : 화산 기믹 버그 해결
 public class FallingRockSpawner : MonoBehaviour
 {
     [Header("화산 설정")]
