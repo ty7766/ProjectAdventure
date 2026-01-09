@@ -33,6 +33,21 @@ public class Surfboard : MonoBehaviour
         {
             transform.position = _wayPoints[0].position;
         }
+
+        //시작하자마자 1번 포인트를 바라보게 '즉시' 회전
+        if (_wayPoints.Length > 1 && _wayPoints[1] != null)
+        {
+            Vector3 startDir = _wayPoints[1].position - _wayPoints[0].position;
+            startDir.y = 0; // 수평 유지
+
+            if (startDir.sqrMagnitude > 0.001f)
+            {
+                transform.rotation = Quaternion.LookRotation(startDir);
+            }
+
+            // 0번에는 이미 도착해 있으니, 목표를 바로 1번으로 설정
+            _currentIndex = 1;
+        }
     }
 
     private void FixedUpdate()
