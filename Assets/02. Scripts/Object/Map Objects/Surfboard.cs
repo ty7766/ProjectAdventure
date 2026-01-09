@@ -86,7 +86,25 @@ public class Surfboard : MonoBehaviour
             //시작점과 끝점인 경우 회전 모션없이 즉시 보드 반전
             if(_shouldSnapRotation)
             {
+                Transform player = null;
+                foreach(Transform child in transform)
+                {
+                    if(child.CompareTag("Player"))
+                    {
+                        player = child;
+                        break; 
+                    }
+                }
+
+                if(player != null)
+                {
+                    player.SetParent(null);
+                }
                 transform.rotation = targetRotation;
+                if (player != null)
+                {
+                    player.SetParent(transform);
+                }
                 _shouldSnapRotation = false;
             }
             else
