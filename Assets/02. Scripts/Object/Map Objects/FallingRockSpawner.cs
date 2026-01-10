@@ -66,6 +66,7 @@ public class FallingRockSpawner : MonoBehaviour
     }
 
     //탄 범위 그리기
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
         Transform startPoint = (_firePoint != null) ? _firePoint : transform;
@@ -94,4 +95,5 @@ public class FallingRockSpawner : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawLine(startPoint.position, landingPos);
     }
+#endif
 }
