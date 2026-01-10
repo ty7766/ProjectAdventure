@@ -3,7 +3,15 @@ using System.Collections.Generic;
 
 public class VFXManager : MonoBehaviour
 {
-    public static VFXManager Instance;
+    private static VFXManager _instance;
+
+    public static VFXManager Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
 
     [System.Serializable]
     public struct VFXData
@@ -21,13 +29,14 @@ public class VFXManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance == null)
+        if(_instance == null)
         {
-            Instance = this;
+            _instance = this;
         }
         else
         {
             Destroy(gameObject);
+            return;
         }
 
         InitializePool();
@@ -55,7 +64,7 @@ public class VFXManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
+                Clog.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
                 return;
             }
         }

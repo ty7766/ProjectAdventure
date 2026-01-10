@@ -1964,13 +1964,8 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
-    - {fileID: 5235255453237804214, guid: baf5d4af087cf4b4195f08ba395caf90, type: 3}
-    - {fileID: 7849585590471810532, guid: f1f59e5d68dee9245ac3a1b0a20c4cd0, type: 3}
-    - {fileID: 1849501178850213521, guid: d91356d274a41344893454605391f5c9, type: 3}
-    - {fileID: 6707614242750483430, guid: 9c6ed67da1640d74f81a8ea63e2398fd, type: 3}
-    - {fileID: 2537567946428058207, guid: f233f53137f89594eafc193243cf42e2, type: 3}
-    - {fileID: 5784679207109243959, guid: 6f0069113a8c5474eaa68cdb797c2bae, type: 3}
-    - {fileID: 4898819785125874793, guid: f55ef10a93589294caf90e88e93ebc86, type: 3}
+    - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
+    - {fileID: 372187102251910809, guid: ea251467e8c374f4d85704e93d34dcd8, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _detectionSize: {x: 12, y: 5, z: 10}
