@@ -8,14 +8,18 @@ public class EffectObject : SpecialObject
 
     protected override void ApplyEffect(GameObject player)
     {
-        if (_itemEffect == null)
+        ApplyItemEffectTo(player);
+    }
+
+    private void ApplyItemEffectTo(GameObject player)
+    {
+        if (_itemEffect != null)
+        {
+            player.GetComponent<PlayerEffectController>()?.ApplyEffect(_itemEffect);
+        }
+        else
         {
             Debug.LogWarning($"itemEffect is missing in {this.gameObject.name}");
-            return;
-        }
-        if(player.TryGetComponent<PlayerEffectController>(out var controller))
-        {
-            controller.ApplyEffect(_itemEffect);
         }
     }
 }

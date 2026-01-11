@@ -1,4 +1,5 @@
 ﻿
+using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -6,16 +7,18 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class PlayerMovement : MonoBehaviour
 {
-    //--- Fields ---//
+    //--- Components ---//
     private Rigidbody _rb;
     private Animator _animator;
     private Collider _col;
+
+    //--- Fields ---//
     private bool _isJumping = false;
     private Vector3 _direction;
     private float _speed;
     private float _turnSpeed;
 
-
+    //--- Settings ---//
     [Header("Ground Detection")]
     [SerializeField] private LayerMask _groundLayer; 
     [SerializeField] private float _groundCheckDist = 0.1f;
@@ -23,18 +26,7 @@ public class PlayerMovement : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        if(!TryGetComponent<Rigidbody>(out _rb))
-        {
-            Debug.LogWarning("Rigidbody Component not found on player");
-        }
-        if(!TryGetComponent<Animator>(out _animator))
-        {
-            Debug.LogWarning("Animator Component not found on player");
-        }
-        if(!TryGetComponent<Collider>(out _col))
-        {
-            Debug.LogWarning("Collider Component not found on player");
-        }
+        GetPlayerComponents();
     }
 
     private void Update()
@@ -87,6 +79,13 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //--- Private Helper ---//
+    private void GetPlayerComponents()
+    {
+        _rb = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
+        _col = GetComponent<Collider>();
+    }
+
     private void ChangeViewDirection()
     {
         if (_direction != Vector3.zero)
@@ -98,37 +97,63 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        //ground check
-        Vector3 rayOrigin = _col.bounds.center;
-        float rayLength = _col.bounds.extents.y + _groundCheckDist;
-        bool isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
-        _animator?.SetBool("isGround", isGrounded);
-
-#if UNITY_EDITOR
-        Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
-#endif
-
+        Vector3 rayOrigin;
+        float rayLength;
+        bool isGrounded;
+        DoGroundCheck(out rayOrigin, out rayLength, out isGrounded);
 
         if (isGrounded)
         {
-            _isJumping = false;
-            //apply movement only when player is on ground
-            Vector3 targetVelocity = Vector3.ClampMagnitude(_direction, 1f) * _speed;
-            targetVelocity.y = _rb.linearVelocity.y;
-            _rb.linearVelocity = targetVelocity;
-
-
-            float animSpeed = _rb.linearVelocity.magnitude;
-            _animator.SetFloat("Speed", Mathf.Clamp(animSpeed, 1f, _speed));
+            ApplyMoveWithAnimation();
         }
         else
         {
-            if (!_isJumping)
-            {
-                //play animation only once when player falling
-                _animator.SetTrigger("Jump");
-                _isJumping = true;
-            }
+            RunJumpAnimationOnlyOnce();
         }
+
+        DebugGizmo(rayOrigin, rayLength, isGrounded);
+    }
+
+    private void DoGroundCheck(out Vector3 rayOrigin, out float rayLength, out bool isGrounded)
+    {
+        rayOrigin = _col.bounds.center;
+        rayLength = _col.bounds.extents.y + _groundCheckDist;
+        isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
+        _animator?.SetBool("isGround", isGrounded);
+    }
+
+    [Conditional("UNITY_EDITOR")]
+    private static void DebugGizmo(Vector3 rayOrigin, float rayLength, bool isGrounded)
+    {
+        UnityEngine.Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
+    }
+
+    private void RunJumpAnimationOnlyOnce()
+    {
+        if (!_isJumping)
+        {
+            _animator.SetTrigger("Jump");
+            _isJumping = true;
+        }
+    }
+
+    private void ApplyMoveWithAnimation()
+    {
+        _isJumping = false;
+        ApplyTargetVelocity();
+        SetAnimationSpeed();
+    }
+
+    private void SetAnimationSpeed()
+    {
+        float animSpeed = _rb.linearVelocity.magnitude;
+        _animator.SetFloat("Speed", Mathf.Clamp(animSpeed, 1f, _speed));
+    }
+
+    private void ApplyTargetVelocity()
+    {
+        Vector3 targetVelocity = Vector3.ClampMagnitude(_direction, 1f) * _speed;
+        targetVelocity.y = _rb.linearVelocity.y;
+        _rb.linearVelocity = targetVelocity;
     }
 }

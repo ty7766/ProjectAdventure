@@ -15,9 +15,10 @@ public class PlayerEffectController : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        TryGetComponent<PlayerProperties>(out _properties);
-        _baseSpeed = _properties.Speed;
+        GetPlayerComponents();
+        InitializeFields();
     }
+
     private void Update()
     {
         HandleEffectsDuration();
@@ -41,6 +42,7 @@ public class PlayerEffectController : MonoBehaviour
         }
         UpdateFinalStats();
     }
+
     /// <summary>
     /// 발판 위에 있는 동안 지속되는 상태 효과를 시작합니다. (영구 효과)
     /// </summary>
@@ -63,6 +65,7 @@ public class PlayerEffectController : MonoBehaviour
 
         UpdateFinalStats();
     }
+
     /// <summary>
     /// 발판 위에서 벗어났을 때 영구 상태 효과를 중지하고 N초 카운트다운을 시작합니다.
     /// </summary>
@@ -78,6 +81,16 @@ public class PlayerEffectController : MonoBehaviour
     }
 
     //--- Private Methods ---//
+    private void InitializeFields()
+    {
+        _baseSpeed = _properties.Speed;
+    }
+
+    private void GetPlayerComponents()
+    {
+        TryGetComponent<PlayerProperties>(out _properties);
+    }
+
     private void HandleEffectsDuration()
     {
         bool changed = false;
@@ -95,6 +108,7 @@ public class PlayerEffectController : MonoBehaviour
 
         if (changed) UpdateFinalStats();
     }
+
     private void CalculateSpeed()
     {
         float totalMultiplier = _activeEffects
@@ -108,11 +122,11 @@ public class PlayerEffectController : MonoBehaviour
         // 최종 이동 속도 계산 수식 : (기본속도 * (1 + 증가율 효과 합)) + 고정증가량 합
         _properties.Speed = (_baseSpeed * (1.0f + totalMultiplier)) + totalAdditive;
     }
+
     private void UpdateFinalStats()
     {
         CalculateSpeed();
 
         //TODO : 다른 스탯들도 여기에 추가
     }
-
 }
