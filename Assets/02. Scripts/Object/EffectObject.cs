@@ -15,11 +15,18 @@ public class EffectObject : SpecialObject
     {
         if (_itemEffect != null)
         {
-            player.GetComponent<PlayerEffectController>()?.ApplyEffect(_itemEffect);
+           if(player.TryGetComponent<PlayerEffectController>(out var effectController))
+           {
+               effectController.ApplyEffect(_itemEffect);
+           }
+           else
+           {
+               Clog.LogWarning($"PlayerEffectController component is missing on {player.name}", player);
+            }
         }
         else
         {
-            Debug.LogWarning($"itemEffect is missing in {this.gameObject.name}");
+            Clog.LogWarning($"itemEffect is missing in {name}", this);
         }
     }
 }
