@@ -83,12 +83,18 @@ public class PlayerEffectController : MonoBehaviour
     //--- Private Methods ---//
     private void InitializeFields()
     {
+        if(_properties == null) return;
         _baseSpeed = _properties.Speed;
     }
 
     private void GetPlayerComponents()
     {
-        TryGetComponent<PlayerProperties>(out _properties);
+        _properties = GetComponent<PlayerProperties>();
+        if(_properties == null)
+        {
+            Clog.LogError($"PlayerProperties component is missing.", this);
+            enabled = false;
+        }
     }
 
     private void HandleEffectsDuration()
