@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 //PathGroup 데이터 클래스
 [System.Serializable]
@@ -35,13 +36,26 @@ public class MapManager : MonoBehaviour
 
     private int _selectedSlotIndex = 0;
 
+    private void Awake()
+    {
+        Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
+        Assert.IsTrue(_pathGroups.Length > 0, $"[MapManager] '{name}'의 Path Groups 배열이 비어있습니다.");
+        Assert.IsNotNull(_selectionCursor, $"[MapManager] '{name}'에 Selection Cursor가 할당되지 않았습니다.");
+    }
     void Start()
     {
-        if(_pathGroups == null)
-        {
-            return;
-        }
+        MapGeneration();
+        UpdateCursorPosition();
+    }
 
+    void Update()
+    {
+        HandleSelectionInput();
+        HandleMapChangeInput();
+    }
+
+    private void MapGeneration()
+    {
         // 등록된 모든 'PathGroup'을 순회하며 맵 생성
         foreach (PathGroup group in _pathGroups)
         {
@@ -51,19 +65,6 @@ public class MapManager : MonoBehaviour
                 SpawnPath(group, group.CurrentPathIndex);
             }
         }
-
-        UpdateCursorPosition();
-    }
-
-    void Update()
-    {
-        if (_pathGroups == null || _pathGroups.Length == 0)
-        {
-            return;
-        }
-
-        HandleSelectionInput();
-        HandleMapChangeInput();
     }
 
     private void HandleSelectionInput()
@@ -143,12 +144,10 @@ public class MapManager : MonoBehaviour
         //SpawnPoint가 할당되지 않은 맵 방지
         if (group.SpawnPoint == null)
         {
-#if UNITY_EDITOR
-            Debug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
-#endif
+            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
             return false;
         }
-        //해당 슬롯 위치에 가상 박스를 만들어 검사
+        //해당 슬롯 위치에 박스를 만들어 검사
         Collider[] hitColliders = Physics.OverlapBox(
             group.SpawnPoint.position,
             _detectionSize * 0.5f,
