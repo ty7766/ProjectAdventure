@@ -25,7 +25,7 @@ public class VFXManager : MonoBehaviour
     [SerializeField]
     private List<VFXData> _vfxList;
 
-    private Dictionary<VFXType, Queue<GameObject>> _poolDict = new Dictionary<VFXType, Queue<GameObject>>();
+    private Dictionary<VFXType, Queue<GameObject>> _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
 
     private void Awake()
     {
@@ -49,13 +49,13 @@ public class VFXManager : MonoBehaviour
     /// <param name="position">이펙트 생성될 위치</param>
     public void PlayVFX(VFXType type, Vector3 position)
     {
-        if(!_poolDict.ContainsKey(type))
+        if(!_poolDictionary.ContainsKey(type))
         {
             return;
         }
 
         //대기열 비었으면 추가 생성
-        if (_poolDict[type].Count == 0)
+        if (_poolDictionary[type].Count == 0)
         {
             var data = _vfxList.Find(x => x.Type == type);
             if(data.Prefab != null)
@@ -70,7 +70,7 @@ public class VFXManager : MonoBehaviour
         }
 
 
-        GameObject obj = _poolDict[type].Dequeue();
+        GameObject obj = _poolDictionary[type].Dequeue();
         obj.transform.position = position;
         obj.SetActive(true);
     }
@@ -83,7 +83,7 @@ public class VFXManager : MonoBehaviour
     public void ReturnToPool(VFXType type, GameObject obj)
     {
         obj.SetActive(false);
-        _poolDict[type].Enqueue(obj);
+        _poolDictionary[type].Enqueue(obj);
     }
 
     //설정된 개수만큼 미리 생성
@@ -91,9 +91,9 @@ public class VFXManager : MonoBehaviour
     {
         foreach(var data in _vfxList)
         {
-            if(!_poolDict.ContainsKey(data.Type))
+            if(!_poolDictionary.ContainsKey(data.Type))
             {
-                _poolDict.Add(data.Type, new Queue<GameObject>());
+                _poolDictionary.Add(data.Type, new Queue<GameObject>());
             }
 
             for(int i = 0; i < data.PoolSize; i++)
@@ -105,18 +105,18 @@ public class VFXManager : MonoBehaviour
 
     private GameObject CreateNewObject(VFXType type, GameObject prefab)
     {
-        GameObject obj = Instantiate(prefab, transform);
+        GameObject effectObject = Instantiate(prefab, transform);
 
-        var returnScript = obj.GetComponent<VFXReturnToPool>();
+        var returnScript = effectObject.GetComponent<VFXReturnToPool>();
         if(returnScript == null)
         {
-            returnScript = obj.AddComponent<VFXReturnToPool>();
+            returnScript = effectObject.AddComponent<VFXReturnToPool>();
         }
 
         returnScript.Setup(type);
 
-        obj.SetActive(false);
-        _poolDict[type].Enqueue(obj);
-        return obj;
+        effectObject.SetActive(false);
+        _poolDictionary[type].Enqueue(effectObject);
+        return effectObject;
     }
 }
