@@ -107,7 +107,7 @@ public class Surfboard : MonoBehaviour
         }
         else
         {
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);
         }
     }
 
