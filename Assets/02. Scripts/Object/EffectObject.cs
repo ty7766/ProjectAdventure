@@ -21,12 +21,12 @@ public class EffectObject : SpecialObject
            }
            else
            {
-               Clog.LogWarning($"PlayerEffectController component is missing on {player.name}", player);
+               CustomDebug.LogWarning($"PlayerEffectController component is missing on {player.name}", player);
             }
         }
         else
         {
-            Clog.LogWarning($"itemEffect is missing in {name}", this);
+            CustomDebug.LogWarning($"itemEffect is missing in {name}", this);
         }
     }
 }

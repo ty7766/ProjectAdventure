@@ -26,7 +26,7 @@ public class StageManager : MonoBehaviour
     //--- Private Helpers ---//
     private void ClearStage()
     {
-        Clog.Log("Stage Cleared!");
+        CustomDebug.Log("Stage Cleared!");
         DisablePlayerControl();
     }
 
@@ -38,7 +38,7 @@ public class StageManager : MonoBehaviour
         }
         else
         {
-            Clog.LogWarning("PlayerController reference is missing in StageManager.");
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
         }
     }
 }

@@ -47,7 +47,7 @@ public class MapGuideLine : MonoBehaviour
     {
         if(_spawnPointToAlign == null || _spawnPointToAlign.Length == 0)
         {
-            Clog.LogWarning("정렬할 대상 (SpawnPoint) 가 비어있습니다.");
+            CustomDebug.LogWarning("정렬할 대상 (SpawnPoint) 가 비어있습니다.");
             return;
         }
 
@@ -61,7 +61,7 @@ public class MapGuideLine : MonoBehaviour
                 _spawnPointToAlign[i].position = CalculatePosition(basePosition, i);
             }
         }
-        Clog.Log("모든 SpawnPoint 정렬 완료!");
+        CustomDebug.Log("모든 SpawnPoint 정렬 완료!");
     }
     private Vector3 CalculatePosition(Vector3 basePos, int index)
     {

@@ -64,7 +64,7 @@ public class VFXManager : MonoBehaviour
             }
             else
             {
-                Clog.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
+                CustomDebug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
                 return;
             }
         }

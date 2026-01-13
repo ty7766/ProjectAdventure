@@ -108,7 +108,7 @@ public class MapManager : MonoBehaviour
         //SpawnPoint가 할당되지 않은 맵 방지
         if (targetSpawnPoint == null)
         {
-            Clog.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            CustomDebug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
             return;
         }
         _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
@@ -123,8 +123,8 @@ public class MapManager : MonoBehaviour
             //플레이어가 해당 맵 위에 있는지 확인
             if (CheckPlayerOnMap(targetGroup))
             {
-                Clog.Log("플레이어가 현재 해당 맵 위에 있습니다.");
-                Clog.Log("해당 맵을 교체할 수 없습니다!");
+                CustomDebug.Log("플레이어가 현재 해당 맵 위에 있습니다.");
+                CustomDebug.Log("해당 맵을 교체할 수 없습니다!");
                 return;
             }
 
@@ -177,6 +177,6 @@ public class MapManager : MonoBehaviour
         group.CurrentActivePath = Instantiate(pathPrefabToSpawn, group.SpawnPoint.position, group.SpawnPoint.rotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
-        Clog.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
+        CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
     }
 }
