@@ -48,7 +48,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _wayPoints: []
   _moveSpeed: 2
-  _turnSpeed: 5
+  _turnSpeed: 100
   _reachThreshold: 0.1
 --- !u!54 &3918265105407336106
 Rigidbody:
