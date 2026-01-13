@@ -42,7 +42,7 @@ public class Surfboard : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MoveSurfboard();
+        ProcessSurfboardMovement();
     }
 
     private void InitializePositionAndRotation()
@@ -67,70 +67,79 @@ public class Surfboard : MonoBehaviour
             _currentIndex = 1;
         }
     }
-
-    private void MoveSurfboard()
+    private void ProcessSurfboardMovement()
     {
-        //현재 목표지점이 없는 경우 다음 인덱스로 복구 시도
+        // 현재 목표 지점이 유효하지 않으면 인덱스 갱신 시도
         if (_wayPoints[_currentIndex] == null)
         {
-            HandleIndexChange();
+            UpdateTargetIndex();
             return;
         }
 
         Transform targetPoint = _wayPoints[_currentIndex];
 
-        //1. 다음 포인트로 이동
+        MoveTowardsTarget(targetPoint);
+        RotateTowardsTarget(targetPoint);
+        CheckArrival(targetPoint);
+    }
+    private void MoveTowardsTarget(Transform targetPoint)
+    {
         Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
         transform.position = newPosition;
+    }
 
-        //2. 다음 포인트가 현재 포인트와 같은 선상이 아닌경우 회전
+    private void RotateTowardsTarget(Transform targetPoint)
+    {
         Vector3 direction = targetPoint.position - transform.position;
         direction.y = 0;
 
-        if(direction.sqrMagnitude > 0.001f)
+        if (direction.sqrMagnitude <= 0.001f)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-
-            //시작점과 끝점인 경우 회전 모션없이 즉시 보드 반전
-            if(_shouldSnapRotation)
-            {
-                Transform player = null;
-                foreach(Transform child in transform)
-                {
-                    if(child.CompareTag("Player"))
-                    {
-                        player = child;
-                        break; 
-                    }
-                }
-
-                if(player != null)
-                {
-                    player.SetParent(null);
-                }
-                transform.rotation = targetRotation;
-                if (player != null)
-                {
-                    player.SetParent(transform);
-                }
-                _shouldSnapRotation = false;
-            }
-            else
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);
-            }
+            return;
         }
 
-        //3. 도착 판정
-        float distance = Vector3.Distance(transform.position, targetPoint.position);
-        if(distance <= _reachThreshold)
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+        // 시작점과 끝점(반환점)인 경우 부드러운 회전 대신 즉시 반전
+        if (_shouldSnapRotation)
         {
-            HandleIndexChange();
+            SnapRotationWithPlayerDetachment(targetRotation);
+        }
+        else
+        {
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _turnSpeed * Time.fixedDeltaTime);
         }
     }
 
-    //다음 목표 계산
-    private void HandleIndexChange()
+    //보트가 즉시 반전될 때 플레이어가 보트 중앙을 기준으로 회전하므로
+    //플레이어가 순간이동하는 것을 방지하기 위함
+    private void SnapRotationWithPlayerDetachment(Quaternion targetRotation)
+    {
+        if (_attachedPlayer != null)
+        {
+            _attachedPlayer.SetParent(null);
+        }
+
+        transform.rotation = targetRotation;
+
+        if (_attachedPlayer != null)
+        {
+            _attachedPlayer.SetParent(transform);
+        }
+
+        _shouldSnapRotation = false;
+    }
+
+    private void CheckArrival(Transform targetPoint)
+    {
+        float distance = Vector3.Distance(transform.position, targetPoint.position);
+        if (distance <= _reachThreshold)
+        {
+            UpdateTargetIndex();
+        }
+    }
+
+    private void UpdateTargetIndex()
     {
         if(_isMovingForward)
         {
@@ -168,6 +177,7 @@ public class Surfboard : MonoBehaviour
         if(collision.gameObject.CompareTag("Player"))
         {
             collision.transform.SetParent(this.transform);
+            _attachedPlayer = collision.transform;
         }
     }
 
