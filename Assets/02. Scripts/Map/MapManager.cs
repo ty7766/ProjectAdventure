@@ -124,8 +124,7 @@ public class MapManager : MonoBehaviour
             //플레이어가 해당 맵 위에 있는지 확인
             if (CheckPlayerOnMap(targetGroup))
             {
-                CustomDebug.Log("플레이어가 현재 해당 맵 위에 있습니다.");
-                CustomDebug.Log("해당 맵을 교체할 수 없습니다!");
+                CustomDebug.Log("플레이어가 현재 해당 맵 위에 있어 맵을 교체할 수 없습니다!");
                 return;
             }
 
