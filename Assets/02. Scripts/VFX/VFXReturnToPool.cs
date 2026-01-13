@@ -4,11 +4,11 @@ using System.Collections;
 public class VFXReturnToPool : MonoBehaviour
 {
     private VFXType _myType;
-    private ParticleSystem _ps;
+    private ParticleSystem _particleSystem;
 
     private void Awake()
     {
-        _ps = GetComponent<ParticleSystem>();
+        _particleSystem = GetComponent<ParticleSystem>();
     }
 
     /// <summary>
@@ -28,9 +28,9 @@ public class VFXReturnToPool : MonoBehaviour
     private IEnumerator CheckIfAlive()
     {
         //파티클이 재생중이면 대기
-        if (_ps != null)
+        if (_particleSystem != null)
         {
-            yield return new WaitWhile(() => _ps.IsAlive(true));
+            yield return new WaitWhile(() => _particleSystem.IsAlive(true));
         }
         else
         {
