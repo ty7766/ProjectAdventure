@@ -122,11 +122,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1830ccd14daf6004ba1062be9f3afc50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRespawnable: 0
-  respawnTime: 5
+  _isRespawnable: 0
+  _respawnTime: 5
   _damageAmount: 1
-  _lifeTime: 3
-  _rotateSpeed: 5
+  _lifeTime: 4
+  _tumbleForce: 5
 --- !u!54 &1084390403287454017
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ Rigidbody:
   m_GameObject: {fileID: 8815995608648527608}
   serializedVersion: 4
   m_Mass: 2
-  m_Drag: 0.8
+  m_Drag: 1
   m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
