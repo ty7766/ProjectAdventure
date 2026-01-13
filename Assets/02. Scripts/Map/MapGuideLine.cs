@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
+using System.Diagnostics;
 
-//각 맵의 범위를 보여주는 가상 가이드라인
 public class MapGuideLine : MonoBehaviour
 {
     [Header("기준점 설정")]
@@ -21,23 +21,12 @@ public class MapGuideLine : MonoBehaviour
     [SerializeField]
     private Color _gizmoColor = Color.yellow;
 
+#if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        Gizmos.color = _gizmoColor;
-
-        //기준점 설정 (설정되지 않으면 해당 오브젝트 기준으로 정렬)
-        Vector3 basePosition = (_originTransform != null) ? _originTransform.position : transform.position;
-
-        int count = (_spawnPointToAlign != null && _spawnPointToAlign.Length > 0) ? _spawnPointToAlign.Length : 5;
-        for(int i = 0; i < count; i++)
-        {
-            //현재는 -z 방향으로 맵이 이어지므로 -z 축으로 설정
-            Vector3 pos = CalculatePosition(basePosition, i);
-            Gizmos.DrawWireCube(pos, _tileSize);
-            Gizmos.DrawSphere(pos, 0.3f);
-        }
+        DrawMapGuideLinesWithGizmos();
     }
-
+#endif
 
     /// <summary>
     /// SpawnPoint 배열에 등록된 오브젝트들을 설정된 타일 크기에 맞춰 일렬로 자동 정렬
@@ -63,10 +52,29 @@ public class MapGuideLine : MonoBehaviour
         }
         CustomDebug.Log("모든 SpawnPoint 정렬 완료!");
     }
-    private Vector3 CalculatePosition(Vector3 basePos, int index)
+
+    [Conditional("UNITY_EDITOR")]
+    private void DrawMapGuideLinesWithGizmos()
     {
-        float zPos = -(_tileSize.z * index);
-        Vector3 offset = new Vector3(0,0, zPos);
-        return basePos + _startOffset + offset;
+        Gizmos.color = _gizmoColor;
+
+        //기준점 설정 (설정되지 않으면 해당 오브젝트 기준으로 정렬)
+        Vector3 basePosition = (_originTransform != null) ? _originTransform.position : transform.position;
+
+        int count = (_spawnPointToAlign != null && _spawnPointToAlign.Length > 0) ? _spawnPointToAlign.Length : 5;
+        for (int i = 0; i < count; i++)
+        {
+            //현재는 -z 방향으로 맵이 이어지므로 -z 축으로 설정
+            Vector3 position = CalculatePosition(basePosition, i);
+            Gizmos.DrawWireCube(position, _tileSize);
+            Gizmos.DrawSphere(position, 0.3f);
+        }
+    }
+
+    private Vector3 CalculatePosition(Vector3 basePosition, int index)
+    {
+        float zPosition = -(_tileSize.z * index);
+        Vector3 offset = new Vector3(0,0, zPosition);
+        return basePosition + _startOffset + offset;
     }
 }
