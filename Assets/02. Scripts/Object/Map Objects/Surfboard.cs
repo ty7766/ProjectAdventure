@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,43 +22,50 @@ public class Surfboard : MonoBehaviour
     private bool _isMovingForward = true;
     private bool _shouldSnapRotation = false;   //즉시 회전 변수
 
+    private Transform _attachedPlayer;
+
+    private void Awake()
+    {
+        Assert.IsNotNull(_wayPoints, $"[Surfboard] '{name}'에 WayPoints 배열이 할당되지 않았습니다.");
+
+        if (_wayPoints.Length < 2)
+        {
+            CustomDebug.LogError($"[Surfboard] '{name}'의 WayPoints는 최소 2개 이상이어야 합니다. 스크립트를 비활성화합니다.");
+            this.enabled = false;
+        }
+    }
+
     private void Start()
     {
-        if (_wayPoints == null || _wayPoints.Length == 0)
-        {
-            enabled = false;
-            return;
-        }
+        InitializePositionAndRotation();
+    }
 
+    private void FixedUpdate()
+    {
+        MoveSurfboard();
+    }
+
+    private void InitializePositionAndRotation()
+    {
+        // 시작 위치 설정
         if (_wayPoints[0] != null)
         {
             transform.position = _wayPoints[0].position;
         }
 
-        //시작하자마자 1번 포인트를 바라보게 '즉시' 회전
-        if (_wayPoints.Length > 1 && _wayPoints[1] != null)
+        // 시작하자마자 1번 포인트를 바라보게 '즉시' 회전
+        if (_wayPoints[1] != null)
         {
-            Vector3 startDir = _wayPoints[1].position - _wayPoints[0].position;
-            startDir.y = 0; // 수평 유지
+            Vector3 startDirection = _wayPoints[1].position - _wayPoints[0].position;
+            startDirection.y = 0; // 수평 유지
 
-            if (startDir.sqrMagnitude > 0.001f)
+            if (startDirection.sqrMagnitude > 0.001f)
             {
-                transform.rotation = Quaternion.LookRotation(startDir);
+                transform.rotation = Quaternion.LookRotation(startDirection);
             }
 
-            // 0번에는 이미 도착해 있으니, 목표를 바로 1번으로 설정
             _currentIndex = 1;
         }
-    }
-
-    private void FixedUpdate()
-    {
-        if (_wayPoints == null || _wayPoints.Length < 2)
-        {
-            return;
-        }
-
-        MoveSurfboard();
     }
 
     private void MoveSurfboard()
@@ -171,6 +179,11 @@ public class Surfboard : MonoBehaviour
             if(collision.transform.parent == this.transform)
             {
                 collision.transform.SetParent(null);
+            }
+
+            if (_attachedPlayer == collision.transform)
+            {
+                _attachedPlayer = null;
             }
         }
     }
