@@ -14,7 +14,7 @@ public class FallingRockSpawner : MonoBehaviour
     [SerializeField]
     private float _spawnInterval = 3.0f; // 발사 주기
     [SerializeField]
-    private float _power = 30f;          // 발사 힘
+    private float _launchSpeed = 15f;    // 발사 속도
     [SerializeField]
     private float _spread = 0.3f;        // 탄퍼짐 정도
 
@@ -70,14 +70,12 @@ public class FallingRockSpawner : MonoBehaviour
         Rigidbody rockRigidbody = rockInstance.GetComponent<Rigidbody>();
         if (rockRigidbody != null)
         {
-            // 랜덤한 확산 방향 계산 (수평으로만 퍼지게)
             Vector3 randomSpreadDirection = Random.insideUnitSphere * _spread;
             randomSpreadDirection.y = 0;
 
-            // 최종 발사 방향 (위쪽 방향 + 랜덤 확산)
             Vector3 launchDirection = (transform.up + randomSpreadDirection).normalized;
 
-            rockRigidbody.AddForce(launchDirection * _power, ForceMode.Impulse);
+            rockRigidbody.AddForce(launchDirection * _launchSpeed, ForceMode.VelocityChange);
         }
         else
         {
@@ -90,7 +88,7 @@ public class FallingRockSpawner : MonoBehaviour
     {
         Transform startPoint = (_firePoint != null) ? _firePoint : transform;
 
-        Vector3 initialVelocity = startPoint.up * _power;
+        Vector3 initialVelocity = startPoint.up * _launchSpeed;
         float gravity = Mathf.Abs(Physics.gravity.y);
 
         float timeToImpact = (initialVelocity.y + Mathf.Sqrt(initialVelocity.y * initialVelocity.y + 2 * gravity * _fallHeight)) / gravity;
