@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Assertions;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -26,7 +25,12 @@ public class Surfboard : MonoBehaviour
 
     private void Awake()
     {
-        Assert.IsNotNull(_wayPoints, $"[Surfboard] '{name}'에 WayPoints 배열이 할당되지 않았습니다.");
+        if (_wayPoints == null)
+        {
+            CustomDebug.LogError($"[Surfboard] '{name}'에 WayPoints 배열이 할당되지 않았습니다. 스크립트를 비활성화합니다.");
+            this.enabled = false;
+            return;
+        }
 
         if (_wayPoints.Length < 2)
         {
