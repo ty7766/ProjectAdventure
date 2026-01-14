@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 [RequireComponent(typeof(Rigidbody))]
 public class FallingRock : SpecialObject
@@ -11,28 +12,26 @@ public class FallingRock : SpecialObject
     [SerializeField] 
     private float _lifeTime = 5.0f;
 
-    [SerializeField] 
-    private float _rotateSpeed = 200f;
+    [SerializeField]
+    [Tooltip("회전 힘의 크기")]
+    private float _tumbleForce = 10f;
 
     //--- Components ---//
-    private Rigidbody _rb;
+    private Rigidbody _rigidbody;
 
     //--- Unity Methods ---//
     protected override void Awake()
     {
         base.Awake();
         GetAdditionalComponents();
+
+        Assert.IsNotNull(_rigidbody, $"[FallingRock] '{name}'에 Rigidbody가 없습니다. (RequireComponent 확인 필요)");
     }
 
     private void Start()
     {
         ReserveDestroyAfterLifetime();
-        ApplyInitialAngularVelocity();
-    }
-
-    private void Update()
-    {
-        UpdateRotation();
+        ApplyInitialTumble();
     }
 
     protected override void ApplyEffect(GameObject player)
@@ -49,17 +48,12 @@ public class FallingRock : SpecialObject
     //--- Private Methods ---//
     private void GetAdditionalComponents()
     {
-        _rb = GetComponent<Rigidbody>();
+        _rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void UpdateRotation()
+    private void ApplyInitialTumble()
     {
-        transform.Rotate(Vector3.right * _rotateSpeed * Time.deltaTime);
-    }
-
-    private void ApplyInitialAngularVelocity()
-    {
-        _rb.angularVelocity = Random.insideUnitSphere * 10f;
+        _rigidbody.angularVelocity = Random.insideUnitSphere * _tumbleForce;
     }
 
     private void ReserveDestroyAfterLifetime()
@@ -81,7 +75,7 @@ public class FallingRock : SpecialObject
         PlayerController playerController = player.GetComponent<PlayerController>();
         if (playerController != null)
         {
-            Debug.Log("[화산탄] 플레이어 명중!");
+            CustomDebug.Log("[화산탄] 플레이어 명중!");
             playerController.TakeDamage(_damageAmount);
         }
     }

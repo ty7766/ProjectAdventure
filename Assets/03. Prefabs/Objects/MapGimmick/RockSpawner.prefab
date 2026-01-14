@@ -47,6 +47,6 @@ MonoBehaviour:
   _rockPrefab: {fileID: 8815995608648527608, guid: 43ca335e34c6f284d934271fde90cc13, type: 3}
   _firePoint: {fileID: 0}
   _spawnInterval: 3
-  _power: 30
-  _spread: 0.3
+  _launchSpeed: 10
+  _spread: 0.2
   _fallHeight: 10

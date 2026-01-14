@@ -92,7 +92,7 @@ public class PlayerEffectController : MonoBehaviour
         _properties = GetComponent<PlayerProperties>();
         if(_properties == null)
         {
-            Clog.LogError($"PlayerProperties component is missing.", this);
+            CustomDebug.LogError($"PlayerProperties component is missing.", this);
             enabled = false;
         }
     }

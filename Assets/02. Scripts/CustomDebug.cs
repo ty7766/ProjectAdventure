@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Diagnostics;
 
-public static class Clog
+public static class CustomDebug
 {
     // "UNITY_EDITOR"가 정의된 경우(에디터)에만 작동
     // 만약 개발 빌드(폰 등)에서도 보고 싶으면 [Conditional("DEVELOPMENT_BUILD")]를 추가하면 됨
