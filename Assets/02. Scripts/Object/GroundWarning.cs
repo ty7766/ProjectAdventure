@@ -8,6 +8,8 @@ public class GroundWarning : MonoBehaviour
     [SerializeField] 
     private SpriteRenderer _spriteRenderer;
 
+    private Coroutine _blinkCoroutine;
+
     private void Awake()
     {
         if (_spriteRenderer == null)
@@ -18,7 +20,11 @@ public class GroundWarning : MonoBehaviour
 
     public void Activate(float duration)
     {
-        StartCoroutine(BlinkAndReturn(duration));
+        if (_blinkCoroutine != null)
+        {
+            StopCoroutine(_blinkCoroutine);
+        }
+        _blinkCoroutine = StartCoroutine(BlinkAndReturn(duration));
     }
 
     private IEnumerator BlinkAndReturn(float duration)
