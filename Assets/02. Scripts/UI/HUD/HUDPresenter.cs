@@ -43,6 +43,13 @@ public class HUDPresenter : MonoBehaviour
         {
             _effectController.OnBuffListChanged += HandleBuffChange;
         }
+        if (_hudView != null)
+        {
+            _hudView.OnPauseButtonClicked += HandlePauseButtonClicked;
+            _hudView.OnResumeButtonClicked += HandleResumeButtonClicked;
+            _hudView.OnReturnToMainMenuButtonClicked += HandleReturnToMainMenuButtonClicked;
+            _hudView.OnQuitGameButtonClicked += HandleQuitGameButtonClicked;
+        }
     }
 
     private void UnsubscribeEventHandlers()
@@ -59,6 +66,13 @@ public class HUDPresenter : MonoBehaviour
         {
             _effectController.OnBuffListChanged -= HandleBuffChange;
         }
+        if (_hudView != null)
+        {
+            _hudView.OnPauseButtonClicked -= HandlePauseButtonClicked;
+            _hudView.OnResumeButtonClicked -= HandleResumeButtonClicked;
+            _hudView.OnReturnToMainMenuButtonClicked -= HandleReturnToMainMenuButtonClicked;
+            _hudView.OnQuitGameButtonClicked -= HandleQuitGameButtonClicked;
+        }
     }
 
     private void HandleHealthChanged(int newHealth)
@@ -74,5 +88,31 @@ public class HUDPresenter : MonoBehaviour
     private void HandleBuffChange(System.Collections.Generic.List<ActiveEffect> effects)
     {
         _hudView.RefreshBuffs(effects);
+    }
+
+    private void HandlePauseButtonClicked()
+    {
+        _stageManager.PauseGameSmoothly();
+        _hudView.ShowPauseMenu();
+    }
+
+    private void HandleResumeButtonClicked()
+    {
+        _stageManager.ResumeGameSmoothly();
+        _hudView.HidePauseMenu();
+    }
+
+    private void HandleReturnToMainMenuButtonClicked()
+    {
+        //TODO : 메인메뉴로 돌아가기
+    }
+
+    private void HandleQuitGameButtonClicked()
+    {
+        //TODO : 게임 종료
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
+        Application.Quit();
     }
 }
