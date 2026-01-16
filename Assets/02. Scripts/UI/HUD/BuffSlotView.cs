@@ -15,7 +15,7 @@ public class BuffSlotView : MonoBehaviour
     //--- Unity Methods ---//
     private void Update()
     {
-        if (_targetEffect == null || _targetEffect.IsPermanent) return;
+        if (_targetEffect == null) return;
         UpdateDurationFill();
     }
 
