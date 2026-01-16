@@ -39,7 +39,7 @@ public class GroundWarning : MonoBehaviour
         while(timer < duration)
         {
             timer += Time.deltaTime;
-            float alpha = Mathf.Lerp(0.2f, 0.8f, (Mathf.Sin(timer * _blinkSpeed)));
+            float alpha = Mathf.Lerp(0.2f, 0.8f, (Mathf.Abs(timer * _blinkSpeed)));
 
             Color newColor = originalColor;
             newColor.a = alpha;
