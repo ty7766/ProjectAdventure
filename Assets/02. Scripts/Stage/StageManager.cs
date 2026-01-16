@@ -70,16 +70,29 @@ public class StageManager : MonoBehaviour
     private IEnumerator ChangeTimeScale(float targetScale, float duration)
     {
         float startScale = Time.timeScale;
+        float initialFixedDeltaTime = 0.02f; // 유니티 기본값
         float elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            Time.timeScale = Mathf.Lerp(startScale, targetScale, elapsed / duration);
+            float t = elapsed / duration;
+
+            float currentScale = Mathf.Lerp(startScale, targetScale, t);
+
+            Time.timeScale = currentScale;
+            Time.fixedDeltaTime = initialFixedDeltaTime * currentScale;
+
             yield return null;
         }
 
-        Time.timeScale = targetScale; // 마지막으로 목표값 고정
+        Time.timeScale = targetScale;
+        Time.fixedDeltaTime = initialFixedDeltaTime * targetScale;
+
+        if (Time.timeScale <= 0)
+        {
+            Time.fixedDeltaTime = initialFixedDeltaTime;
+        }
     }
 
     private void ClearStage()
