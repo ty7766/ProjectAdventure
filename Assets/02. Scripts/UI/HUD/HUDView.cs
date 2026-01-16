@@ -1,20 +1,51 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System;
 
 public class HUDView : MonoBehaviour
 {
     //--- Settings ---//
     [Header("UI Components")]
+    [Header("Health UI")]
     [SerializeField] private List<Image> _heartImages; // 하트 아이콘 리스트
     [SerializeField] private Sprite _fullHeart; // 꽉 찬 하트 이미지
     [SerializeField] private Sprite _emptyHeart; // 빈 하트 이미지
+
+    [Header("Gem UI")]
     [SerializeField] private List<Image> _gemImages; // 보석 아이콘 리스트
     [SerializeField] private Color _fullGemColor; // 수집한 보석 색상
     [SerializeField] private Color _emptyGemColor; // 빈 보석 이미지 색상
+
+    [Header("Buff UI")]
     [SerializeField] private Transform _contentParent;
     [SerializeField] private BuffSlotView _buffItemPrefab;
 
+    [Header("Pause Menu")]
+    [SerializeField] private KeyCode _pauseKey = KeyCode.Escape;
+    [SerializeField] private GameObject _pauseMenu;
+    [SerializeField] private UnityEngine.UI.Button _resumeButton;
+    [SerializeField] private UnityEngine.UI.Button _pauseButton;
+    [SerializeField] private UnityEngine.UI.Button _returnToMainMenuButton;
+    [SerializeField] private UnityEngine.UI.Button _quitGameButton;
+    
+
+    //--- Events ---//
+    public event Action OnResumeButtonClicked;
+    public event Action OnPauseButtonClicked;
+    public event Action OnReturnToMainMenuButtonClicked;
+    public event Action OnQuitGameButtonClicked;
+
+    //--- Unity Methods ---//
+    private void Awake()
+    {
+        AddButtonListners();
+    }
+
+    private void Update()
+    {
+        HandlePauseKeyInput();
+    }
 
     //--- Public Methods ---//
     /// <summary>
@@ -67,7 +98,52 @@ public class HUDView : MonoBehaviour
             newItem.Setup(effect);
         }
     }
+
+    /// <summary>
+    /// 일시정지 메뉴를 표출합니다.
+    /// </summary>
+    public void ShowPauseMenu()
+    {
+        _pauseMenu.SetActive(true);
+    }
+
+    /// <summary>
+    /// 일시정지 메뉴를 감춥니다.
+    /// </summary>
+    public void HidePauseMenu()
+    {
+        _pauseMenu.SetActive(false);
+    }
+
     //--- Private Methods ---//
+    private void AddButtonListners()
+    {
+        _resumeButton?.onClick.AddListener(() => OnResumeButtonClicked?.Invoke());
+        _pauseButton?.onClick.AddListener(() => OnPauseButtonClicked?.Invoke());
+        _returnToMainMenuButton?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
+        _quitGameButton?.onClick.AddListener(() => OnQuitGameButtonClicked?.Invoke());
+    }
+
+    private void HandlePauseKeyInput()
+    {
+        if (Input.GetKeyDown(_pauseKey))
+        {
+            TogglePauseMenu();
+        }
+    }
+
+    private void TogglePauseMenu()
+    {
+        if (_pauseMenu.activeSelf)
+        {
+            OnResumeButtonClicked?.Invoke();
+        }
+        else
+        {
+            OnPauseButtonClicked?.Invoke();
+        }
+    }
+
     private void UpdateHealthIcons(int currentHealth, int i)
     {
         if (i < currentHealth)
