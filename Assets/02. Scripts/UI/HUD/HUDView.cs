@@ -52,6 +52,7 @@ public class HUDView : MonoBehaviour
     /// <param name="activeEffects"></param>
     public void RefreshBuffs(List<ActiveEffect> activeEffects)
     {
+        // TODO : 성능면에서 조금 아쉬울것 같은데
         // 1. 기존 아이콘 싹 청소
         foreach (Transform child in _contentParent)
         {
