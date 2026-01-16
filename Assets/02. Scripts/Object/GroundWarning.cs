@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class GroundWarning : MonoBehaviour
 {
     [SerializeField] 
@@ -12,10 +13,7 @@ public class GroundWarning : MonoBehaviour
 
     private void Awake()
     {
-        if (_spriteRenderer == null)
-        {
             _spriteRenderer = GetComponent<SpriteRenderer>();
-        }
     }
 
     public void Activate(float duration)
