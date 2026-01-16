@@ -426,6 +426,9 @@ MonoBehaviour:
   - Type: 2
     Prefab: {fileID: 6175650999539524287, guid: 5ed50990fc1889141ace3c019d371ff7, type: 3}
     PoolSize: 5
+  - Type: 3
+    Prefab: {fileID: 9001070013301290477, guid: 08a4447e23161b74f82e153d9a525b54, type: 3}
+    PoolSize: 3
 --- !u!4 &674068052
 Transform:
   m_ObjectHideFlags: 0
@@ -1968,6 +1971,7 @@ MonoBehaviour:
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
     - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
+    - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _detectionSize: {x: 12, y: 5, z: 10}
