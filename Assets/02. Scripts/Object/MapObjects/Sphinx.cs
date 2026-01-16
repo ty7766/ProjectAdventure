@@ -23,6 +23,8 @@ public class Sphinx : MonoBehaviour
     private float _dropHeight = 15f;
     [SerializeField]
     private float _patternInterval = 5f;
+    [SerializeField]
+    private Transform _spawnCenterPoint;
 
     [Header("기믹 타이밍 설정")]
     [SerializeField]
@@ -92,9 +94,9 @@ public class Sphinx : MonoBehaviour
         //돌 개수만큼 낙하 지점 생성
         for (int i = 0; i < _rockCount; i++)
         {
-            Vector3 targetPos = GetRandomPosition();
-            SpawnWarningEffect(targetPos);
-            StartCoroutine(DropRockRoutine(targetPos));
+            Vector3 targetPosition = GetRandomPosition();
+            SpawnWarningEffect(targetPosition);
+            StartCoroutine(DropRockRoutine(targetPosition));
 
             yield return new WaitForSeconds(Random.Range(_randomDurationMin, _randomDurationMax));
         }
@@ -102,16 +104,16 @@ public class Sphinx : MonoBehaviour
 
     private void SpawnWarningEffect(Vector3 position)
     {
-        Vector3 spawnPos = position + Vector3.up * 0.05f;
-        Quaternion rot = Quaternion.Euler(90, 0, 0);
+        Vector3 spawnPosition = position + Vector3.up * 0.08f;
+        Quaternion rotation = Quaternion.Euler(90, 0, 0);
 
         //VFXManager에게 요청
-        GameObject warningObj = VFXManager.Instance.PlayVFX(VFXType.SphinxWarning, spawnPos, rot);
+        GameObject warningObject = VFXManager.Instance.PlayVFX(VFXType.SphinxWarning, spawnPosition, rotation);
 
         // 가져온 오브젝트에서 스크립트 꺼내서 실행
-        if (warningObj != null)
+        if (warningObject != null)
         {
-            GroundWarning warningScript = warningObj.GetComponent<GroundWarning>();
+            GroundWarning warningScript = warningObject.GetComponent<GroundWarning>();
             if (warningScript != null)
             {
                 warningScript.Activate(_warningDuration);
@@ -119,18 +121,25 @@ public class Sphinx : MonoBehaviour
         }
     }
 
-    private IEnumerator DropRockRoutine(Vector3 targetPos)
+    private IEnumerator DropRockRoutine(Vector3 targetPosition)
     {
         yield return new WaitForSeconds(_warningDuration);
 
-        Vector3 spawnPos = targetPos + Vector3.up * _dropHeight;
+        Vector3 spawnPosition = targetPosition + Vector3.up * _dropHeight;
 
-        Instantiate(_rockPrefab, spawnPos, Random.rotation);
+        Instantiate(_rockPrefab, spawnPosition, Random.rotation);
     }
 
     private Vector3 GetRandomPosition()
     {
         Vector2 circle = Random.insideUnitCircle * _spawnRadius;
+
+        Vector3 centerPosition = (_spawnCenterPoint != null) ? _spawnCenterPoint.position : transform.position;
+
+        Vector3 finalPosition = centerPosition + new Vector3(circle.x, 0, circle.y);
+
+        finalPosition.y = centerPosition.y;
+
         return transform.position + new Vector3(circle.x, 0, circle.y);
     }
 }
