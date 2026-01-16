@@ -1,14 +1,26 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class StageManager : MonoBehaviour
 {
+    //--- Components & Settings ---//
     [Header("Components")]
     [SerializeField] private PlayerController playerController;
 
     [Header("Stage Settings")]
     [SerializeField] private int requiredGemsToClear = 1;
 
-    private int collectedGems = 0;
+    //--- Fields ---//
+    private int _collectedGems = 0;
+
+    //--- Events ---//
+    public event Action<int, int> OnGemCountChanged;
+
+    //--- Unity Methods ---//
+    private void Start()
+    {
+        OnGemCountChanged?.Invoke(_collectedGems, requiredGemsToClear);
+    }
 
     //--- Public Methods ---//
     /// <summary>
@@ -16,8 +28,9 @@ public class StageManager : MonoBehaviour
     /// </summary>
     public void CollectGem()
     {
-        collectedGems++;
-        if (collectedGems >= requiredGemsToClear)
+        _collectedGems++;
+        OnGemCountChanged?.Invoke(_collectedGems, requiredGemsToClear);
+        if (_collectedGems >= requiredGemsToClear)
         {
             ClearStage();
         }

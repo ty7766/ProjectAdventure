@@ -5,39 +5,53 @@ public class HUDPresenter : MonoBehaviour
     //--- Settings ---//
     [Header("References")]
     [SerializeField] private PlayerProperties _playerModel;
-    [SerializeField] private HUDView _healthView;
+    [SerializeField] private StageManager _stageManager;
+    [SerializeField] private HUDView _hudView;
 
     //--- Unity Methods ---//
-    private void Start()
+    private void Awake()
     {
         SubscribeEventHandlers();
     }
 
-    private void SubscribeEventHandlers()
+    private void OnDestroy()
     {
         UnsubscribeEventHandlers();
     }
 
     //--- Private Methods ---//
-    private void UnsubscribeEventHandlers()
+    private void SubscribeEventHandlers()
     {
         if (_playerModel != null)
         {
-            _healthView.UpdateHealthUI(_playerModel.Health);
+            _hudView.UpdateHealthUI(_playerModel.Health);
             _playerModel.OnHealthChanged += HandleHealthChanged;
+        }
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged += HandleGemUpdate;
         }
     }
 
-    private void OnDestroy()
+    private void UnsubscribeEventHandlers()
     {
         if (_playerModel != null)
         {
             _playerModel.OnHealthChanged -= HandleHealthChanged;
         }
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged -= HandleGemUpdate;
+        }
     }
 
     private void HandleHealthChanged(int newHealth)
     {
-        _healthView.UpdateHealthUI(newHealth);
+        _hudView.UpdateHealthUI(newHealth);
+    }
+
+    private void HandleGemUpdate(int current, int total)
+    {
+        _hudView.UpdateGemUI(current, total);
     }
 }

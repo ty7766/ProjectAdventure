@@ -84,9 +84,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd5a83c3760a93441b62120ab2f044bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRespawnable: 0
-  respawnTime: 5
-  stageManager: {fileID: 0}
+  _isRespawnable: 0
+  _respawnTime: 5
+  _stageManager: {fileID: 0}
 --- !u!65 &4945316647548543355
 BoxCollider:
   m_ObjectHideFlags: 0
