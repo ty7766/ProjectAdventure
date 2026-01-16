@@ -9,27 +9,37 @@ public enum EffectType
 [CreateAssetMenu(fileName = "NewEffect", menuName = "Effects/Status Effect")]
 public class StatusEffect : ScriptableObject
 {
+    [Header("이펙트 데이터")]
     /// <summary>
     /// 효과의 종류를 정의합니다. (예: 이동 속도, 공격력 등)
     /// </summary>
     public EffectType Type;
 
-    [Header("합연산 시 더해질 수치 (예: 2.0)")]
+    [Tooltip("합연산 시 더해질 수치 (예: 2.0)")]
     /// <summary>
     /// 합연산 시 기본값에 더해질 절대적인 수치입니다.
     /// </summary>
     public float AdditiveValue;
-    [Header("배율연산 시 사용 (예: 0.3이면 30% 증가)")]
+    [Tooltip("배율연산 시 사용 (예: 0.3이면 30% 증가)")]
     /// <summary>
     /// 배율 연산 시 사용되는 계수입니다. (예: 0.3은 30% 증가를 의미)
     /// </summary>
     public float MultiplierValue;
 
-    [Header("효과 지속 시간 (초)")]
-    public float Duration;
-    [Header("중첩 가능 여부")]
+    [SerializeField]
+    [Tooltip("효과 지속 시간 (초)")]
+    private float _duration;
+    public float Duration
+    {
+        get { return Mathf.Max(0,1f, _duration); }
+        set { _duration = Mathf.Max(0.1f, value); }
+    }
     [Tooltip("완전히 동일한 효과 2개를 먹었을 때, 효과가 중첩될지 혹은 시간만 연장될지")]
     public bool IsStackable;
+
+    [Header("UI 표시용")]
+    public Sprite Icon;
+    public string Description;
 }
 
 [System.Serializable]

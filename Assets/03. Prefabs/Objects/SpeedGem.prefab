@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 38237b0f51d85f545a024c6353039d3f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38237b0f51d85f545a024c6353039d3f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38237b0f51d85f545a024c6353039d3f, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38237b0f51d85f545a024c6353039d3f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.9404774
       objectReference: {fileID: 0}
@@ -105,7 +117,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4e1850f0428a4474b964b63101740cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRespawnable: 1
-  respawnTime: 5
-  _playerEffectController: {fileID: 0}
+  _isRespawnable: 0
+  _respawnTime: 5
   _itemEffect: {fileID: 11400000, guid: 6f7d75b923637e24dae369387aa2c6b3, type: 2}
