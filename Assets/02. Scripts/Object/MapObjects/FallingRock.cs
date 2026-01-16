@@ -5,7 +5,7 @@ using UnityEngine.Assertions;
 public class FallingRock : SpecialObject
 {
     //--- Settings ---//
-    [Header("화산탄 속성 설정")]
+    [Header("돌 속성 설정")]
     [SerializeField] 
     private int _damageAmount = 1;
 

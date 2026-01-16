@@ -18,6 +18,11 @@ public class FallingRockSpawner : MonoBehaviour
     [SerializeField]
     private float _spread = 0.3f;        // 탄퍼짐 정도
 
+    [Header("이펙트 설정")]
+    [Tooltip("설정한 값만큼 밑에서 이펙트 출력")]
+    [SerializeField]
+    private float _effectOffsetY = 0.5f;
+
     [Header("기즈모 설정 (예측)")]
     [Tooltip("화산의 높이보다 얼마나 아래로 떨어질지 예측 (보통 화산 높이만큼 입력)")]
     [SerializeField]
@@ -30,7 +35,6 @@ public class FallingRockSpawner : MonoBehaviour
         if (_firePoint == null)
         {
             _firePoint = transform;
-            CustomDebug.LogWarning($"[FallingRockSpawner] '{name}'에 Fire Point가 없어 자신을 발사 지점으로 설정합니다.");
         }
     }
 
@@ -76,6 +80,10 @@ public class FallingRockSpawner : MonoBehaviour
             Vector3 launchDirection = (transform.up + randomSpreadDirection).normalized;
 
             rockRigidbody.AddForce(launchDirection * _launchSpeed, ForceMode.VelocityChange);
+
+            Vector3 effectPosition = _firePoint.position;
+            effectPosition.y -= _effectOffsetY;
+            VFXManager.Instance.PlayVFX(VFXType.VolcanoFire, effectPosition, _firePoint.rotation);
         }
         else
         {
