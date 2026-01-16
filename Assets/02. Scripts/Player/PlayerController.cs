@@ -79,6 +79,18 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    //지속 장판 관련
+    private void OnCollisionStay(Collision collision)
+    {
+        //데드존에 지속적으로 있을 때
+        if (collision.gameObject.CompareTag("Dead"))
+        {
+            //Stay는 매 프레임 실행
+            //but 무적시간으로 영향 X
+            TakeDamage(1);
+        }
+    }
+
     //--- Public Methods ---//
     /// <summary>
     /// 플레이어에게 데미지를 적용합니다. 일반적으로 데미지는 1이어야 하지만 기획에 따라 다를 수 있습니다.
@@ -225,17 +237,5 @@ public class PlayerController : MonoBehaviour
     {
         yield return wfs;
         _isMovable = true;
-    }
-
-    //지속 장판 관련
-    private void OnCollisionStay(Collision collision)
-    {
-        //데드존에 지속적으로 있을 때
-        if (collision.gameObject.CompareTag("Dead"))
-        {
-            //Stay는 매 프레임 실행
-            //but 무적시간으로 영향 X
-            TakeDamage(1);
-        }
     }
 }

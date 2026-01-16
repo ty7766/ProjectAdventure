@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlayerProperties : MonoBehaviour
 {
@@ -11,11 +12,17 @@ public class PlayerProperties : MonoBehaviour
     [SerializeField]
     private float _turnSpeed = 15f;
 
+    //--- Events ---//
+    public event Action<int> OnHealthChanged;
+
     //--- Properties ---//
     public int Health
     {
         get { return _health; }
-        set { _health = Mathf.Max(0, value); } // Ensure health doesn't go below 0
+        set { 
+            _health = Mathf.Max(0, value);
+            OnHealthChanged?.Invoke(_health);
+        } // Ensure health doesn't go below 0
     }
 
     public float Speed
