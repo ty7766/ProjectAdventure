@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(HUDView))]
 public class HUDPresenter : MonoBehaviour
 {
     //--- Settings ---//
@@ -7,11 +8,12 @@ public class HUDPresenter : MonoBehaviour
     [SerializeField] private PlayerProperties _playerModel;
     [SerializeField] private PlayerEffectController _effectController;
     [SerializeField] private StageManager _stageManager;
-    [SerializeField] private HUDView _hudView;
+    private HUDView _hudView;
 
     //--- Unity Methods ---//
     private void Awake()
     {
+        GetRequiredComponents();
         SubscribeEventHandlers();
     }
 
@@ -21,6 +23,11 @@ public class HUDPresenter : MonoBehaviour
     }
 
     //--- Private Methods ---//
+    private void GetRequiredComponents()
+    {
+        _hudView = GetComponent<HUDView>();
+    }
+
     private void SubscribeEventHandlers()
     {
         if (_playerModel != null)
