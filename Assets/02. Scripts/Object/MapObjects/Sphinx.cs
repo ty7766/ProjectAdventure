@@ -1,21 +1,18 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Build;
-
-public class EmissionOptions
-{
-    public const string EmissionKeyword = "_EMISSION";
-    public const string EmissionColor = "_EmissionColor";
-}
 
 public class Sphinx : MonoBehaviour
 {
     [Header("연결 요소")]
     [SerializeField]
     private GameObject _rockPrefab;
+
+    [Header("눈 이펙트 및 위치 설정")]
     [SerializeField]
-    private Renderer _sphinxEyeRenderer;
+    private GameObject _eyeEffectPrefab;
+    [SerializeField]
+    private Transform[] _eyes;
 
     [Header("기믹 패턴 설정")]
     [SerializeField]
@@ -37,24 +34,32 @@ public class Sphinx : MonoBehaviour
     [SerializeField]
     private float _randomDurationMax = 0.3f;
 
-    [Header("눈 이펙트")]
-    [SerializeField]
-    [ColorUsage(true, true)]        //HDR 컬러 사용을 위해 추가
-    private Color _glowColor = Color.red * 5f;
+    private List<GameObject> _spawnedEyeEffects = new List<GameObject>();
 
-    private MaterialPropertyBlock _materialPropertyBlock;
-    private int _emissionColorID;
-
-    private void Awake()
-    {
-        _emissionColorID = Shader.PropertyToID(EmissionOptions.EmissionColor);
-        _materialPropertyBlock = new MaterialPropertyBlock();
-    }
     private void Start()
     {
+        SetupEyeEffects();
         StartCoroutine(PatternLoop());
     }
 
+    private void SetupEyeEffects()
+    {
+        if (_eyeEffectPrefab == null || _eyes == null || _eyes.Length == 0)
+        {
+            Debug.LogError("스핑크스 눈 이펙트 설정이 누락되었습니다!");
+            return;
+        }
+
+        foreach (Transform anchor in _eyes)
+        {
+            if (anchor != null)
+            {
+                GameObject effect = Instantiate(_eyeEffectPrefab, anchor.position, anchor.rotation, anchor);
+                effect.SetActive(false);
+                _spawnedEyeEffects.Add(effect);
+            }
+        }
+    }
     private IEnumerator PatternLoop()
     {
         while(true)
@@ -62,12 +67,23 @@ public class Sphinx : MonoBehaviour
             yield return new WaitForSeconds(_patternInterval);
 
             //눈 이펙트 활성
-            SetEyeEmission(true);
+            SetEyeEffectActive(true);
             yield return new WaitForSeconds(_eyeGlowDuration);
-            SetEyeEmission(false);
+            SetEyeEffectActive(false);
 
             //공격 시작
             StartCoroutine(SpawnRocksSequence());
+        }
+    }
+
+    private void SetEyeEffectActive(bool isActive)
+    {
+        foreach (GameObject effect in _spawnedEyeEffects)
+        {
+            if (effect != null)
+            {
+                effect.SetActive(isActive);
+            }
         }
     }
 
@@ -110,19 +126,6 @@ public class Sphinx : MonoBehaviour
         Vector3 spawnPos = targetPos + Vector3.up * _dropHeight;
 
         Instantiate(_rockPrefab, spawnPos, Random.rotation);
-    }
-
-    private void SetEyeEmission(bool isGlowing)
-    {
-        if(_sphinxEyeRenderer == null)
-        {
-            return;
-        }
-
-        _sphinxEyeRenderer.GetPropertyBlock(_materialPropertyBlock);
-        Color targetColor = isGlowing ? _glowColor : Color.black;
-        _materialPropertyBlock.SetColor(_emissionColorID, targetColor);
-        _sphinxEyeRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 
     private Vector3 GetRandomPosition()
