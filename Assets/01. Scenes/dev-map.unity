@@ -1970,6 +1970,10 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
+    - {fileID: 1509016994126531578, guid: fa426cff3f361d94498abea2d966ae9e, type: 3}
+    - {fileID: 9127166993104370049, guid: e8ba2d15b0c99ee47b9f63574fc29325, type: 3}
+    - {fileID: 8290647674106872464, guid: 20b89a1b3c08cc3409f0f3edaf39a742, type: 3}
+    - {fileID: 5115908956258582257, guid: c3056e18d5d04b44aad9e762e9694b72, type: 3}
     - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
     - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
     CurrentActivePath: {fileID: 0}
