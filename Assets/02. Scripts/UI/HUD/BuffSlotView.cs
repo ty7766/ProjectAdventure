@@ -26,6 +26,12 @@ public class BuffSlotView : MonoBehaviour
     /// <param name="effect"></param>
     public void Setup(ActiveEffect effect)
     {
+        if(effect?.Data == null)
+        {
+            CustomDebug.LogWarning("BuffSlotView Setup called with null effect data.");
+            return;
+        }
+
         _targetEffect = effect;
         _iconImage.sprite = effect.Data.Icon;
         _descriptionText.text = effect.Data.Description;
@@ -33,6 +39,10 @@ public class BuffSlotView : MonoBehaviour
         if (effect.IsPermanent)
         {
             _durationFillImage.fillAmount = 1f;
+        }
+        else
+        {
+            UpdateDurationFill();
         }
     }
 
