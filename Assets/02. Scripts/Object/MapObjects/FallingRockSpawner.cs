@@ -83,6 +83,7 @@ public class FallingRockSpawner : MonoBehaviour
         if (rockRigidbody == null)
         {
             CustomDebug.LogError($"[FallingRockSpawner] 프리팹 '{rock.name}'에 Rigidbody가 없습니다!");
+            Destroy(rock);
             return;
         }
 
