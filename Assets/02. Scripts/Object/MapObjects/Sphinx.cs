@@ -15,8 +15,6 @@ public class Sphinx : MonoBehaviour
     [SerializeField]
     private GameObject _rockPrefab;
     [SerializeField]
-    private GameObject _warningPrefab;
-    [SerializeField]
     private Renderer _sphinxEyeRenderer;
 
     [Header("기믹 패턴 설정")]
@@ -27,7 +25,7 @@ public class Sphinx : MonoBehaviour
     [SerializeField]
     private float _dropHeight = 15f;
     [SerializeField]
-    private float _patternInterval = 5;
+    private float _patternInterval = 5f;
 
     [Header("기믹 타이밍 설정")]
     [SerializeField]
@@ -43,23 +41,18 @@ public class Sphinx : MonoBehaviour
     [SerializeField]
     [ColorUsage(true, true)]        //HDR 컬러 사용을 위해 추가
     private Color _glowColor = Color.red * 5f;
-    private Color _originalEyeColor;
-    private Material _eyeMaterial;
 
+    private MaterialPropertyBlock _materialPropertyBlock;
+    private int _emissionColorID;
+
+    private void Awake()
+    {
+        _emissionColorID = Shader.PropertyToID(EmissionOptions.EmissionColor);
+        _materialPropertyBlock = new MaterialPropertyBlock();
+    }
     private void Start()
     {
-        CheckMaterialInstanceForSphinxEyes();
         StartCoroutine(PatternLoop());
-    }
-
-    private void CheckMaterialInstanceForSphinxEyes()
-    {
-        if(_sphinxEyeRenderer != null)
-        {
-            _eyeMaterial = _sphinxEyeRenderer.material;
-            _eyeMaterial.EnableKeyword(EmissionOptions.EmissionKeyword);
-            _originalEyeColor = _eyeMaterial.GetColor(EmissionOptions.EmissionColor);
-        }
     }
 
     private IEnumerator PatternLoop()
@@ -74,20 +67,39 @@ public class Sphinx : MonoBehaviour
             SetEyeEmission(false);
 
             //공격 시작
-            StartCoroutine(SpawnRocksSequance());
+            StartCoroutine(SpawnRocksSequence());
         }
     }
 
-    private IEnumerator SpawnRocksSequance()
+    private IEnumerator SpawnRocksSequence()
     {
         //돌 개수만큼 낙하 지점 생성
         for (int i = 0; i < _rockCount; i++)
         {
             Vector3 targetPos = GetRandomPosition();
-            SpawnWarning(targetPos);
+            SpawnWarningEffect(targetPos);
             StartCoroutine(DropRockRoutine(targetPos));
 
             yield return new WaitForSeconds(Random.Range(_randomDurationMin, _randomDurationMax));
+        }
+    }
+
+    private void SpawnWarningEffect(Vector3 position)
+    {
+        Vector3 spawnPos = position + Vector3.up * 0.05f;
+        Quaternion rot = Quaternion.Euler(90, 0, 0);
+
+        //VFXManager에게 요청
+        GameObject warningObj = VFXManager.Instance.PlayVFX(VFXType.SphinxWarning, spawnPos, rot);
+
+        // 가져온 오브젝트에서 스크립트 꺼내서 실행
+        if (warningObj != null)
+        {
+            GroundWarning warningScript = warningObj.GetComponent<GroundWarning>();
+            if (warningScript != null)
+            {
+                warningScript.Activate(_warningDuration);
+            }
         }
     }
 
@@ -100,40 +112,22 @@ public class Sphinx : MonoBehaviour
         Instantiate(_rockPrefab, spawnPos, Random.rotation);
     }
 
-    private void SpawnWarning(Vector3 targetPos)
-    {
-        if (_warningPrefab == null) return;
-
-        Vector3 warningPos = targetPos + Vector3.up * 0.05f;
-
-        GameObject marker = Instantiate(_warningPrefab, warningPos, Quaternion.Euler(90, 0, 0));
-
-        GroundWarning groundWarningScript = marker.GetComponent<GroundWarning>();
-
-        if (groundWarningScript != null)
-        {
-            groundWarningScript.Activate(_warningDuration);
-        }
-    }
-
     private void SetEyeEmission(bool isGlowing)
     {
-        if(_eyeMaterial == null)
+        if(_sphinxEyeRenderer == null)
         {
             return;
         }
 
-        Color targetColor = isGlowing ? _glowColor : _originalEyeColor;
-        _eyeMaterial.SetColor(EmissionOptions.EmissionColor, targetColor);
+        _sphinxEyeRenderer.GetPropertyBlock(_materialPropertyBlock);
+        Color targetColor = isGlowing ? _glowColor : Color.black;
+        _materialPropertyBlock.SetColor(_emissionColorID, targetColor);
+        _sphinxEyeRenderer.SetPropertyBlock(_materialPropertyBlock);
     }
 
     private Vector3 GetRandomPosition()
     {
-        Vector2 randomCircle = Random.insideUnitCircle * _spawnRadius;
-        Vector3 pos = transform.position + new Vector3(randomCircle.x, 0, randomCircle.y);
-
-        pos.y = 0;
-
-        return pos;
+        Vector2 circle = Random.insideUnitCircle * _spawnRadius;
+        return transform.position + new Vector3(circle.x, 0, circle.y);
     }
 }

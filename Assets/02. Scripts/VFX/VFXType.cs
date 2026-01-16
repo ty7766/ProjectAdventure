@@ -3,4 +3,5 @@ public enum VFXType
 {
     None = 0,
     Snow,
+    SphinxWarning,
 }

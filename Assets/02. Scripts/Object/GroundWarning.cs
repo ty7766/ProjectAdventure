@@ -10,12 +10,21 @@ public class GroundWarning : MonoBehaviour
     [SerializeField]
     private SpriteRenderer _spriteRenderer;
 
-    private bool _isActivate = false;
-
     private void Awake()
     {
         if (_spriteRenderer == null)
             _spriteRenderer = GetComponent<SpriteRenderer>();
+    }
+
+    private void OnEnable()
+    {
+        //색상 초기화
+        if(_spriteRenderer != null)
+        {
+            Color color = _spriteRenderer.color;
+            color.a = 0f;
+            _spriteRenderer.color = color;
+        }
     }
 
     /// <summary>
@@ -24,7 +33,7 @@ public class GroundWarning : MonoBehaviour
     /// <param name="duration">주기</param>
     public void Activate(float duration)
     {
-        _isActivate = true;
+        StopAllCoroutines();
         StartCoroutine(BlinkRoutine(duration));
     }
 
@@ -32,9 +41,6 @@ public class GroundWarning : MonoBehaviour
     {
         float timer = 0f;
         Color originalColor = _spriteRenderer.color;
-
-        originalColor.a = 0f;
-        _spriteRenderer.color = originalColor;
 
         while(timer < duration)
         {
@@ -48,6 +54,8 @@ public class GroundWarning : MonoBehaviour
             yield return null;
         }
 
-        Destroy(gameObject);
+        //VFXManager의 Pool로 되돌아감
+        //연출시간이 가변적이므로 VFXReturnToPool 사용X
+        gameObject.SetActive(false);
     }
 }
