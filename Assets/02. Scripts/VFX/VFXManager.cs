@@ -32,14 +32,12 @@ public class VFXManager : MonoBehaviour
         if(_instance == null)
         {
             _instance = this;
+            InitializePool();
         }
         else
         {
             Destroy(gameObject);
-            return;
         }
-
-        InitializePool();
     }
 
     /// <summary>
@@ -47,11 +45,12 @@ public class VFXManager : MonoBehaviour
     /// </summary>
     /// <param name="type">VFX타입</param>
     /// <param name="position">이펙트 생성될 위치</param>
-    public void PlayVFX(VFXType type, Vector3 position)
+    public GameObject PlayVFX(VFXType type, Vector3 position, Quaternion rotation = default)
     {
         if(!_poolDictionary.ContainsKey(type))
         {
-            return;
+            CustomDebug.LogWarning($"VFXManager: {type} 타입의 풀이 존재하지 않습니다.");
+            return null;
         }
 
         //대기열 비었으면 추가 생성
@@ -64,15 +63,28 @@ public class VFXManager : MonoBehaviour
             }
             else
             {
-                CustomDebug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다. 새 오브젝트를 생성할 수 없습니다.");
-                return;
+                CustomDebug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다.");
+                return null;
             }
         }
 
-
         GameObject obj = _poolDictionary[type].Dequeue();
         obj.transform.position = position;
+        obj.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
         obj.SetActive(true);
+
+        return obj;
+    }
+
+    /// <summary>
+    /// 기존 호환성을 위한 오버로딩
+    /// </summary>
+    /// <param name="type"></param>
+    /// <param name="position"></param>
+    /// <returns></returns>
+    public GameObject PlayVFX(VFXType type, Vector3 position)
+    {
+        return PlayVFX(type, position, Quaternion.identity);
     }
 
     /// <summary>
@@ -89,6 +101,8 @@ public class VFXManager : MonoBehaviour
     //설정된 개수만큼 미리 생성
     private void InitializePool()
     {
+        _poolDictionary.Clear();        //중복 방지
+
         foreach(var data in _vfxList)
         {
             if(!_poolDictionary.ContainsKey(data.Type))
