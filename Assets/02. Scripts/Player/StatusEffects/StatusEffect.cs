@@ -25,10 +25,13 @@ public class StatusEffect : ScriptableObject
     /// 배율 연산 시 사용되는 계수입니다. (예: 0.3은 30% 증가를 의미)
     /// </summary>
     public float MultiplierValue;
+
+    [SerializeField]
+    [Tooltip("효과 지속 시간 (초)")]
     private float _duration;
     public float Duration
     {
-        get { return _duration; }
+        get { return Mathf.Max(0,1f, _duration); }
         set { _duration = Mathf.Max(0.1f, value); }
     }
     [Tooltip("완전히 동일한 효과 2개를 먹었을 때, 효과가 중첩될지 혹은 시간만 연장될지")]
