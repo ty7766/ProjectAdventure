@@ -7,9 +7,8 @@ public class GemObject : SpecialObject
     [Header("Components")]
     [SerializeField] private StageManager _stageManager;
 
-    protected override void Awake()
+    private void Start()
     {
-        base.Awake();
         FindStageManagerWhenIsNull();
     }
 
@@ -21,6 +20,11 @@ public class GemObject : SpecialObject
     //--- Private Methods ---//
     private void CollectGem()
     {
+        if(_stageManager == null)
+        {
+            FindStageManagerWhenIsNull();
+        }
+
         if (_stageManager != null)
         {
             _stageManager.CollectGem();
