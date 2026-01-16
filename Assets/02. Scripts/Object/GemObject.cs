@@ -31,7 +31,7 @@ public class GemObject : SpecialObject
         }
         else
         {
-            Debug.LogWarning("StageManager reference is missing in GemObject.");
+            CustomDebug.LogWarning("StageManager reference is missing in GemObject.");
         }
     }
 
