@@ -19,12 +19,6 @@ public class BuffSlotView : MonoBehaviour
         UpdateDurationFill();
     }
 
-    private void UpdateDurationFill()
-    {
-        float ratio = _targetEffect.RemainingDuration / _targetEffect.Data.Duration;
-        _durationFillImage.fillAmount = ratio;
-    }
-
     //--- Public Methods ---//
     /// <summary>
     /// 초기 데이터를 세팅합니다.
@@ -40,6 +34,12 @@ public class BuffSlotView : MonoBehaviour
         {
             _durationFillImage.fillAmount = 1f;
         }
+    }
+
+    private void UpdateDurationFill()
+    {
+        float ratio = _targetEffect.RemainingDuration / _targetEffect.Data.Duration;
+        _durationFillImage.fillAmount = ratio;
     }
 
 }
