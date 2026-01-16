@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -11,6 +12,9 @@ public class PlayerEffectController : MonoBehaviour
     //--- Fields ---//
     private List<ActiveEffect> _activeEffects = new List<ActiveEffect>();
     private float _baseSpeed;
+
+    //--- Events ---//
+    public event Action<List<ActiveEffect>> OnBuffListChanged;
 
     //--- Unity Methods ---//
     private void Awake()
@@ -39,6 +43,7 @@ public class PlayerEffectController : MonoBehaviour
         else
         {
             _activeEffects.Add(new ActiveEffect(effectData));
+            OnBuffListChanged?.Invoke(_activeEffects);
         }
         UpdateFinalStats();
     }
@@ -61,6 +66,7 @@ public class PlayerEffectController : MonoBehaviour
         {
             var effect = new ActiveEffect(effectData, true);
             _activeEffects.Add(effect);
+            OnBuffListChanged?.Invoke(_activeEffects);
         }
 
         UpdateFinalStats();
@@ -112,7 +118,11 @@ public class PlayerEffectController : MonoBehaviour
             }
         }
 
-        if (changed) UpdateFinalStats();
+        if (changed)
+        {
+            UpdateFinalStats();
+            OnBuffListChanged?.Invoke(_activeEffects);
+        }
     }
 
     private void CalculateSpeed()

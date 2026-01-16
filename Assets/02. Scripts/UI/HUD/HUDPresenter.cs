@@ -5,6 +5,7 @@ public class HUDPresenter : MonoBehaviour
     //--- Settings ---//
     [Header("References")]
     [SerializeField] private PlayerProperties _playerModel;
+    [SerializeField] private PlayerEffectController _effectController;
     [SerializeField] private StageManager _stageManager;
     [SerializeField] private HUDView _hudView;
 
@@ -31,6 +32,10 @@ public class HUDPresenter : MonoBehaviour
         {
             _stageManager.OnGemCountChanged += HandleGemUpdate;
         }
+        if (_effectController != null)
+        {
+            _effectController.OnBuffListChanged += HandleBuffChange;
+        }
     }
 
     private void UnsubscribeEventHandlers()
@@ -43,6 +48,10 @@ public class HUDPresenter : MonoBehaviour
         {
             _stageManager.OnGemCountChanged -= HandleGemUpdate;
         }
+        if (_effectController != null)
+        {
+            _effectController.OnBuffListChanged -= HandleBuffChange;
+        }
     }
 
     private void HandleHealthChanged(int newHealth)
@@ -53,5 +62,10 @@ public class HUDPresenter : MonoBehaviour
     private void HandleGemUpdate(int current, int total)
     {
         _hudView.UpdateGemUI(current, total);
+    }
+
+    private void HandleBuffChange(System.Collections.Generic.List<ActiveEffect> effects)
+    {
+        _hudView.RefreshBuffs(effects);
     }
 }

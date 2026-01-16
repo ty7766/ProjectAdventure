@@ -12,6 +12,8 @@ public class HUDView : MonoBehaviour
     [SerializeField] private List<Image> _gemImages; // 보석 아이콘 리스트
     [SerializeField] private Color _fullGemColor; // 수집한 보석 색상
     [SerializeField] private Color _emptyGemColor; // 빈 보석 이미지 색상
+    [SerializeField] private Transform _contentParent;
+    [SerializeField] private BuffSlotView _buffItemPrefab;
 
 
     //--- Public Methods ---//
@@ -44,6 +46,25 @@ public class HUDView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 버프 리스트 업데이트
+    /// </summary>
+    /// <param name="activeEffects"></param>
+    public void RefreshBuffs(List<ActiveEffect> activeEffects)
+    {
+        // 1. 기존 아이콘 싹 청소
+        foreach (Transform child in _contentParent)
+        {
+            Destroy(child.gameObject);
+        }
+
+        // 2. 새 리스트대로 생성
+        foreach (var effect in activeEffects)
+        {
+            BuffSlotView newItem = Instantiate(_buffItemPrefab, _contentParent);
+            newItem.Setup(effect);
+        }
+    }
     //--- Private Methods ---//
     private void UpdateHealthIcons(int currentHealth, int i)
     {
