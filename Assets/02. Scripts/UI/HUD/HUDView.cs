@@ -36,11 +36,12 @@ public class HUDView : MonoBehaviour
     /// <param name="requiredGems">스테이지 클리어에 필요한 보석 개수</param>
     public void UpdateGemUI(int collectedGems, int requiredGems)
     {
-        for(int i=0; i< requiredGems; i++)
+        int safeRequired = Mathf.Clamp(requiredGems, 0, _gemImages.Count);
+        for (int i=0; i< safeRequired; i++)
         {
             UpdateGemIcons(collectedGems, i);
         }
-        for (int i = requiredGems; i< _gemImages.Count; i++)
+        for (int i = safeRequired; i< _gemImages.Count; i++)
         {
             _gemImages[i].gameObject.SetActive(false);
         }
