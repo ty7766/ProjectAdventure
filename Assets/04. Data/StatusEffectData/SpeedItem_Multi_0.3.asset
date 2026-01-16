@@ -15,7 +15,7 @@ MonoBehaviour:
   Type: 1
   AdditiveValue: 0
   MultiplierValue: 0.3
-  Duration: 5
+  _duration: 1
   IsStackable: 0
   Icon: {fileID: 21300052, guid: 1eaee135ce037439d925cee5e41ce026, type: 3}
   Description: "\uC774\uB3D9\uC18D\uB3C4 30% \uC99D\uAC00"
