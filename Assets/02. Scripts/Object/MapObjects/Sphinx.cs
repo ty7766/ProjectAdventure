@@ -140,6 +140,6 @@ public class Sphinx : MonoBehaviour
 
         finalPosition.y = centerPosition.y;
 
-        return transform.position + new Vector3(circle.x, 0, circle.y);
+        return finalPosition;
     }
 }
