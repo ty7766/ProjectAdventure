@@ -17,6 +17,7 @@ public class StageManager : MonoBehaviour
 
     //--- Events ---//
     public event Action<int, int> OnGemCountChanged;
+    public event Action OnStageCleared;
 
     //--- Unity Methods ---//
     private void Start()
@@ -99,7 +100,7 @@ public class StageManager : MonoBehaviour
     {
         CustomDebug.Log("Stage Cleared!");
         DisablePlayerControl();
-        PauseGameSmoothly(1f);
+        OnStageCleared?.Invoke();
     }
 
     private void DisablePlayerControl()
