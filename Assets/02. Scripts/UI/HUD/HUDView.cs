@@ -28,13 +28,22 @@ public class HUDView : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _pauseButton;
     [SerializeField] private UnityEngine.UI.Button _returnToMainMenuButton;
     [SerializeField] private UnityEngine.UI.Button _quitGameButton;
-    
 
     //--- Events ---//
     public event Action OnResumeButtonClicked;
     public event Action OnPauseButtonClicked;
     public event Action OnReturnToMainMenuButtonClicked;
     public event Action OnQuitGameButtonClicked;
+
+    //--- Fields ---//
+    private bool _isPauseMenuActive = true;
+
+    //--- Properties ---//
+    public bool IsPauseMenuActive
+    {
+        get { return _isPauseMenuActive; }
+        set { _isPauseMenuActive = value; }
+    }
 
     //--- Unity Methods ---//
     private void Awake()
@@ -104,9 +113,8 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void ShowPauseMenu()
     {
-        if(_pauseMenu == null)
+        if (_pauseMenu == null || !IsPauseMenuActive)
         {
-            CustomDebug.LogWarning("Pause menu reference is missing.");
             return;
         }
         _pauseMenu.SetActive(true);
@@ -117,9 +125,8 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void HidePauseMenu()
     {
-        if (_pauseMenu == null)
+        if (_pauseMenu == null || !IsPauseMenuActive)
         {
-            CustomDebug.LogWarning("Pause menu reference is missing.");
             return;
         }
         _pauseMenu.SetActive(false);
@@ -136,7 +143,7 @@ public class HUDView : MonoBehaviour
 
     private void HandlePauseKeyInput()
     {
-        if (Input.GetKeyDown(_pauseKey))
+        if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
         {
             TogglePauseMenu();
         }
@@ -144,9 +151,8 @@ public class HUDView : MonoBehaviour
 
     private void TogglePauseMenu()
     {
-        if (_pauseMenu == null)
+        if (_pauseMenu == null || !IsPauseMenuActive)
         {
-            CustomDebug.LogWarning("Pause menu reference is missing.");
             return;
         }
 

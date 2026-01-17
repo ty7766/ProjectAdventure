@@ -34,10 +34,12 @@ public class HUDPresenter : MonoBehaviour
         {
             _hudView.UpdateHealthUI(_playerModel.Health);
             _playerModel.OnHealthChanged += HandleHealthChanged;
+            _playerModel.OnPlayerDeath += HandlePlayerDeath;
         }
         if (_stageManager != null)
         {
             _stageManager.OnGemCountChanged += HandleGemUpdate;
+            _stageManager.OnStageCleared += HandleStageClear;
         }
         if (_effectController != null)
         {
@@ -57,10 +59,12 @@ public class HUDPresenter : MonoBehaviour
         if (_playerModel != null)
         {
             _playerModel.OnHealthChanged -= HandleHealthChanged;
+            _playerModel.OnPlayerDeath -= HandlePlayerDeath;
         }
         if (_stageManager != null)
         {
             _stageManager.OnGemCountChanged -= HandleGemUpdate;
+            _stageManager.OnStageCleared -= HandleStageClear;
         }
         if (_effectController != null)
         {
@@ -114,5 +118,27 @@ public class HUDPresenter : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+    private void HandlePlayerDeath()
+    {
+        _stageManager?.PauseGameSmoothly(1f);
+        if(_hudView != null)
+        {
+            _hudView.IsPauseMenuActive = false;
+            //TODO : 게임 오버 UI 표시
+
+        }
+    }
+
+    private void HandleStageClear()
+    {
+        _stageManager?.PauseGameSmoothly(1f);
+        if (_hudView != null)
+        {
+            _hudView.IsPauseMenuActive = false;
+            //TODO : 스테이지 클리어 UI 표시
+
+        }
     }
 }
