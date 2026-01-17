@@ -423,6 +423,12 @@ MonoBehaviour:
   - Type: 1
     Prefab: {fileID: 9007009797279911586, guid: bd262cba89e56aa4dbb1a89c51c1bf43, type: 3}
     PoolSize: 10
+  - Type: 2
+    Prefab: {fileID: 6175650999539524287, guid: 5ed50990fc1889141ace3c019d371ff7, type: 3}
+    PoolSize: 5
+  - Type: 3
+    Prefab: {fileID: 9001070013301290477, guid: 08a4447e23161b74f82e153d9a525b54, type: 3}
+    PoolSize: 3
 --- !u!4 &674068052
 Transform:
   m_ObjectHideFlags: 0
@@ -1964,8 +1970,12 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
+    - {fileID: 1509016994126531578, guid: fa426cff3f361d94498abea2d966ae9e, type: 3}
+    - {fileID: 9127166993104370049, guid: e8ba2d15b0c99ee47b9f63574fc29325, type: 3}
+    - {fileID: 8290647674106872464, guid: 20b89a1b3c08cc3409f0f3edaf39a742, type: 3}
+    - {fileID: 5115908956258582257, guid: c3056e18d5d04b44aad9e762e9694b72, type: 3}
+    - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
     - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
-    - {fileID: 372187102251910809, guid: ea251467e8c374f4d85704e93d34dcd8, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _detectionSize: {x: 12, y: 5, z: 10}
