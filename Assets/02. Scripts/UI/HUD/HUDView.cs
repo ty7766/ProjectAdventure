@@ -39,7 +39,7 @@ public class HUDView : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        AddButtonListners();
+        AddButtonListeners();
     }
 
     private void Update()
@@ -104,6 +104,11 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void ShowPauseMenu()
     {
+        if(_pauseMenu == null)
+        {
+            CustomDebug.LogWarning("Pause menu reference is missing.");
+            return;
+        }
         _pauseMenu.SetActive(true);
     }
 
@@ -112,11 +117,16 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void HidePauseMenu()
     {
+        if (_pauseMenu == null)
+        {
+            CustomDebug.LogWarning("Pause menu reference is missing.");
+            return;
+        }
         _pauseMenu.SetActive(false);
     }
 
     //--- Private Methods ---//
-    private void AddButtonListners()
+    private void AddButtonListeners()
     {
         _resumeButton?.onClick.AddListener(() => OnResumeButtonClicked?.Invoke());
         _pauseButton?.onClick.AddListener(() => OnPauseButtonClicked?.Invoke());
@@ -134,6 +144,12 @@ public class HUDView : MonoBehaviour
 
     private void TogglePauseMenu()
     {
+        if (_pauseMenu == null)
+        {
+            CustomDebug.LogWarning("Pause menu reference is missing.");
+            return;
+        }
+
         if (_pauseMenu.activeSelf)
         {
             OnResumeButtonClicked?.Invoke();

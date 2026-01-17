@@ -92,13 +92,13 @@ public class HUDPresenter : MonoBehaviour
 
     private void HandlePauseButtonClicked()
     {
-        _stageManager.PauseGameSmoothly();
+        _stageManager?.PauseGameSmoothly();
         _hudView.ShowPauseMenu();
     }
 
     private void HandleResumeButtonClicked()
     {
-        _stageManager.ResumeGameSmoothly();
+        _stageManager?.ResumeGameSmoothly();
         _hudView.HidePauseMenu();
     }
 
