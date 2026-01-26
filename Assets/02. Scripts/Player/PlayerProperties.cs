@@ -14,6 +14,7 @@ public class PlayerProperties : MonoBehaviour
 
     //--- Events ---//
     public event Action<int> OnHealthChanged;
+    public event Action OnPlayerDeath;
 
     //--- Properties ---//
     public int Health
@@ -22,6 +23,10 @@ public class PlayerProperties : MonoBehaviour
         set { 
             _health = Mathf.Max(0, value);
             OnHealthChanged?.Invoke(_health);
+            if (_health <= 0)
+            {
+                OnPlayerDeath?.Invoke();
+            }
         } // Ensure health doesn't go below 0
     }
 
