@@ -64,7 +64,15 @@ public class TitleView : MonoBehaviour
     {
         if (_playButton != null && _onPlayButtonClicked != null)
         {
-            _playButton.onClick.RemoveListener(_titlePresenter.OnPlayButtonClicked);
+            _playButton.onClick.RemoveListener(_onPlayButtonClicked);
+        }
+        if (_optionsButton != null && _onOptionsButtonClicked != null)
+        {
+            _optionsButton.onClick.RemoveListener(_onOptionsButtonClicked);
+        }
+        if (_exitButton != null && _onExitButtonClicked != null)
+        {
+            _exitButton.onClick.RemoveListener(_onExitButtonClicked);
         }
     }
 }
