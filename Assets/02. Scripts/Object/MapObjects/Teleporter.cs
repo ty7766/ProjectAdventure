@@ -56,10 +56,7 @@ public class Teleporter : MonoBehaviour
     }
 
     /// <summary>
-    /// 무한 루프 방지 쿨타임을 설정하는 메소드
-    /// </summary>
-    /// <summary>
-    /// Begins a cooldown during which this teleporter cannot be used.
+    /// 무한 루프 방지 쿨타임을 설정하는 메소드 Begins a cooldown during which this teleporter cannot be used.
     /// </summary>
     /// <param name="duration">Cooldown duration in seconds during which the teleporter is disabled.</param>
     public void ReceivePlayer(float duration)
