@@ -8,7 +8,7 @@ public class SaveData
 }
 
 [System.Serializable]
-public class StageSaveRecord
+public class StageSaveRecord : ISerializationCallbackReceiver
 {
     public int StageNumber;
     public bool IsCleared;
@@ -19,6 +19,16 @@ public class StageSaveRecord
         StageNumber = number;
         IsCleared = cleared;
         AcquiredStars = Mathf.Clamp(stars, 0, 3);
+    }
+
+    public void OnBeforeSerialize()
+    {
+
+    }
+    
+    public void OnAfterDeserialize()
+    {
+        AcquiredStars = Mathf.Clamp(AcquiredStars, 0, 3);
     }
 }
 
