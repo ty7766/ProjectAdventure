@@ -18,7 +18,7 @@ public class StageSaveRecord
     {
         StageNumber = number;
         IsCleared = cleared;
-        AcquiredStars = stars;
+        AcquiredStars = Mathf.Clamp(stars, 0, 3);
     }
 }
 
@@ -37,6 +37,10 @@ public class StageEntryRuntime
 
     public StageEntryRuntime(StageData data, bool cleared, int stars)
     {
+        if (data == null)
+        {
+            throw new System.ArgumentNullException(nameof(data));
+        }
         Data = data;
         IsCleared = cleared;
         AcquiredStars = stars;
