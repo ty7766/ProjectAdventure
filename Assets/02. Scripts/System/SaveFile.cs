@@ -1,0 +1,44 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class SaveData
+{
+    public List<StageSaveRecord> StageRecords = new List<StageSaveRecord>();
+}
+
+[System.Serializable]
+public class StageSaveRecord
+{
+    public int StageNumber;
+    public bool IsCleared;
+    public int AcquiredStars;
+
+    public StageSaveRecord(int number, bool cleared, int stars)
+    {
+        StageNumber = number;
+        IsCleared = cleared;
+        AcquiredStars = stars;
+    }
+}
+
+[System.Serializable]
+public class StageEntryRuntime
+{
+    public StageData Data { get; private set; }
+    public bool IsCleared { get; set; }
+
+    private int _acquiredStars;
+    public int AcquiredStars
+    {
+        get => _acquiredStars;
+        set => _acquiredStars = Mathf.Clamp(value, 0, 3);
+    }
+
+    public StageEntryRuntime(StageData data, bool cleared, int stars)
+    {
+        Data = data;
+        IsCleared = cleared;
+        AcquiredStars = stars;
+    }
+}
