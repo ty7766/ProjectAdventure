@@ -122,9 +122,10 @@ public class HUDPresenter : MonoBehaviour
 
     private void HandlePlayerDeath()
     {
-        _stageManager?.PauseGameSmoothly(1f);
+        _stageManager?.PauseGameSmoothly(3f);
         if(_hudView != null)
         {
+            _hudView.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
             //TODO : 게임 오버 UI 표시
 
@@ -133,9 +134,10 @@ public class HUDPresenter : MonoBehaviour
 
     private void HandleStageClear()
     {
-        _stageManager?.PauseGameSmoothly(1f);
+        _stageManager?.PauseGameSmoothly(3f);
         if (_hudView != null)
         {
+            _hudView.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
             //TODO : 스테이지 클리어 UI 표시
 

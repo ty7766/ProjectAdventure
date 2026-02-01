@@ -7,6 +7,7 @@ public class HUDView : MonoBehaviour
 {
     //--- Settings ---//
     [Header("UI Components")]
+    [SerializeField] private GameObject _hudPanel;
     [Header("Health UI")]
     [SerializeField] private List<Image> _heartImages; // 하트 아이콘 리스트
     [SerializeField] private Sprite _fullHeart; // 꽉 찬 하트 이미지
@@ -105,6 +106,28 @@ public class HUDView : MonoBehaviour
         {
             BuffSlotView newItem = Instantiate(_buffItemPrefab, _contentParent);
             newItem.Setup(effect);
+        }
+    }
+
+    /// <summary>
+    /// HUD 패널을 표출합니다.
+    /// </summary>
+    public void ShowHUD()
+    {
+        if( _hudPanel != null)
+        {
+            _hudPanel.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// HUD 패널을 감춥니다.
+    /// </summary>
+    public void HideHUD()
+    {
+        if (_hudPanel != null)
+        {
+            _hudPanel.SetActive(false);
         }
     }
 
