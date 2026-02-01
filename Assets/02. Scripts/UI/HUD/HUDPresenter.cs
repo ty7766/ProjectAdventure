@@ -166,6 +166,8 @@ public class HUDPresenter : MonoBehaviour
         if (_hudView != null)
         {
             _hudView.HideHUD();
+            _hudView.IsPauseMenuActive = false;
+            _hudView.HidePauseMenu();
             UpdateStageObjectText();
             _hudView.ShowStageStartPanel();
             _hudView.ShowStageObjectView();
@@ -188,6 +190,10 @@ public class HUDPresenter : MonoBehaviour
         _hudView?.HideStageStartPanel();
         _hudView?.HideStageObjectView();
         _hudView?.ShowHUD();
+        if(_hudView != null)
+        {
+            _hudView.IsPauseMenuActive = true;
+        }
         _stageManager?.StartStage();
     }
 
