@@ -200,6 +200,12 @@ public class HUDView : MonoBehaviour
     /// <param name="timeInSeconds">초 단위 시간</param>
     public void UpdateTimerUI(float timeInSeconds)
     {
+        if(_timerText == null)
+        {
+            CustomDebug.LogWarning("UpdateTimerUI: Timer Text component is not assigned.");
+            return;
+        }
+
         TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
         _timerText.text = string.Format("<mspace=0.7em>{0:D2}:{1:D2}.</mspace><mspace=0.5em><size=50%>{2:D3}</size></mspace>",
             timeSpan.Minutes,
@@ -216,12 +222,12 @@ public class HUDView : MonoBehaviour
     {
         if(index < 0 || index >= _stageObjectTexts.Count)
         {
-            Debug.LogWarning("UpdateStageObjectUI: Index out of range.");
+            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range.");
             return;
         }
         if(index < 0 || index >= _stageObjectStarImages.Count)
         {
-            Debug.LogWarning("UpdateStageObjectUI: Index out of range for star images.");
+            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range for star images.");
             return;
         }
 
@@ -235,6 +241,11 @@ public class HUDView : MonoBehaviour
     /// <param name="text"></param>
     public void UpdateStageCountDown(string text)
     {
+        if(_stageCountDownText == null)
+        {
+            CustomDebug.LogWarning("UpdateStageCountDown: Stage Count Down Text component is not assigned.");
+            return;
+        }
         _stageCountDownText.text = text;
     }
 
