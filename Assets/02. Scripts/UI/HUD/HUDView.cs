@@ -219,6 +219,12 @@ public class HUDView : MonoBehaviour
             Debug.LogWarning("UpdateStageObjectUI: Index out of range.");
             return;
         }
+        if(index < 0 || index >= _stageObjectStarImages.Count)
+        {
+            Debug.LogWarning("UpdateStageObjectUI: Index out of range for star images.");
+            return;
+        }
+
         _stageObjectTexts[index].text = text;
         _stageObjectStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
     }
