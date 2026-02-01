@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections;
+using UnityEngine;
 
 [RequireComponent(typeof(HUDView))]
 public class HUDPresenter : MonoBehaviour
@@ -15,6 +17,16 @@ public class HUDPresenter : MonoBehaviour
     {
         GetRequiredComponents();
         SubscribeEventHandlers();
+    }
+
+    private void Start()
+    {
+        HandleStageStart();
+    }
+
+    private void Update()
+    {
+        HandleTimerUI();
     }
 
     private void OnDestroy()
@@ -98,12 +110,14 @@ public class HUDPresenter : MonoBehaviour
     {
         _stageManager?.PauseGameSmoothly();
         _hudView.ShowPauseMenu();
+        _hudView.HideHUD();
     }
 
     private void HandleResumeButtonClicked()
     {
         _stageManager?.ResumeGameSmoothly();
         _hudView.HidePauseMenu();
+        _hudView.ShowHUD();
     }
 
     private void HandleReturnToMainMenuButtonClicked()
@@ -137,10 +151,84 @@ public class HUDPresenter : MonoBehaviour
         _stageManager?.PauseGameSmoothly(3f);
         if (_hudView != null)
         {
-            _hudView.HidePauseMenu();
+            _hudView?.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
             //TODO : 스테이지 클리어 UI 표시
+            UpdateStageObjectText();
+            _hudView?.ShowStageObjectView();
+            _hudView?.ShowStageStartPanel();
+            _hudView?.UpdateStageCountDown("Stage Clear!");
+        }
+    }
 
+    private void HandleStageStart()
+    {
+        if (_hudView != null)
+        {
+            _hudView.HideHUD();
+            UpdateStageObjectText();
+            _hudView.ShowStageStartPanel();
+            _hudView.ShowStageObjectView();
+        }
+
+        StartCoroutine(StartCountDown());
+    }
+
+    IEnumerator StartCountDown()
+    {
+        float countdownDuration = 5f;
+        float elapsed = 0f;
+        while (elapsed < countdownDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float remainingTime = countdownDuration - elapsed;
+            _hudView?.UpdateStageCountDown(Mathf.CeilToInt(remainingTime).ToString());
+            yield return null;
+        }
+        _hudView?.HideStageStartPanel();
+        _hudView?.HideStageObjectView();
+        _hudView?.ShowHUD();
+        _stageManager?.StartStage();
+    }
+
+    private void HandleTimerUI()
+    {
+        if (_stageManager != null && _hudView != null && _stageManager.IsTimerRunning)
+        {
+            float elapsedTime = _stageManager.StageTimer;
+            _hudView.UpdateTimerUI(elapsedTime);
+        }
+    }
+
+    private void UpdateStageObjectText()
+    {
+        if (_stageManager != null && _hudView != null)
+        {
+            int idx = 0;
+            foreach (StageObject obj in _stageManager.StageObjects)
+            {
+                switch (obj.stageObjectType)
+                {
+                    case StageObjectType.TimeLimitClear:
+                        TimeSpan timeSpan = TimeSpan.FromSeconds(obj.value);
+                        _hudView.UpdateStageObjectUI(idx, $"{timeSpan.Minutes}분 {timeSpan.Seconds}초 이내에 스테이지를 클리어 한다.", obj.isCleared);
+                        break;
+                    case StageObjectType.NoFallClear:
+                        _hudView.UpdateStageObjectUI(idx, "한 번도 세상 밖으로 떨어지지 않고 스테이지를 클리어 한다.", obj.isCleared);
+                        break;
+                    case StageObjectType.NoDamageClear:
+                        _hudView.UpdateStageObjectUI(idx, "한 번도 데미지를 입지 않고 스테이지를 클리어 한다.", obj.isCleared);
+                        break;
+                    case StageObjectType.RemainHealthClear:
+                        _hudView.UpdateStageObjectUI(idx, $"스테이지 클리어 시 체력이 {obj.value} 이상 남아 있어야 한다.", obj.isCleared);
+                        break;
+                    default:
+                        _hudView.UpdateStageObjectUI(idx, "알 수 없는 도전과제", obj.isCleared);
+                        CustomDebug.LogError("HUDPresenter : 구현되지 않은 도전과제!", gameObject);
+                        break;  
+                }
+                idx++;
+            }
         }
     }
 }
