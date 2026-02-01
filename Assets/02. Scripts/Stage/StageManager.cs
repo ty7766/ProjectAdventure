@@ -13,7 +13,8 @@ public class StageManager : MonoBehaviour
 
     //--- Fields ---//
     private int _collectedGems = 0;
-    private Coroutine timeScaleCoroutine;
+    private Coroutine _timeScaleCoroutine;
+    private float _initialFixedDeltaTime;
 
     //--- Events ---//
     public event Action<int, int> OnGemCountChanged;
@@ -23,6 +24,7 @@ public class StageManager : MonoBehaviour
     private void Start()
     {
         OnGemCountChanged?.Invoke(_collectedGems, requiredGemsToClear);
+        _initialFixedDeltaTime = Time.fixedDeltaTime;
     }
 
     //--- Public Methods ---//
@@ -58,10 +60,10 @@ public class StageManager : MonoBehaviour
     /// <param name="duration">변화에 걸리는 시간(초)</param>
     public void SmoothTimeScale(float targetScale, float duration)
     {
-        if (timeScaleCoroutine != null)
-            StopCoroutine(timeScaleCoroutine);
+        if (_timeScaleCoroutine != null)
+            StopCoroutine(_timeScaleCoroutine);
 
-        timeScaleCoroutine = StartCoroutine(ChangeTimeScale(targetScale, duration));
+        _timeScaleCoroutine = StartCoroutine(ChangeTimeScale(targetScale, duration));
     }
 
 
@@ -71,7 +73,6 @@ public class StageManager : MonoBehaviour
     private IEnumerator ChangeTimeScale(float targetScale, float duration)
     {
         float startScale = Time.timeScale;
-        float initialFixedDeltaTime = 0.02f; // 유니티 기본값
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -82,17 +83,17 @@ public class StageManager : MonoBehaviour
             float currentScale = Mathf.Lerp(startScale, targetScale, t);
 
             Time.timeScale = currentScale;
-            Time.fixedDeltaTime = initialFixedDeltaTime * currentScale;
+            Time.fixedDeltaTime = _initialFixedDeltaTime * currentScale;
 
             yield return null;
         }
 
         Time.timeScale = targetScale;
-        Time.fixedDeltaTime = initialFixedDeltaTime * targetScale;
+        Time.fixedDeltaTime = _initialFixedDeltaTime * targetScale;
 
         if (Time.timeScale <= 0)
         {
-            Time.fixedDeltaTime = initialFixedDeltaTime;
+            Time.fixedDeltaTime = _initialFixedDeltaTime;
         }
     }
 
