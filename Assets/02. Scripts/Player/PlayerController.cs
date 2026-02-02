@@ -39,6 +39,12 @@ public class PlayerController : MonoBehaviour
     private bool _isAlive = true;
     private bool _isMovable = true;
 
+    //--- properties ---//
+    public int Health => _properties.Health;
+
+    //--- Events ---//
+    public event System.Action OnPlayerDamageTaken;
+    public event System.Action OnPlayerFallenDown;
 
     //--- Unity Methods ---//
     private void Awake()
@@ -104,6 +110,7 @@ public class PlayerController : MonoBehaviour
         }
 
         _properties.Health -= damage;
+        OnPlayerDamageTaken?.Invoke();
 
         _invTimer = 0f;
 
@@ -182,6 +189,7 @@ public class PlayerController : MonoBehaviour
 
     private void RespawnWithDamagePenalty(int damage = 1)
     {
+        OnPlayerFallenDown?.Invoke();
         _isMovable = false;
         _movement.TeleportTo(_respawnPoint);
         TakeDamage(damage);

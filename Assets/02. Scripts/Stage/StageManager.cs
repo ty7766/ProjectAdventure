@@ -2,27 +2,101 @@
 using System.Collections;
 using UnityEngine;
 
-public class StageManager : MonoBehaviour
+public enum  StageObjectType
 {
+    NoDamageClear,
+    NoFallClear,
+    TimeLimitClear,
+    RemainHealthClear
+}
+
+[Serializable]
+public class StageObject
+{
+    public StageObjectType stageObjectType;
+    public int value;
+    public bool isCleared = false;
+}
+
+    public class StageManager : MonoBehaviour
+{
+    public static StageManager Instance { get; private set; }
+
     //--- Components & Settings ---//
     [Header("Components")]
-    [SerializeField] private PlayerController playerController;
+    [SerializeField] private PlayerController _playerController;
 
     [Header("Stage Settings")]
-    [SerializeField] private int requiredGemsToClear = 1;
+    [SerializeField] private int _requiredGemsToClear = 1;
+
+    [Header("Stage Objects")]
+    [SerializeField] private StageObject[] _stageObjects;
 
     //--- Fields ---//
     private int _collectedGems = 0;
-    private Coroutine timeScaleCoroutine;
+    private Coroutine _timeScaleCoroutine;
+    private float _initialFixedDeltaTime;
+    private float _stageTimer = 0f;
+    private bool _isTimerRunning = true;
+
+    //--- Stage Objeect related States ---//
+    private bool _isPlayerDamageTaken = false;
+    private bool _isPlayerFallenDown = false;
 
     //--- Events ---//
     public event Action<int, int> OnGemCountChanged;
     public event Action OnStageCleared;
 
+    //--- Properties ---// 
+    public float StageTimer => _stageTimer;
+    public bool IsTimerRunning => _isTimerRunning;
+    public StageObject[] StageObjects => _stageObjects;
+
     //--- Unity Methods ---//
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        if (_playerController != null) {
+            _playerController.OnPlayerDamageTaken += HandlePlayerDamageTakenEvent;
+            _playerController.OnPlayerFallenDown += HandlePlayerFallenDownEvent;
+        }
+
+        ApplyAlreadyClearedStageObjects();
+    }
+
+    private void OnDestroy() 
+    {
+        if (Instance == this)
+        {
+            Instance = null;
+        }
+
+        if (_playerController != null)
+        {
+            _playerController.OnPlayerDamageTaken -= HandlePlayerDamageTakenEvent;
+            _playerController.OnPlayerFallenDown -= HandlePlayerFallenDownEvent;
+        }
+    }
+
     private void Start()
     {
-        OnGemCountChanged?.Invoke(_collectedGems, requiredGemsToClear);
+        OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+        _initialFixedDeltaTime = Time.fixedDeltaTime;
+        DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
+    }
+
+    private void Update()
+    {
+        TimerTick();
     }
 
     //--- Public Methods ---//
@@ -32,11 +106,18 @@ public class StageManager : MonoBehaviour
     public void CollectGem()
     {
         _collectedGems++;
-        OnGemCountChanged?.Invoke(_collectedGems, requiredGemsToClear);
-        if (_collectedGems >= requiredGemsToClear)
+        OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+        if (_collectedGems >= _requiredGemsToClear)
         {
             ClearStage();
         }
+    }
+
+    public void StartStage()
+    {
+        _isTimerRunning = true;
+        _stageTimer = 0f;
+        EnablePlayerControl();
     }
 
     /// <summary>
@@ -58,10 +139,10 @@ public class StageManager : MonoBehaviour
     /// <param name="duration">변화에 걸리는 시간(초)</param>
     public void SmoothTimeScale(float targetScale, float duration)
     {
-        if (timeScaleCoroutine != null)
-            StopCoroutine(timeScaleCoroutine);
+        if (_timeScaleCoroutine != null)
+            StopCoroutine(_timeScaleCoroutine);
 
-        timeScaleCoroutine = StartCoroutine(ChangeTimeScale(targetScale, duration));
+        _timeScaleCoroutine = StartCoroutine(ChangeTimeScale(targetScale, duration));
     }
 
 
@@ -71,7 +152,6 @@ public class StageManager : MonoBehaviour
     private IEnumerator ChangeTimeScale(float targetScale, float duration)
     {
         float startScale = Time.timeScale;
-        float initialFixedDeltaTime = 0.02f; // 유니티 기본값
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -82,17 +162,17 @@ public class StageManager : MonoBehaviour
             float currentScale = Mathf.Lerp(startScale, targetScale, t);
 
             Time.timeScale = currentScale;
-            Time.fixedDeltaTime = initialFixedDeltaTime * currentScale;
+            Time.fixedDeltaTime = _initialFixedDeltaTime * currentScale;
 
             yield return null;
         }
 
         Time.timeScale = targetScale;
-        Time.fixedDeltaTime = initialFixedDeltaTime * targetScale;
+        Time.fixedDeltaTime = _initialFixedDeltaTime * targetScale;
 
         if (Time.timeScale <= 0)
         {
-            Time.fixedDeltaTime = initialFixedDeltaTime;
+            Time.fixedDeltaTime = _initialFixedDeltaTime;
         }
     }
 
@@ -100,18 +180,107 @@ public class StageManager : MonoBehaviour
     {
         CustomDebug.Log("Stage Cleared!");
         DisablePlayerControl();
+        foreach(var obj in _stageObjects)
+        {
+            if (obj.isCleared)
+            {
+                continue; //이미 클리어된 도전과제는 건너뜀
+            }
+            switch (obj.stageObjectType)
+            {
+                case StageObjectType.NoDamageClear:
+                    if(!_isPlayerDamageTaken)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+
+                case StageObjectType.NoFallClear:
+                    if(!_isPlayerFallenDown)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+
+                case StageObjectType.TimeLimitClear:
+                    if(_stageTimer <= obj.value)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+
+                case StageObjectType.RemainHealthClear:
+                    if(_playerController != null && _playerController.Health >= obj.value)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+            }
+        }
+
         OnStageCleared?.Invoke();
+        SaveStageClearData();
     }
 
     private void DisablePlayerControl()
     {
-        if (playerController != null)
+        if (_playerController != null)
         {
-            playerController.DisablePlayerControl();
+            _playerController.DisablePlayerControl();
         }
         else
         {
             CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
+        }
+    }
+
+    private void EnablePlayerControl()
+    {
+        if (_playerController != null)
+        {
+            _playerController.EnablePlayerControl();
+        }
+        else
+        {
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
+        }
+    }
+
+    private void TimerTick()
+    {
+        if (_isTimerRunning)
+        {
+            _stageTimer += Time.deltaTime;
+        }
+    }
+
+    private void HandlePlayerDamageTakenEvent()
+    {
+        _isPlayerDamageTaken = true;
+    }
+
+    private void HandlePlayerFallenDownEvent()
+    {
+        _isPlayerFallenDown = true;
+    }
+
+    private void ApplyAlreadyClearedStageObjects()
+    {
+        foreach(var obj in _stageObjects)
+        {
+            //TODO : 저장된 클리어 상태 불러오기
+
+        }
+    }
+
+    private void SaveStageClearData()
+    {
+        foreach(var obj in _stageObjects)
+        {
+            if (obj.isCleared)
+            {
+                //TODO : 도전과제 클리어 상태 저장하기
+            }
         }
     }
 }
