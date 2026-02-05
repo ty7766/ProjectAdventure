@@ -72,13 +72,15 @@ public class SnowBallSpawner : MonoBehaviour
 
     private Vector3 CalculateRandomSpawnPoint(Bounds bound)
     {
-        Vector3 randomPos = new Vector3(
-            Random.Range(bound.min.x, bound.max.x),
-            Random.Range(bound.min.y, bound.max.y),
-            Random.Range(bound.min.z, bound.max.z)
-        );
+        Vector3 center = _spawnArea.center;
+        Vector3 size = _spawnArea.size;
 
-        return randomPos;
+        Vector3 randomLocalPos = new Vector3(
+            Random.Range(center.x - size.x / 2, center.x + size.x / 2),
+            Random.Range(center.y - size.y / 2, center.y + size.y / 2),
+            Random.Range(center.z - size.z / 2, center.z + size.z / 2)
+        );
+        return _spawnArea.transform.TransformPoint(randomLocalPos);
     }
 
     private void ApplyForceForSnowBall(GameObject snowBall)
