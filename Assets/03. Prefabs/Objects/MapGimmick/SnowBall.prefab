@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2242960736389651978}
   - component: {fileID: 2059786104845958955}
   - component: {fileID: -5043358815733768342}
+  - component: {fileID: 1479990605829017390}
   m_Layer: 0
   m_Name: SnowBall
   m_TagString: Untagged
@@ -136,3 +137,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 1
+--- !u!114 &1479990605829017390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5620837362021418719}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3ab394571ba8de479f6cf92942bb7de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _damageAmount: 1
+  _destroyVFXType: 5
+  _objectType: 1
+  _lifeTime: 10
