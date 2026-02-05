@@ -46,7 +46,10 @@ public class MovingRing : MonoBehaviour
         _movedDistance = 0f;
     }
 
-    private void ReturnToPool()
+    /// <summary>
+    /// 링을 풀에 반납하는 함수
+    /// </summary>
+    public void ReturnToPool()
     {
         if (transform.childCount > 0)
         {
