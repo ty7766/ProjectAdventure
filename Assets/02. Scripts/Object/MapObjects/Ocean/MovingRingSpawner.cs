@@ -68,7 +68,6 @@ public class TileSpawner : MonoBehaviour
         Vector3 tileScale = _movingRingPrefab.transform.localScale;
         Vector3 size = Vector3.Scale(box.size, tileScale);
 
-        // [MODIFIED] 기즈모도 방향에 맞춰서 그리기
         Vector3 dirVector = (_direction == TileDirection.Left_MinusX) ? Vector3.left : Vector3.right;
 
         // 1. 경로 그리기 (하늘색 터널)
