@@ -68,7 +68,10 @@ public class SnowBall : MonoBehaviour
         ReturnToPool();
     }
 
-    private void ReturnToPool()
+    /// <summary>
+    /// SnowBall을 Pool에 반납
+    /// </summary>
+    public void ReturnToPool()
     {
         StopAllCoroutines();
 

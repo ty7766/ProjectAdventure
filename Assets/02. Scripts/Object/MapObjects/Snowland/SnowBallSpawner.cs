@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using NUnit.Framework;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SnowBallSpawner : MonoBehaviour
@@ -18,9 +20,27 @@ public class SnowBallSpawner : MonoBehaviour
     [SerializeField, Tooltip("-x 방향으로 굴러가도록 설정")]
     private Vector3 _initialForce = new Vector3(-2f, 0f, 0f);
 
+    //생성된 스노우볼 추적용 리스트
+    private List<SnowBall> _spawnedSnowBalls = new List<SnowBall>();
+
     private void Start()
     {
         StartCoroutine(ActivateSnowBall());
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+
+        foreach (var ring in _spawnedSnowBalls)
+        {
+            if (ring != null && ring.gameObject.activeInHierarchy)
+            {
+                ring.ReturnToPool();
+            }
+        }
+
+        _spawnedSnowBalls.Clear();
     }
 
     private IEnumerator ActivateSnowBall()
@@ -41,11 +61,25 @@ public class SnowBallSpawner : MonoBehaviour
         }
 
         Vector3 randomPos = CalculateRandomSpawnPoint();
-
         GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
-        ApplyForceForSnowBall(snowBall);
 
-        CustomDebug.Log($"[SnowBallSpawner] 눈덩이 생성! 위치: {randomPos}, 힘: {_initialForce}");
+        if (snowBall != null)
+        {
+            ApplyForceForSnowBall(snowBall);
+
+            if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
+            {
+                for (int i = _spawnedSnowBalls.Count - 1; i >= 0; i--)
+                {
+                    if (_spawnedSnowBalls[i] == null || !_spawnedSnowBalls[i].gameObject.activeInHierarchy)
+                    {
+                        _spawnedSnowBalls.RemoveAt(i);
+                    }
+                }
+
+                _spawnedSnowBalls.Add(ballScript);
+            }
+        }
     }
 
     private Vector3 CalculateRandomSpawnPoint()
