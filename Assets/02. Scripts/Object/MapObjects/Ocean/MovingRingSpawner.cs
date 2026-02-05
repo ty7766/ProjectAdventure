@@ -31,16 +31,25 @@ public class MovingRingSpawner : MonoBehaviour
     //생성된 링들 추적용 리스트
     private List<MovingRing> _spawnedRings = new List<MovingRing>();
 
-    private void Start()
+    private Coroutine _spawnCoroutine;
+
+    private void OnEnable()
     {
-        StartCoroutine(MovingRingSpawnRoutine());
+        if( _spawnCoroutine == null )
+        {
+            _spawnCoroutine = StartCoroutine(MovingRingSpawnRoutine());
+        }
     }
 
 
     //맵이 바뀌게 되던 기존에 생성된 링들 제거
     private void OnDisable()
     {
-        StopAllCoroutines();
+        if( _spawnCoroutine != null )
+        {
+            StopCoroutine(_spawnCoroutine );
+            _spawnCoroutine = null;
+        }
 
         foreach(var ring in _spawnedRings)
         {
