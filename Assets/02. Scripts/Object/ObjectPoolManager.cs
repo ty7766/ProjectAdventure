@@ -50,6 +50,11 @@ public class ObjectPoolManager : MonoBehaviour
         if (_poolDictionary[type].Count == 0)
         {
             CreateNewObject(type);
+            if (_poolDictionary[type].Count == 0)
+            {
+                CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능).");
+                return null;
+            }
         }
 
         GameObject obj = _poolDictionary[type].Dequeue();
