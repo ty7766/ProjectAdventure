@@ -32,10 +32,6 @@ public class MovingRing : MonoBehaviour
         _movedDistance += step;
     }
 
-    private void OnDisable()
-    {
-        if (transform.childCount > 0) transform.DetachChildren();
-    }
 
     /// <summary>
     /// 움직이는 링의 속성을 초기화하는 함수 (TileSpawner.cs에서 속성 할당)
@@ -47,11 +43,16 @@ public class MovingRing : MonoBehaviour
         _speed = speed;
         _maxDistance = maxDistance;
         _moveDirection = direction;
-        _movedDistance = 0f; // 거리 초기화
+        _movedDistance = 0f;
     }
 
     private void ReturnToPool()
     {
+        if (transform.childCount > 0)
+        {
+            transform.DetachChildren();
+        }
+
         if (ObjectPoolManager.Instance != null)
         {
             ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
