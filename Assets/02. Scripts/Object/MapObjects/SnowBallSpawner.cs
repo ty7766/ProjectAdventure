@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class SnowBallSpawner : MonoBehaviour
 {
@@ -6,63 +7,40 @@ public class SnowBallSpawner : MonoBehaviour
     [SerializeField, Tooltip("눈덩이가 생성될 랜덤 범위")]
     private BoxCollider _spawnArea;
 
-    [SerializeField, Tooltip("플레이어가 밟으면 함정이 발동되는 트리거")]
-    private BoxCollider _triggerArea;
-
     [Header("생성 설정")]
     [SerializeField]
     private PoolObjectType _snowBallType = PoolObjectType.SnowBall;
+
+    [SerializeField, Tooltip("눈덩이 생성 간격 (초)")]
+    private float _spawnInterval = 3.0f;
 
     [Header("물리 설정")]
     [SerializeField, Tooltip("-x 방향으로 굴러가도록 설정")]
     private Vector3 _initialForce = new Vector3(-2f, 0f, 0f);
 
-    [Header("옵션")]
-    [SerializeField]
-    private bool _isOneTimeUse = true;
-
-    private bool _isActivated = false;
-
-    private void Awake()
+    private void Start()
     {
-        if (_triggerArea == null)
-        {
-            _triggerArea = GetComponent<BoxCollider>();
-        }
-
-        if (_triggerArea != null)
-        {
-            _triggerArea.isTrigger = true;
-        }
+        StartCoroutine(ActivateSnowBall());
     }
 
-    private void OnTriggerEnter(Collider other)
+    private IEnumerator ActivateSnowBall()
     {
-        if (_isActivated) return;
+        WaitForSeconds wait = new WaitForSeconds(_spawnInterval);
 
-        if (other.CompareTag("Player"))
+        while (true)
         {
-            SpawnRandomSnowBall();
-
-            if (_isOneTimeUse)
-            {
-                _isActivated = true;
-                if (_triggerArea != null) _triggerArea.enabled = false;
-            }
+            yield return wait;
+            SpawnSnowBallRandomArea();
         }
     }
-
-    //--- Private Methods ---//
-    private void SpawnRandomSnowBall()
+    private void SpawnSnowBallRandomArea()
     {
         if (ObjectPoolManager.Instance == null || _spawnArea == null)
         {
-            CustomDebug.LogError($"[SnowBallSpawner] 설정 오류: ObjectPoolManager가 없거나 SpawnArea가 연결되지 않음.", this);
             return;
         }
 
-        Bounds bound = _spawnArea.bounds;
-        Vector3 randomPos = CalculateRandomSpawnPoint(bound);
+        Vector3 randomPos = CalculateRandomSpawnPoint();
 
         GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
         ApplyForceForSnowBall(snowBall);
@@ -70,7 +48,7 @@ public class SnowBallSpawner : MonoBehaviour
         CustomDebug.Log($"[SnowBallSpawner] 눈덩이 생성! 위치: {randomPos}, 힘: {_initialForce}");
     }
 
-    private Vector3 CalculateRandomSpawnPoint(Bounds bound)
+    private Vector3 CalculateRandomSpawnPoint()
     {
         Vector3 center = _spawnArea.center;
         Vector3 size = _spawnArea.size;
