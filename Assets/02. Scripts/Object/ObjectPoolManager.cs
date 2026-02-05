@@ -72,6 +72,15 @@ public class ObjectPoolManager : MonoBehaviour
     /// <param name="obj">기믹 오브젝트</param>
     public void ReturnObject(PoolObjectType type, GameObject obj)
     {
+        if (obj == null)
+        {
+            return;
+        }
+        if (!_poolDictionary.ContainsKey(type))
+        {
+            CustomDebug.LogWarning($"[ObjectPoolManager] {type} 타입의 풀이 없습니다.");
+            return;
+        }
         obj.SetActive(false);
         _poolDictionary[type].Enqueue(obj);
     }
