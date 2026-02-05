@@ -7,10 +7,10 @@ public class MovingRing : MonoBehaviour
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.MovingRing;
 
-    //무조건 -x 축 방향으로 진행되게 설정하므로 Direction은 표현하지 않음
     private float _speed;
     private float _maxDistance;
     private float _movedDistance;
+    private Vector3 _moveDirection;
     private Rigidbody _rigidbody;
 
     private void Awake()
@@ -27,7 +27,7 @@ public class MovingRing : MonoBehaviour
         }
         float step = _speed * Time.fixedDeltaTime;
 
-        _rigidbody.MovePosition(_rigidbody.position + Vector3.left * step);
+        _rigidbody.MovePosition(_rigidbody.position + _moveDirection * step);
 
         _movedDistance += step;
     }
@@ -42,10 +42,11 @@ public class MovingRing : MonoBehaviour
     /// </summary>
     /// <param name="speed">링 속도</param>
     /// <param name="maxDistance">링이 이동할 거리</param>
-    public void InitializeForRingAttributs(float speed, float maxDistance)
+    public void InitializeForRingAttributs(float speed, float maxDistance, Vector3 direction)
     {
         _speed = speed;
         _maxDistance = maxDistance;
+        _moveDirection = direction;
         _movedDistance = 0f; // 거리 초기화
     }
 
