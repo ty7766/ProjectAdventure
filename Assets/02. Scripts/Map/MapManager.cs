@@ -35,6 +35,7 @@ public class MapManager : MonoBehaviour
     private Vector3 _detectionSize = Vector3.zero;
 
     private int _selectedSlotIndex = 0;
+    private FloatingCursor _cursor;
 
     private void Awake()
     {
@@ -44,6 +45,7 @@ public class MapManager : MonoBehaviour
     }
     void Start()
     {
+        GetComponentFloatingCursor();
         MapGeneration();
         UpdateCursorPosition();
     }
@@ -54,6 +56,14 @@ public class MapManager : MonoBehaviour
         HandleMapChangeInput();
     }
 
+    private void GetComponentFloatingCursor()
+    {
+        if(_selectionCursor != null)
+        {
+            _cursor = _selectionCursor.GetComponent<FloatingCursor>();
+        }
+    }
+
     private void MapGeneration()
     {
         // 등록된 모든 'PathGroup'을 순회하며 맵 생성
@@ -61,7 +71,6 @@ public class MapManager : MonoBehaviour
         {
             if (group.PathPrefabs.Length > 0 && group.SpawnPoint != null)
             {
-                // 각 그룹의 0번째(첫 번째) 맵 생성 (Init)
                 SpawnPath(group, group.CurrentPathIndex);
             }
         }
@@ -112,7 +121,18 @@ public class MapManager : MonoBehaviour
             CustomDebug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
             return;
         }
-        _selectionCursor.position = targetSpawnPoint.position + _cursorOffset;
+
+        // 목표 기준 위치 계산
+        Vector3 targetBasePos = targetSpawnPoint.position + _cursorOffset;
+
+        if (_cursor != null)
+        {
+            _cursor.SetBasePositionCursor(targetBasePos);
+        }
+        else
+        {
+            _selectionCursor.position = targetBasePos;
+        }
     }
 
     private void HandleMapChangeInput()
