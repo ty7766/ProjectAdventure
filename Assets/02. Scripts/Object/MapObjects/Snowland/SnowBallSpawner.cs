@@ -23,14 +23,23 @@ public class SnowBallSpawner : MonoBehaviour
     //생성된 스노우볼 추적용 리스트
     private List<SnowBall> _spawnedSnowBalls = new List<SnowBall>();
 
-    private void Start()
+    private Coroutine _spawnCoroutine;
+
+    private void OnEnable()
     {
-        StartCoroutine(ActivateSnowBall());
+        if( _spawnCoroutine == null )
+        {
+            _spawnCoroutine = StartCoroutine(ActivateSnowBall());
+        }
     }
 
     private void OnDisable()
     {
-        StopAllCoroutines();
+        if(_spawnCoroutine != null)
+        {
+            StopCoroutine(_spawnCoroutine);
+            _spawnCoroutine = null;
+        }
 
         foreach (var ring in _spawnedSnowBalls)
         {
