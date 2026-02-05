@@ -2,4 +2,5 @@
 {
     None = 0,
     SnowBall,
+    MovingRing,
 }
