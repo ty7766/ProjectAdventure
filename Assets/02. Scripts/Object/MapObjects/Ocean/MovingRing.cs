@@ -1,0 +1,79 @@
+﻿using UnityEngine;
+
+[RequireComponent(typeof(Rigidbody))]
+public class MovingRing : MonoBehaviour
+{
+    [Header("풀링 설정")]
+    [SerializeField]
+    private PoolObjectType _objectType = PoolObjectType.MovingRing;
+
+    //무조건 -x 축 방향으로 진행되게 설정하므로 Direction은 표현하지 않음
+    private float _speed;
+    private float _maxDistance;
+    private float _movedDistance;
+    private Rigidbody _rigidbody;
+
+    private void Awake()
+    {
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void FixedUpdate()
+    {
+        if (_movedDistance >= _maxDistance)
+        {
+            ReturnToPool();
+            return;
+        }
+        float step = _speed * Time.fixedDeltaTime;
+
+        _rigidbody.MovePosition(_rigidbody.position + Vector3.left * step);
+
+        _movedDistance += step;
+    }
+
+    private void OnDisable()
+    {
+        if (transform.childCount > 0) transform.DetachChildren();
+    }
+
+    /// <summary>
+    /// 움직이는 링의 속성을 초기화하는 함수 (TileSpawner.cs에서 속성 할당)
+    /// </summary>
+    /// <param name="speed">링 속도</param>
+    /// <param name="maxDistance">링이 이동할 거리</param>
+    public void InitializeForRingAttributs(float speed, float maxDistance)
+    {
+        _speed = speed;
+        _maxDistance = maxDistance;
+        _movedDistance = 0f; // 거리 초기화
+    }
+
+    private void ReturnToPool()
+    {
+        if (ObjectPoolManager.Instance != null)
+        {
+            ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
+        }
+        else
+        {
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.transform.SetParent(transform);
+        }
+    }
+
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            collision.transform.SetParent(null);
+        }
+    }
+}
