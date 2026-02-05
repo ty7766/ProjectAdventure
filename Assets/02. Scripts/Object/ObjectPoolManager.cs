@@ -107,5 +107,9 @@ public class ObjectPoolManager : MonoBehaviour
             obj.SetActive(false);
             _poolDictionary[type].Enqueue(obj);
         }
+        else
+        {
+            CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능).");
+        }
     }
 }
