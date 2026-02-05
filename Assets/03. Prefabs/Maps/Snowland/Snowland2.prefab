@@ -46,6 +46,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Hill_Snow_15
       objectReference: {fileID: 0}
+    - target: {fileID: 6137463556967893840, guid: dd27568773e960c439b2f8e71a1de727, type: 3}
+      propertyPath: m_TagString
+      value: Snow
+      objectReference: {fileID: 0}
     - target: {fileID: 6802535756939809258, guid: dd27568773e960c439b2f8e71a1de727, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15
@@ -197,6 +201,10 @@ PrefabInstance:
     - target: {fileID: 4713103151660187536, guid: 786e3b97267fee5479e82c9cfa5fc4f2, type: 3}
       propertyPath: m_Name
       value: PP_Arctic_Ground_10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713103151660187536, guid: 786e3b97267fee5479e82c9cfa5fc4f2, type: 3}
+      propertyPath: m_TagString
+      value: Snow
       objectReference: {fileID: 0}
     - target: {fileID: 5342288357874132266, guid: 786e3b97267fee5479e82c9cfa5fc4f2, type: 3}
       propertyPath: m_LocalScale.x

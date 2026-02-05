@@ -50,6 +50,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Hill_Snow_21
       objectReference: {fileID: 0}
+    - target: {fileID: 534549902793588263, guid: f947db00bc18b1f4193ef2d82d3309ff, type: 3}
+      propertyPath: m_TagString
+      value: Snow
+      objectReference: {fileID: 0}
     - target: {fileID: 873921397373232285, guid: f947db00bc18b1f4193ef2d82d3309ff, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15
@@ -123,6 +127,10 @@ PrefabInstance:
     - target: {fileID: 534549902793588263, guid: f947db00bc18b1f4193ef2d82d3309ff, type: 3}
       propertyPath: m_Name
       value: PP_Hill_Snow_21 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 534549902793588263, guid: f947db00bc18b1f4193ef2d82d3309ff, type: 3}
+      propertyPath: m_TagString
+      value: Snow
       objectReference: {fileID: 0}
     - target: {fileID: 873921397373232285, guid: f947db00bc18b1f4193ef2d82d3309ff, type: 3}
       propertyPath: m_LocalScale.x
@@ -249,6 +257,10 @@ PrefabInstance:
     - target: {fileID: 6618289164042876832, guid: aabccd02fefe24143b9313bcaecd0e65, type: 3}
       propertyPath: m_Name
       value: PP_Hill_Snow_19
+      objectReference: {fileID: 0}
+    - target: {fileID: 6618289164042876832, guid: aabccd02fefe24143b9313bcaecd0e65, type: 3}
+      propertyPath: m_TagString
+      value: Snow
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -471,6 +483,10 @@ PrefabInstance:
     - target: {fileID: 6618289164042876832, guid: aabccd02fefe24143b9313bcaecd0e65, type: 3}
       propertyPath: m_Name
       value: PP_Hill_Snow_19 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 6618289164042876832, guid: aabccd02fefe24143b9313bcaecd0e65, type: 3}
+      propertyPath: m_TagString
+      value: Snow
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
