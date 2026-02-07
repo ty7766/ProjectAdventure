@@ -28,14 +28,37 @@ public class RuneStone : MonoBehaviour
     private int _currentIndex = 0;
     private Coroutine _runeChangeroutine;
 
-    private void Start()
+    private void Awake()
     {
-        if (_runeTypes != null && _runeTypes.Length > 0)
+        if(TryGetComponent<MeshRenderer>(out var renderer))
+        {
+            renderer.enabled = false;
+        }
+    }
+    private void OnEnable()
+    {
+        _currentIndex = -1;
+
+        if(_runeChangeroutine != null)
+        {
+            StopCoroutine(_runeChangeroutine);
+        }
+
+        if(_runeTypes != null && _runeTypes.Length > 0)
         {
             _runeChangeroutine = StartCoroutine(RuneChangeRoutine());
         }
     }
 
+    private void OnDisable()
+    {
+        if(_runeChangeroutine != null)
+        {
+            StopCoroutine(_runeChangeroutine);
+            _runeChangeroutine = null;
+        }
+    }
+    //중복 방지 (이벤트 구독 해제)
     private void OnDestroy()
     {
         OnRuneChanged = null;
