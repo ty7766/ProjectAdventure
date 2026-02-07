@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class HUDView : MonoBehaviour
 {
@@ -77,6 +78,7 @@ public class HUDView : MonoBehaviour
 
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
+    private Coroutine _fontSizeCoroutine;
 
     //--- Properties ---//
     public bool IsPauseMenuActive
@@ -239,7 +241,7 @@ public class HUDView : MonoBehaviour
     /// 스테이지 카운트다운 텍스트 UI를 업데이트 합니다.
     /// </summary>
     /// <param name="text"></param>
-    public void UpdateStageCountDown(string text)
+    public void UpdateStageCountDownContent(string text)
     {
         if(_stageCountDownText == null)
         {
@@ -247,6 +249,27 @@ public class HUDView : MonoBehaviour
             return;
         }
         _stageCountDownText.text = text;
+    }
+
+    /// <summary>
+    /// 글자 크기 애니메이션 적용
+    /// </summary>
+    /// <param name="targetFontSize"></param>
+    /// <param name="duration"></param>
+    public void ApplyStageCountDownAnimation(float targetFontSize, float duration)
+    {
+        if (_stageCountDownText == null)
+        {
+            CustomDebug.LogWarning("UpdateStageCountDownAnimation: Stage Count Down Text component is not assigned.");
+            return;
+        }
+
+        if (_fontSizeCoroutine != null)
+        {
+            StopCoroutine(_fontSizeCoroutine);
+        }
+
+        _fontSizeCoroutine = StartCoroutine(AnimateFontSize(targetFontSize, duration));
     }
 
     public void ShowStageStartPanel()
@@ -282,6 +305,23 @@ public class HUDView : MonoBehaviour
     }
 
     //--- Private Methods ---//
+    private IEnumerator AnimateFontSize(float targetSize, float time)
+    {
+        float startSize = _stageCountDownText.fontSize;
+        float elapsed = 0f;
+
+        while (elapsed < time)
+        {
+            elapsed += Time.deltaTime;
+            float progress = elapsed / time;
+
+            _stageCountDownText.fontSize = Mathf.Lerp(startSize, targetSize, progress);
+            yield return null;
+        }
+
+        _stageCountDownText.fontSize = targetSize;
+    }
+
     private void AddButtonListeners()
     {
         _resumeButton?.onClick.AddListener(() => OnResumeButtonClicked?.Invoke());

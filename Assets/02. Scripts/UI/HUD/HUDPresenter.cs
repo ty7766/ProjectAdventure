@@ -157,7 +157,7 @@ public class HUDPresenter : MonoBehaviour
             UpdateStageObjectText();
             _hudView?.ShowStageObjectView();
             _hudView?.ShowStageStartPanel();
-            _hudView?.UpdateStageCountDown("Stage Clear!");
+            _hudView?.UpdateStageCountDownContent("Stage Clear!");
         }
     }
 
@@ -178,22 +178,43 @@ public class HUDPresenter : MonoBehaviour
 
     IEnumerator StartCountDown()
     {
-        float countdownDuration = 5f;
-        float elapsed = 0f;
-        while (elapsed < countdownDuration)
+        string readyText = "준비하세요!";
+        _hudView?.UpdateStageCountDownContent(readyText);
+        // 시작할 때 폰트 크기 120에서 80으로 0.3초 동안 줄어드는 느낌 (수치는 형 취향대로 조절해!)
+        _hudView?.ApplyStageCountDownAnimation(80f, 1.0f);
+
+        yield return new WaitForSecondsRealtime(1.5f);
+
+        // 3, 2, 1 카운트다운 루프
+        for (int i = 3; i >= 1; i--)
         {
-            elapsed += Time.unscaledDeltaTime;
-            float remainingTime = countdownDuration - elapsed;
-            _hudView?.UpdateStageCountDown(Mathf.CeilToInt(remainingTime).ToString());
-            yield return null;
+            //TODO : 사운드 매니저 통합
+            //ex) SoundManager.Instance.PlaySFX("CountdownBeep");
+
+            _hudView?.ApplyStageCountDownAnimation(128f, 0.5f);
+            _hudView?.UpdateStageCountDownContent(i.ToString());
+            yield return new WaitForSecondsRealtime(.5f);
+
+            _hudView?.ApplyStageCountDownAnimation(100f, 0.5f);
+
+            yield return new WaitForSecondsRealtime(.5f);
         }
+
+        // "START!" 혹은 "GO!" 연출 (필요 없으면 생략 가능)
+        _hudView?.UpdateStageCountDownContent("GO!");
+        _hudView?.ApplyStageCountDownAnimation(120f, 0.2f);
+        yield return new WaitForSecondsRealtime(0.5f);
+
+        // 기존 종료 로직 수행
         _hudView?.HideStageStartPanel();
         _hudView?.HideStageObjectView();
         _hudView?.ShowHUD();
-        if(_hudView != null)
+
+        if (_hudView != null)
         {
             _hudView.IsPauseMenuActive = true;
         }
+
         _stageManager?.StartStage();
     }
 
