@@ -42,11 +42,11 @@ public class RuneGate : MonoBehaviour
         // 왼쪽은 -90도(또는 90도), 오른쪽은 반대로 계산
         if (_leftDoor != null)
         {
-        _leftOpenRot = _leftClosedRot * Quaternion.Euler(0, -_openAngle, 0);
+        _leftOpenRot = _leftClosedRot * Quaternion.Euler(0, _openAngle, 0);
         }
 
         if (_rightDoor != null)
-        { _rightOpenRot = _rightClosedRot * Quaternion.Euler(0, _openAngle, 0);
+        { _rightOpenRot = _rightClosedRot * Quaternion.Euler(0, -_openAngle, 0);
         }
     }
 

@@ -50,13 +50,10 @@ public class RuneStone : MonoBehaviour
     {
         _currentIndex = 0;
 
-        // 시작하자마자 첫 번째 룬 스폰
-        if (_runeSequence != null && _runeSequence.Length > 0)
+        if (_runeChangeroutine != null)
         {
-            SpawnRuneObject(_runeSequence[0]);
+            StopCoroutine(_runeChangeroutine);
         }
-
-        if (_runeChangeroutine != null) StopCoroutine(_runeChangeroutine);
         _runeChangeroutine = StartCoroutine(RuneChangeRoutine());
     }
 
@@ -81,23 +78,29 @@ public class RuneStone : MonoBehaviour
 
     private IEnumerator RuneChangeRoutine()
     {
+        yield return null;
+
+        //시작하자마자 바로 한 번 실행
+        if (_runeSequence != null && _runeSequence.Length > 0)
+        {
+            RuneType firstRune = _runeSequence[0];
+            SpawnRuneObject(firstRune);
+            PlayRuneVFX();
+
+            OnRuneChanged?.Invoke(firstRune);
+        }
+
         WaitForSeconds wait = new WaitForSeconds(_changeInterval);
 
         while (true)
         {
             yield return wait;
 
-            // 순서 변경
             _currentIndex = (_currentIndex + 1) % _runeSequence.Length;
             RuneType currentRune = _runeSequence[_currentIndex];
 
             SpawnRuneObject(currentRune);
-
-            if (VFXManager.Instance != null)
-            {
-                VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.identity);
-            }
-
+            PlayRuneVFX();
             OnRuneChanged?.Invoke(currentRune);
         }
     }
@@ -127,6 +130,14 @@ public class RuneStone : MonoBehaviour
         {
             _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation);
             _currentRuneInstance.transform.SetParent(this.transform);
+        }
+    }
+
+    private void PlayRuneVFX()
+    {
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.Euler(-90, 0, 0));
         }
     }
 }
