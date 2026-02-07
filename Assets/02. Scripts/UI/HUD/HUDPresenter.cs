@@ -185,7 +185,10 @@ public class HUDPresenter : MonoBehaviour
             _hudView.IsPauseMenuActive = false;
             //TODO : 스테이지 클리어 UI 표시
             UpdateStageClearStarImage();
-            _hudView?.UpdateStageClearTimeRecordText(TimeSpan.FromSeconds(_stageManager.StageTimer));
+            if(_stageManager!= null)
+            {
+                _hudView?.UpdateStageClearTimeRecordText(TimeSpan.FromSeconds(_stageManager.StageTimer));
+            }
             _hudView?.ShowStageClearPanel();
         }
     }
