@@ -150,18 +150,23 @@ public class HUDPresenter : MonoBehaviour
         //TODO : 스테이지 세이브 관리 매니저 싱글턴 개발 및 통합 예정 (assigner : @digitalism8150)
     }
 
-    private async void HandlePlayerDeath()
+    private void HandlePlayerDeath()
+    {
+        StartCoroutine(PlayerDeathSequence());
+
+    }
+
+    private IEnumerator PlayerDeathSequence()
     {
         _stageManager?.PauseGameSmoothly(1.5f);
-        await Task.Delay(1500);
+        yield return new WaitForSecondsRealtime(1.5f);
+        _hudView?.HideHUD();
+        _hudView?.HidePauseMenu();
         if (_hudView != null)
         {
-            _hudView?.HideHUD();
-            _hudView?.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
-            //TODO : 게임 오버 UI 표시
-            _hudView?.ShowStageFailPanel();
         }
+        _hudView?.ShowStageFailPanel();
     }
 
     private async void HandleStageClear()
@@ -276,6 +281,7 @@ public class HUDPresenter : MonoBehaviour
         }
     }
 
+    //스테이지 클리어 UI 별 왼쪽 부터 업데이트
     private void UpdateStageClearStarImage()
     {
         if (_stageManager == null || _hudView == null)
@@ -295,7 +301,7 @@ public class HUDPresenter : MonoBehaviour
 
         for(int i = idx; i < 3; i++)
         {
-            _hudView.UpdateStageClearStarSprite(idx, false);
+            _hudView.UpdateStageClearStarSprite(i, false);
         }
     }
 }

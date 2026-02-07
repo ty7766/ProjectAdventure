@@ -71,7 +71,7 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private Sprite _starEmptySprite;
 
-    [Header("StageClarUI")]
+    [Header("StageClearUI")]
     [SerializeField]
     private GameObject _stageClearPanel;
     [SerializeField]
