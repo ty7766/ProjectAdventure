@@ -6,4 +6,5 @@ public enum VFXType
     SphinxWarning,
     VolcanoFire,
     LavaPop,
+    SnowBallHit,
 }

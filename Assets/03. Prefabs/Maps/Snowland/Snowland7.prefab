@@ -793,6 +793,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Arctic_Ground_07
       objectReference: {fileID: 0}
+    - target: {fileID: 5740530929469073336, guid: 0c9720050e947af4790c768bf82aa241, type: 3}
+      propertyPath: m_TagString
+      value: Snow
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

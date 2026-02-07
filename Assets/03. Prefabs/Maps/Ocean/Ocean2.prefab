@@ -458,6 +458,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5138084812435578978, guid: 6dae72ccea5063e458fe4dcc6923e7b4, type: 3}
+      propertyPath: m_Convex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5138084812435578978, guid: 6dae72ccea5063e458fe4dcc6923e7b4, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5702372856413888874, guid: 6dae72ccea5063e458fe4dcc6923e7b4, type: 3}
       propertyPath: m_Name
       value: PP_Beach_01
