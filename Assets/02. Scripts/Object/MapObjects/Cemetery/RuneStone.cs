@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class RuneStone : MonoBehaviour
 {
+    [System.Serializable]
+    public struct RunePrefabMapping
+    {
+        public RuneType type;       // 룬 이름
+        public GameObject prefab;   // 연결할 프리팹
+    }
+
     public static event Action<RuneType> OnRuneChanged;
 
-    [Header("룬 주기")]
+    [Header("설정")]
     [SerializeField]
     private float _changeInterval = 5.0f;
 
-    [Header("사용할 룬 타입")]
+    [Header("순서 설정")]
     [SerializeField]
-    private RuneType[] _runeTypes;
+    private RuneType[] _runeSequence;
 
-    [Header("사용할 룬 오브젝트")]
-    [Tooltip("RuneType 순서와 일치해야함")]
+    [Header("프리팹 도감")]
+    [Tooltip("모든 룬 프리팹을 여기에 등록하세요.")]
     [SerializeField]
-    private GameObject[] _runeObject;
+    private List<RunePrefabMapping> _prefabDatabase;
 
     [Header("VFX 설정")]
     [SerializeField]
@@ -32,19 +40,20 @@ public class RuneStone : MonoBehaviour
     private void Awake()
     {
         MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        if(meshRenderer != null)
+        if (meshRenderer != null)
         {
             meshRenderer.enabled = false;
         }
     }
+
     private void OnEnable()
     {
         _currentIndex = 0;
 
-        // 시작하자마자 첫 번째 룬 생성
-        if (_runeTypes != null && _runeTypes.Length > 0)
+        // 시작하자마자 첫 번째 룬 스폰
+        if (_runeSequence != null && _runeSequence.Length > 0)
         {
-            SpawnRuneObject(_runeTypes[0]);
+            SpawnRuneObject(_runeSequence[0]);
         }
 
         if (_runeChangeroutine != null) StopCoroutine(_runeChangeroutine);
@@ -59,13 +68,12 @@ public class RuneStone : MonoBehaviour
             _runeChangeroutine = null;
         }
 
-        // 맵 꺼질 때 룬 삭제
         if (_currentRuneInstance != null)
         {
             Destroy(_currentRuneInstance);
         }
     }
-    //중복 방지 (이벤트 구독 해제)
+
     private void OnDestroy()
     {
         OnRuneChanged = null;
@@ -75,54 +83,49 @@ public class RuneStone : MonoBehaviour
     {
         WaitForSeconds wait = new WaitForSeconds(_changeInterval);
 
-        while(true)
+        while (true)
         {
             yield return wait;
-            
-            //룬 변경
-            _currentIndex = (_currentIndex + 1) % _runeTypes.Length;
-            RuneType currentRune = _runeTypes[_currentIndex];
+
+            // 순서 변경
+            _currentIndex = (_currentIndex + 1) % _runeSequence.Length;
+            RuneType currentRune = _runeSequence[_currentIndex];
 
             SpawnRuneObject(currentRune);
 
-            if(VFXManager.Instance != null)
+            if (VFXManager.Instance != null)
             {
-                VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position +  _runeChangeVFXPosition, Quaternion.identity);
+                VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.identity);
             }
 
             OnRuneChanged?.Invoke(currentRune);
         }
     }
-
-    private void SpawnRuneObject(RuneType type)
+    private void SpawnRuneObject(RuneType targetType)
     {
-        //기존에 떠있는 룬이 있으면 제거
+        //룬 삭제
         if (_currentRuneInstance != null)
         {
             Destroy(_currentRuneInstance);
             _currentRuneInstance = null;
         }
 
-        //배열이 비었으면 넘기기
-        if (_runeObject == null)
+        //프리팹 찾기
+        GameObject targetPrefab = null;
+
+        foreach (var mapping in _prefabDatabase)
         {
-            return;
+            if (mapping.type == targetType)
+            {
+                targetPrefab = mapping.prefab;
+                break;
+            }
         }
 
-        //룬의 고유 이름을 정수로 변환하여 인덱스로 결정
-
-        int objectIndex = (int)type - 1;
-
-        if (objectIndex < 0 || objectIndex >= _runeObject.Length)
+        //찾았으면 생성
+        if (targetPrefab != null)
         {
-            return;
-        }
-
-        GameObject prefabToSpawn = _runeObject[objectIndex];
-
-        if (prefabToSpawn != null)
-        {
-            _currentRuneInstance = Instantiate(prefabToSpawn, transform.position + _runeChangeVFXPosition, Quaternion.identity);
+            _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation);
             _currentRuneInstance.transform.SetParent(this.transform);
         }
     }
