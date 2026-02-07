@@ -15,7 +15,7 @@ public class RuneGate : MonoBehaviour
 
     [Header("회전 설정")]
     [SerializeField]
-    private float _openAngle = 90f; // 열리는 각도
+    private float _openAngle = -90f; // 열리는 각도
     [SerializeField]
     private float _duration = 1.0f; // 열리는 데 걸리는 시간
 
