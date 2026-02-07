@@ -50,6 +50,8 @@ public class HUDView : MonoBehaviour
     private Button _returnToMainMenuButton;
     [SerializeField]
     private Button _quitGameButton;
+    [SerializeField]
+    private Button _retryButtonPauseMenu;
 
     [Header("Stage Start UI")]
     [SerializeField]
@@ -83,13 +85,23 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private Button _goToNextStageButton;
 
+    [Header("StageFailUI")]
+    [SerializeField]
+    private GameObject _stageFailPanel;
+    [SerializeField]
+    private Button _retryButtonStageFail;
+    [SerializeField]
+    private Button _returnToMainMenuButtonStageFail;
 
 
-    //--- Events ---//
+
+    //--- Button Events ---//
     public event Action OnResumeButtonClicked;
     public event Action OnPauseButtonClicked;
     public event Action OnReturnToMainMenuButtonClicked;
     public event Action OnQuitGameButtonClicked;
+    public event Action OnRetryButtonClicked;
+    public event Action OnGoToNextStageButtonClicked;
 
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
@@ -111,6 +123,11 @@ public class HUDView : MonoBehaviour
     private void Update()
     {
         HandlePauseKeyInput();
+    }
+
+    private void OnDestroy()
+    {
+        RemoveAllButtonListeners();
     }
 
     //--- Public Methods ---//
@@ -335,6 +352,22 @@ public class HUDView : MonoBehaviour
         }
     }
 
+    public void ShowStageFailPanel()
+    {
+        if(_stageFailPanel != null)
+        {
+            _stageFailPanel.SetActive(true);
+        }
+    }
+
+    public void HideStageFailPanel()
+    {
+        if (_stageFailPanel != null)
+        {
+            _stageFailPanel.SetActive(false);
+        }
+    }
+
     public void UpdateStageClearStageNumberText(int number)
     {
         if(_stageClearNumberText != null)
@@ -354,6 +387,16 @@ public class HUDView : MonoBehaviour
         }
     }
 
+    public void UpdateStageClearStarSprite(int index, bool isCleared)
+    {
+        if(index < 0 || index >= _stageClearStarImages.Count)
+        {
+            CustomDebug.LogWarning("UpdateStageClearStarSprite: Index out of range.");
+            return;
+        }
+        _stageClearStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
+    }
+
     //--- Private Methods ---//
     private IEnumerator AnimateFontSize(float targetSize, float time)
     {
@@ -362,7 +405,7 @@ public class HUDView : MonoBehaviour
 
         while (elapsed < time)
         {
-            elapsed += Time.deltaTime;
+            elapsed += Time.unscaledDeltaTime;
             float progress = elapsed / time;
 
             _stageCountDownText.fontSize = Mathf.Lerp(startSize, targetSize, progress);
@@ -378,6 +421,24 @@ public class HUDView : MonoBehaviour
         _pauseButton?.onClick.AddListener(() => OnPauseButtonClicked?.Invoke());
         _returnToMainMenuButton?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
         _quitGameButton?.onClick.AddListener(() => OnQuitGameButtonClicked?.Invoke());
+        _retryButton?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _goToNextStageButton?.onClick.AddListener(() => OnGoToNextStageButtonClicked?.Invoke());
+        _retryButtonPauseMenu?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _retryButtonStageFail?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _returnToMainMenuButtonStageFail?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
+    }
+
+    private void RemoveAllButtonListeners()
+    {
+        _resumeButton?.onClick.RemoveAllListeners();
+        _pauseButton?.onClick.RemoveAllListeners();
+        _returnToMainMenuButton?.onClick.RemoveAllListeners();
+        _quitGameButton?.onClick.RemoveAllListeners();
+        _retryButton?.onClick.RemoveAllListeners();
+        _goToNextStageButton?.onClick.RemoveAllListeners();
+        _retryButtonPauseMenu?.onClick.RemoveAllListeners();
+        _retryButtonStageFail?.onClick.RemoveAllListeners();
+        _returnToMainMenuButtonStageFail?.onClick.RemoveAllListeners();
     }
 
     private void HandlePauseKeyInput()

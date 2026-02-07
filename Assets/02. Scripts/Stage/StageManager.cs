@@ -83,6 +83,7 @@ public class StageObject
     {
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
         _initialFixedDeltaTime = Time.fixedDeltaTime;
+        PauseGameSmoothly();
         DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
     }
 
@@ -109,6 +110,7 @@ public class StageObject
     {
         _isTimerRunning = true;
         _stageTimer = 0f;
+        ResumeGameSmoothly();
         EnablePlayerControl();
     }
 

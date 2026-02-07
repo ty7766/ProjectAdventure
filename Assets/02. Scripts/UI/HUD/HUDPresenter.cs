@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(HUDView))]
 public class HUDPresenter : MonoBehaviour
@@ -63,6 +65,8 @@ public class HUDPresenter : MonoBehaviour
             _hudView.OnResumeButtonClicked += HandleResumeButtonClicked;
             _hudView.OnReturnToMainMenuButtonClicked += HandleReturnToMainMenuButtonClicked;
             _hudView.OnQuitGameButtonClicked += HandleQuitGameButtonClicked;
+            _hudView.OnRetryButtonClicked += HandleRetryStageClicked;
+            _hudView.OnGoToNextStageButtonClicked += HandleGoToNextStageButtonClicked;
         }
     }
 
@@ -88,6 +92,8 @@ public class HUDPresenter : MonoBehaviour
             _hudView.OnResumeButtonClicked -= HandleResumeButtonClicked;
             _hudView.OnReturnToMainMenuButtonClicked -= HandleReturnToMainMenuButtonClicked;
             _hudView.OnQuitGameButtonClicked -= HandleQuitGameButtonClicked;
+            _hudView.OnRetryButtonClicked -= HandleRetryStageClicked;
+            _hudView.OnGoToNextStageButtonClicked -= HandleGoToNextStageButtonClicked;
         }
     }
 
@@ -122,7 +128,7 @@ public class HUDPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenuButtonClicked()
     {
-        //TODO : 메인메뉴로 돌아가기
+        //TODO : 메인메뉴로 돌아가기 (빌드 세팅 및 최종 메인화면 씬 이름 확인)
     }
 
     private void HandleQuitGameButtonClicked()
@@ -134,30 +140,43 @@ public class HUDPresenter : MonoBehaviour
         Application.Quit();
     }
 
-    private void HandlePlayerDeath()
+    private void HandleRetryStageClicked()
     {
-        _stageManager?.PauseGameSmoothly(3f);
-        if(_hudView != null)
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    private void HandleGoToNextStageButtonClicked()
+    {
+        //TODO : 스테이지 세이브 관리 매니저 싱글턴 개발 및 통합 예정 (assigner : @digitalism8150)
+    }
+
+    private async void HandlePlayerDeath()
+    {
+        _stageManager?.PauseGameSmoothly(1.5f);
+        await Task.Delay(1500);
+        if (_hudView != null)
         {
-            _hudView.HidePauseMenu();
+            _hudView?.HideHUD();
+            _hudView?.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
             //TODO : 게임 오버 UI 표시
-
+            _hudView?.ShowStageFailPanel();
         }
     }
 
-    private void HandleStageClear()
+    private async void HandleStageClear()
     {
-        _stageManager?.PauseGameSmoothly(3f);
+        _stageManager?.PauseGameSmoothly(1.0f);
+        await Task.Delay(1000);
+        _hudView?.HideHUD();
         if (_hudView != null)
         {
             _hudView?.HidePauseMenu();
             _hudView.IsPauseMenuActive = false;
             //TODO : 스테이지 클리어 UI 표시
-            UpdateStageObjectText();
-            _hudView?.ShowStageObjectView();
-            _hudView?.ShowStageStartPanel();
-            _hudView?.UpdateStageCountDownContent("Stage Clear!");
+            UpdateStageClearStarImage();
+            _hudView?.UpdateStageClearTimeRecordText(TimeSpan.FromSeconds(_stageManager.StageTimer));
+            _hudView?.ShowStageClearPanel();
         }
     }
 
@@ -165,9 +184,11 @@ public class HUDPresenter : MonoBehaviour
     {
         if (_hudView != null)
         {
+            _hudView.HideStageFailPanel();
             _hudView.HideHUD();
-            _hudView.IsPauseMenuActive = false;
             _hudView.HidePauseMenu();
+            _hudView.IsPauseMenuActive = false;
+            _hudView.HideStageClearPanel();
             UpdateStageObjectText();
             _hudView.ShowStageStartPanel();
             _hudView.ShowStageObjectView();
@@ -180,12 +201,10 @@ public class HUDPresenter : MonoBehaviour
     {
         string readyText = "준비하세요!";
         _hudView?.UpdateStageCountDownContent(readyText);
-        // 시작할 때 폰트 크기 120에서 80으로 0.3초 동안 줄어드는 느낌 (수치는 형 취향대로 조절해!)
         _hudView?.ApplyStageCountDownAnimation(80f, 1.0f);
 
         yield return new WaitForSecondsRealtime(1.5f);
 
-        // 3, 2, 1 카운트다운 루프
         for (int i = 3; i >= 1; i--)
         {
             //TODO : 사운드 매니저 통합
@@ -200,12 +219,10 @@ public class HUDPresenter : MonoBehaviour
             yield return new WaitForSecondsRealtime(.5f);
         }
 
-        // "START!" 혹은 "GO!" 연출 (필요 없으면 생략 가능)
         _hudView?.UpdateStageCountDownContent("GO!");
         _hudView?.ApplyStageCountDownAnimation(120f, 0.2f);
         yield return new WaitForSecondsRealtime(0.5f);
 
-        // 기존 종료 로직 수행
         _hudView?.HideStageStartPanel();
         _hudView?.HideStageObjectView();
         _hudView?.ShowHUD();
@@ -256,6 +273,29 @@ public class HUDPresenter : MonoBehaviour
                 }
                 idx++;
             }
+        }
+    }
+
+    private void UpdateStageClearStarImage()
+    {
+        if (_stageManager == null || _hudView == null)
+        {
+            return;
+        }
+
+        int idx = 0;
+        foreach(StageObject obj in _stageManager.StageObjects)
+        {
+            if(obj.isCleared)
+            {
+                _hudView.UpdateStageClearStarSprite(idx, true);
+                idx++;
+            }
+        }
+
+        for(int i = idx; i < 3; i++)
+        {
+            _hudView.UpdateStageClearStarSprite(idx, false);
         }
     }
 }
