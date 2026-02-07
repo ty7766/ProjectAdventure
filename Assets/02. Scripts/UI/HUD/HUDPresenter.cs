@@ -169,10 +169,15 @@ public class HUDPresenter : MonoBehaviour
         _hudView?.ShowStageFailPanel();
     }
 
-    private async void HandleStageClear()
+    private void HandleStageClear()
+    {
+        StartCoroutine(StageClearSequence());
+    }
+
+    private IEnumerator StageClearSequence()
     {
         _stageManager?.PauseGameSmoothly(1.0f);
-        await Task.Delay(1000);
+        yield return new WaitForSecondsRealtime(1.0f);
         _hudView?.HideHUD();
         if (_hudView != null)
         {
