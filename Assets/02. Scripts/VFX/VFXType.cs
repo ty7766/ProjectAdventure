@@ -7,4 +7,5 @@ public enum VFXType
     VolcanoFire,
     LavaPop,
     SnowBallHit,
+    RuneChange,
 }
