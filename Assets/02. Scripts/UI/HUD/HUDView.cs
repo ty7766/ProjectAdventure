@@ -43,13 +43,13 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private GameObject _pauseMenu;
     [SerializeField]
-    private UnityEngine.UI.Button _resumeButton;
+    private Button _resumeButton;
     [SerializeField]
-    private UnityEngine.UI.Button _pauseButton;
+    private Button _pauseButton;
     [SerializeField]
-    private UnityEngine.UI.Button _returnToMainMenuButton;
+    private Button _returnToMainMenuButton;
     [SerializeField]
-    private UnityEngine.UI.Button _quitGameButton;
+    private Button _quitGameButton;
 
     [Header("Stage Start UI")]
     [SerializeField]
@@ -68,6 +68,21 @@ public class HUDView : MonoBehaviour
     private Sprite _starFilledSprite;
     [SerializeField]
     private Sprite _starEmptySprite;
+
+    [Header("StageClarUI")]
+    [SerializeField]
+    private GameObject _stageClearPanel;
+    [SerializeField]
+    private TextMeshProUGUI _stageClearTimeText;
+    [SerializeField]
+    private TextMeshProUGUI _stageClearNumberText;
+    [SerializeField]
+    private List<Image> _stageClearStarImages;
+    [SerializeField]
+    private Button _retryButton;
+    [SerializeField]
+    private Button _goToNextStageButton;
+
 
 
     //--- Events ---//
@@ -301,6 +316,41 @@ public class HUDView : MonoBehaviour
         if (_stageObjectPanel != null)
         {
             _stageObjectPanel.SetActive(false);
+        }
+    }
+
+    public void ShowStageClearPanel()
+    {
+        if(_stageClearPanel != null)
+        {
+            _stageClearPanel.SetActive(true);
+        }
+    }
+
+    public void HideStageClearPanel()
+    {
+        if (_stageClearPanel != null)
+        {
+            _stageClearPanel.SetActive(false);
+        }
+    }
+
+    public void UpdateStageClearStageNumberText(int number)
+    {
+        if(_stageClearNumberText != null)
+        {
+            _stageClearNumberText.text = $"스테이지 {number}";
+        }
+    }
+
+    public void UpdateStageClearTimeRecordText(TimeSpan timeSpan)
+    {
+        if(_stageClearTimeText != null)
+        {
+            _stageClearTimeText.text = string.Format("<mspace=0.7em>{0:D2}:{1:D2}.</mspace><mspace=0.5em><size=50%>{2:D3}</size></mspace>",
+            timeSpan.Minutes,
+            timeSpan.Seconds,
+            timeSpan.Milliseconds);
         }
     }
 
