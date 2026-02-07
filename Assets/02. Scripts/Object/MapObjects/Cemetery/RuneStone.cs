@@ -26,36 +26,43 @@ public class RuneStone : MonoBehaviour
     private Vector3 _runeChangeVFXPosition = new Vector3(0, 1.5f, 0);
 
     private int _currentIndex = 0;
+    private GameObject _currentRuneInstance;
     private Coroutine _runeChangeroutine;
 
     private void Awake()
     {
-        if(TryGetComponent<MeshRenderer>(out var renderer))
+        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
+        if(meshRenderer != null)
         {
-            renderer.enabled = false;
+            meshRenderer.enabled = false;
         }
     }
     private void OnEnable()
     {
-        _currentIndex = -1;
+        _currentIndex = 0;
 
-        if(_runeChangeroutine != null)
+        // 시작하자마자 첫 번째 룬 생성
+        if (_runeTypes != null && _runeTypes.Length > 0)
         {
-            StopCoroutine(_runeChangeroutine);
+            SpawnRuneObject(_runeTypes[0]);
         }
 
-        if(_runeTypes != null && _runeTypes.Length > 0)
-        {
-            _runeChangeroutine = StartCoroutine(RuneChangeRoutine());
-        }
+        if (_runeChangeroutine != null) StopCoroutine(_runeChangeroutine);
+        _runeChangeroutine = StartCoroutine(RuneChangeRoutine());
     }
 
     private void OnDisable()
     {
-        if(_runeChangeroutine != null)
+        if (_runeChangeroutine != null)
         {
             StopCoroutine(_runeChangeroutine);
             _runeChangeroutine = null;
+        }
+
+        // 맵 꺼질 때 룬 삭제
+        if (_currentRuneInstance != null)
+        {
+            Destroy(_currentRuneInstance);
         }
     }
     //중복 방지 (이벤트 구독 해제)
@@ -76,7 +83,7 @@ public class RuneStone : MonoBehaviour
             _currentIndex = (_currentIndex + 1) % _runeTypes.Length;
             RuneType currentRune = _runeTypes[_currentIndex];
 
-            UpdateRuneObjects(currentRune);
+            SpawnRuneObject(currentRune);
 
             if(VFXManager.Instance != null)
             {
@@ -87,16 +94,36 @@ public class RuneStone : MonoBehaviour
         }
     }
 
-    //해당 룬으로 바꾸는 메소드
-    private void UpdateRuneObjects(RuneType activeRune)
+    private void SpawnRuneObject(RuneType type)
     {
-        for (int i = 0; i < _runeObject.Length; i++)
+        //기존에 떠있는 룬이 있으면 제거
+        if (_currentRuneInstance != null)
         {
-            if (_runeObject[i] != null)
-            {
-                bool isActive = (i == _currentIndex);
-                _runeObject[i].SetActive(isActive);
-            }
+            Destroy(_currentRuneInstance);
+            _currentRuneInstance = null;
+        }
+
+        //배열이 비었으면 넘기기
+        if (_runeObject == null)
+        {
+            return;
+        }
+
+        //룬의 고유 이름을 정수로 변환하여 인덱스로 결정
+
+        int objectIndex = (int)type - 1;
+
+        if (objectIndex < 0 || objectIndex >= _runeObject.Length)
+        {
+            return;
+        }
+
+        GameObject prefabToSpawn = _runeObject[objectIndex];
+
+        if (prefabToSpawn != null)
+        {
+            _currentRuneInstance = Instantiate(prefabToSpawn, transform.position + _runeChangeVFXPosition, Quaternion.identity);
+            _currentRuneInstance.transform.SetParent(this.transform);
         }
     }
 }
