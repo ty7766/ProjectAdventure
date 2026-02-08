@@ -1641,7 +1641,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.12
+      value: 4.93
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1749,7 +1749,15 @@ MonoBehaviour:
   _pathGroups:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
-    PathPrefabs: []
+    PathPrefabs:
+    - {fileID: 2910512297889539720, guid: d77e3feb34ef9d245bc8001f7999dc1f, type: 3}
+    - {fileID: 2508439079240213857, guid: d52bce99ae3dfa34db0881faf551a35b, type: 3}
+    - {fileID: 1556500274274478124, guid: 5b9731dce80db1b47a16310e4a837a88, type: 3}
+    - {fileID: 1252271583804284471, guid: 2efc3b008bcc7964ea916e4617ca9fa5, type: 3}
+    - {fileID: 2766102709251254700, guid: fab18dfec90473244a2b122d021db220, type: 3}
+    - {fileID: 5248508870652778043, guid: 552f6a98573e920478170e047c328527, type: 3}
+    - {fileID: 6363534732820104948, guid: 337204ab0b5a6a4439fb1360065308f7, type: 3}
+    - {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _detectionSize: {x: 12, y: 5, z: 10}
@@ -1985,7 +1993,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.05
+      value: 9.92
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
