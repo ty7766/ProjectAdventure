@@ -90,8 +90,8 @@ public class RuneGate : MonoBehaviour
     private IEnumerator MoveDoorRoutine(Quaternion targetLeft, Quaternion targetRight)
     {
         float timer = 0f;
-        Quaternion startLeft = _leftDoor.localRotation;
-        Quaternion startRight = _rightDoor.localRotation;
+        Quaternion startLeft = _leftDoor != null ? _leftDoor.localRotation : targetLeft;
+        Quaternion startRight = _rightDoor != null ? _rightDoor.localRotation : targetRight;
 
         while (timer < _duration)
         {
