@@ -75,15 +75,15 @@ public class RuneStone : MonoBehaviour
     {
         yield return null;
 
-        //시작하자마자 바로 한 번 실행
         if (_runeSequence != null && _runeSequence.Length > 0)
         {
-            RuneType firstRune = _runeSequence[0];
-            SpawnRuneObject(firstRune);
-            PlayRuneVFX();
-
-            OnRuneChanged?.Invoke(firstRune);
+            yield break;
         }
+
+        RuneType firstRune = _runeSequence[0];
+        SpawnRuneObject(firstRune);
+        PlayRuneVFX();      //VFX 재생
+        OnRuneChanged?.Invoke(firstRune);
 
         WaitForSeconds wait = new WaitForSeconds(_changeInterval);
 
