@@ -103,7 +103,8 @@ public class WeepingAngel : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _angelRotationSpeed * Time.deltaTime);
         }
         //이동
-        transform.position = Vector3.MoveTowards(transform.position, _playerTransform.position, _angelSpeed * Time.deltaTime);
+        Vector3 targetPos = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
+        transform.position = Vector3.MoveTowards(transform.position, targetPos, _angelSpeed * Time.deltaTime);
     }
 
     private void OnCollisionEnter(Collision collision)
