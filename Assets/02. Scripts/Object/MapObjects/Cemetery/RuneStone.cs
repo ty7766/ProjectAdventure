@@ -71,11 +71,6 @@ public class RuneStone : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-        OnRuneChanged = null;
-    }
-
     private IEnumerator RuneChangeRoutine()
     {
         yield return null;
