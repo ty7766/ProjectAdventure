@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public enum RequiredStageCondition { None, ClearPreviousStage, TotalClearStars }
+public enum RequiredStageCondition { UnlockedByDefault, MustClearPreviousStage, MustHaveTotalClearStars }
 
 [CreateAssetMenu(fileName = "StageData", menuName = "Game/Stage Data")]
 public class StageData : ScriptableObject
