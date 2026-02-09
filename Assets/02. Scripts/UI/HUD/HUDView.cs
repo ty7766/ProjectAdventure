@@ -1,8 +1,9 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class HUDView : MonoBehaviour
 {
@@ -42,13 +43,15 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private GameObject _pauseMenu;
     [SerializeField]
-    private UnityEngine.UI.Button _resumeButton;
+    private Button _resumeButton;
     [SerializeField]
-    private UnityEngine.UI.Button _pauseButton;
+    private Button _pauseButton;
     [SerializeField]
-    private UnityEngine.UI.Button _returnToMainMenuButton;
+    private Button _returnToMainMenuButton;
     [SerializeField]
-    private UnityEngine.UI.Button _quitGameButton;
+    private Button _quitGameButton;
+    [SerializeField]
+    private Button _retryButtonPauseMenu;
 
     [Header("Stage Start UI")]
     [SerializeField]
@@ -68,15 +71,41 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private Sprite _starEmptySprite;
 
+    [Header("StageClearUI")]
+    [SerializeField]
+    private GameObject _stageClearPanel;
+    [SerializeField]
+    private TextMeshProUGUI _stageClearTimeText;
+    [SerializeField]
+    private TextMeshProUGUI _stageClearNumberText;
+    [SerializeField]
+    private List<Image> _stageClearStarImages;
+    [SerializeField]
+    private Button _retryButton;
+    [SerializeField]
+    private Button _goToNextStageButton;
 
-    //--- Events ---//
+    [Header("StageFailUI")]
+    [SerializeField]
+    private GameObject _stageFailPanel;
+    [SerializeField]
+    private Button _retryButtonStageFail;
+    [SerializeField]
+    private Button _returnToMainMenuButtonStageFail;
+
+
+
+    //--- Button Events ---//
     public event Action OnResumeButtonClicked;
     public event Action OnPauseButtonClicked;
     public event Action OnReturnToMainMenuButtonClicked;
     public event Action OnQuitGameButtonClicked;
+    public event Action OnRetryButtonClicked;
+    public event Action OnGoToNextStageButtonClicked;
 
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
+    private Coroutine _fontSizeCoroutine;
 
     //--- Properties ---//
     public bool IsPauseMenuActive
@@ -94,6 +123,11 @@ public class HUDView : MonoBehaviour
     private void Update()
     {
         HandlePauseKeyInput();
+    }
+
+    private void OnDestroy()
+    {
+        RemoveAllButtonListeners();
     }
 
     //--- Public Methods ---//
@@ -239,7 +273,7 @@ public class HUDView : MonoBehaviour
     /// 스테이지 카운트다운 텍스트 UI를 업데이트 합니다.
     /// </summary>
     /// <param name="text"></param>
-    public void UpdateStageCountDown(string text)
+    public void UpdateStageCountDownContent(string text)
     {
         if(_stageCountDownText == null)
         {
@@ -247,6 +281,27 @@ public class HUDView : MonoBehaviour
             return;
         }
         _stageCountDownText.text = text;
+    }
+
+    /// <summary>
+    /// 글자 크기 애니메이션 적용
+    /// </summary>
+    /// <param name="targetFontSize"></param>
+    /// <param name="duration"></param>
+    public void ApplyStageCountDownAnimation(float targetFontSize, float duration)
+    {
+        if (_stageCountDownText == null)
+        {
+            CustomDebug.LogWarning("UpdateStageCountDownAnimation: Stage Count Down Text component is not assigned.");
+            return;
+        }
+
+        if (_fontSizeCoroutine != null)
+        {
+            StopCoroutine(_fontSizeCoroutine);
+        }
+
+        _fontSizeCoroutine = StartCoroutine(AnimateFontSize(targetFontSize, duration));
     }
 
     public void ShowStageStartPanel()
@@ -281,13 +336,109 @@ public class HUDView : MonoBehaviour
         }
     }
 
+    public void ShowStageClearPanel()
+    {
+        if(_stageClearPanel != null)
+        {
+            _stageClearPanel.SetActive(true);
+        }
+    }
+
+    public void HideStageClearPanel()
+    {
+        if (_stageClearPanel != null)
+        {
+            _stageClearPanel.SetActive(false);
+        }
+    }
+
+    public void ShowStageFailPanel()
+    {
+        if(_stageFailPanel != null)
+        {
+            _stageFailPanel.SetActive(true);
+        }
+    }
+
+    public void HideStageFailPanel()
+    {
+        if (_stageFailPanel != null)
+        {
+            _stageFailPanel.SetActive(false);
+        }
+    }
+
+    public void UpdateStageClearStageNumberText(int number)
+    {
+        if(_stageClearNumberText != null)
+        {
+            _stageClearNumberText.text = $"스테이지 {number}";
+        }
+    }
+
+    public void UpdateStageClearTimeRecordText(TimeSpan timeSpan)
+    {
+        if(_stageClearTimeText != null)
+        {
+            _stageClearTimeText.text = string.Format("<mspace=0.7em>{0:D2}:{1:D2}.</mspace><mspace=0.5em><size=50%>{2:D3}</size></mspace>",
+            timeSpan.Minutes,
+            timeSpan.Seconds,
+            timeSpan.Milliseconds);
+        }
+    }
+
+    public void UpdateStageClearStarSprite(int index, bool isCleared)
+    {
+        if(index < 0 || index >= _stageClearStarImages.Count)
+        {
+            CustomDebug.LogWarning("UpdateStageClearStarSprite: Index out of range.");
+            return;
+        }
+        _stageClearStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
+    }
+
     //--- Private Methods ---//
+    private IEnumerator AnimateFontSize(float targetSize, float time)
+    {
+        float startSize = _stageCountDownText.fontSize;
+        float elapsed = 0f;
+
+        while (elapsed < time)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float progress = elapsed / time;
+
+            _stageCountDownText.fontSize = Mathf.Lerp(startSize, targetSize, progress);
+            yield return null;
+        }
+
+        _stageCountDownText.fontSize = targetSize;
+    }
+
     private void AddButtonListeners()
     {
         _resumeButton?.onClick.AddListener(() => OnResumeButtonClicked?.Invoke());
         _pauseButton?.onClick.AddListener(() => OnPauseButtonClicked?.Invoke());
         _returnToMainMenuButton?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
         _quitGameButton?.onClick.AddListener(() => OnQuitGameButtonClicked?.Invoke());
+        _retryButton?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _goToNextStageButton?.onClick.AddListener(() => OnGoToNextStageButtonClicked?.Invoke());
+        _retryButtonPauseMenu?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _retryButtonStageFail?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
+        _returnToMainMenuButtonStageFail?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
+    }
+
+    private void RemoveAllButtonListeners()
+    {
+        _resumeButton?.onClick.RemoveAllListeners();
+        _pauseButton?.onClick.RemoveAllListeners();
+        _returnToMainMenuButton?.onClick.RemoveAllListeners();
+        _quitGameButton?.onClick.RemoveAllListeners();
+        _retryButton?.onClick.RemoveAllListeners();
+        _goToNextStageButton?.onClick.RemoveAllListeners();
+        _retryButtonPauseMenu?.onClick.RemoveAllListeners();
+        _retryButtonStageFail?.onClick.RemoveAllListeners();
+        _returnToMainMenuButtonStageFail?.onClick.RemoveAllListeners();
     }
 
     private void HandlePauseKeyInput()

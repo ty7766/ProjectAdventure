@@ -55,22 +55,14 @@ public class StageObject
     //--- Unity Methods ---//
     private void Awake()
     {
-        if (Instance == null)
+        bool isInstanceNull = TryInitializeSingleton();
+        if (!isInstanceNull)
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
             return;
         }
 
-        if (_playerController != null) {
-            _playerController.OnPlayerDamageTaken += HandlePlayerDamageTakenEvent;
-            _playerController.OnPlayerFallenDown += HandlePlayerFallenDownEvent;
-        }
-
-        ApplyAlreadyClearedStageObjects();
+        SubscribeEvents();
+        LoadStageObjectStatusFromSave();
     }
 
     private void OnDestroy() 
@@ -91,6 +83,7 @@ public class StageObject
     {
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
         _initialFixedDeltaTime = Time.fixedDeltaTime;
+        PauseGameSmoothly();
         DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
     }
 
@@ -117,6 +110,7 @@ public class StageObject
     {
         _isTimerRunning = true;
         _stageTimer = 0f;
+        ResumeGameSmoothly();
         EnablePlayerControl();
     }
 
@@ -149,6 +143,29 @@ public class StageObject
 
 
     //--- Private Helpers ---//
+    private bool TryInitializeSingleton()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            return true;
+        }
+        else
+        {
+            Destroy(gameObject);
+            return false;
+        }
+    }
+
+    private void SubscribeEvents()
+    {
+        if (_playerController != null)
+        {
+            _playerController.OnPlayerDamageTaken += HandlePlayerDamageTakenEvent;
+            _playerController.OnPlayerFallenDown += HandlePlayerFallenDownEvent;
+        }
+    }
+
     private IEnumerator ChangeTimeScale(float targetScale, float duration)
     {
         float startScale = Time.timeScale;
@@ -178,9 +195,17 @@ public class StageObject
 
     private void ClearStage()
     {
-        CustomDebug.Log("Stage Cleared!");
         DisablePlayerControl();
-        foreach(var obj in _stageObjects)
+
+        CheckStageObject();
+        OnStageCleared?.Invoke();
+
+        SaveStageClearData();
+    }
+
+    private void CheckStageObject()
+    {
+        foreach (var obj in _stageObjects)
         {
             if (obj.isCleared)
             {
@@ -189,37 +214,34 @@ public class StageObject
             switch (obj.stageObjectType)
             {
                 case StageObjectType.NoDamageClear:
-                    if(!_isPlayerDamageTaken)
+                    if (!_isPlayerDamageTaken)
                     {
                         obj.isCleared = true;
                     }
                     break;
 
                 case StageObjectType.NoFallClear:
-                    if(!_isPlayerFallenDown)
+                    if (!_isPlayerFallenDown)
                     {
                         obj.isCleared = true;
                     }
                     break;
 
                 case StageObjectType.TimeLimitClear:
-                    if(_stageTimer <= obj.value)
+                    if (_stageTimer <= obj.value)
                     {
                         obj.isCleared = true;
                     }
                     break;
 
                 case StageObjectType.RemainHealthClear:
-                    if(_playerController != null && _playerController.Health >= obj.value)
+                    if (_playerController != null && _playerController.Health >= obj.value)
                     {
                         obj.isCleared = true;
                     }
                     break;
             }
         }
-
-        OnStageCleared?.Invoke();
-        SaveStageClearData();
     }
 
     private void DisablePlayerControl()
@@ -264,7 +286,7 @@ public class StageObject
         _isPlayerFallenDown = true;
     }
 
-    private void ApplyAlreadyClearedStageObjects()
+    private void LoadStageObjectStatusFromSave()
     {
         foreach(var obj in _stageObjects)
         {
