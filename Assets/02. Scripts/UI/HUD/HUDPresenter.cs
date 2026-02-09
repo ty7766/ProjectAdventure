@@ -268,16 +268,16 @@ public class HUDPresenter : MonoBehaviour
                 {
                     case StageObjectType.TimeLimitClear:
                         TimeSpan timeSpan = TimeSpan.FromSeconds(obj.value);
-                        _hudView.UpdateStageObjectUI(idx, $"{timeSpan.Minutes}분 {timeSpan.Seconds}초 이내에 스테이지를 클리어 한다.", obj.isCleared);
+                        _hudView.UpdateStageObjectUI(idx, $"{timeSpan.Minutes}분 {timeSpan.Seconds}초 이내에 클리어", obj.isCleared);
                         break;
                     case StageObjectType.NoFallClear:
-                        _hudView.UpdateStageObjectUI(idx, "한 번도 세상 밖으로 떨어지지 않고 스테이지를 클리어 한다.", obj.isCleared);
+                        _hudView.UpdateStageObjectUI(idx, "한 번도 세상 밖으로 떨어지지 않고 클리어", obj.isCleared);
                         break;
                     case StageObjectType.NoDamageClear:
-                        _hudView.UpdateStageObjectUI(idx, "한 번도 데미지를 입지 않고 스테이지를 클리어 한다.", obj.isCleared);
+                        _hudView.UpdateStageObjectUI(idx, "한 번도 데미지를 입지 않고 클리어", obj.isCleared);
                         break;
                     case StageObjectType.RemainHealthClear:
-                        _hudView.UpdateStageObjectUI(idx, $"스테이지 클리어 시 체력이 {obj.value} 이상 남아 있어야 한다.", obj.isCleared);
+                        _hudView.UpdateStageObjectUI(idx, $"체력을 {obj.value} 이상 남기고 클리어", obj.isCleared);
                         break;
                     default:
                         _hudView.UpdateStageObjectUI(idx, "알 수 없는 도전과제", obj.isCleared);

@@ -792,7 +792,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -1006,7 +1006,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -2962,7 +2962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &5214856727318731004
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3624,8 +3624,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\uD55C \uBC88\uB3C4 \uD53C\uACA9\uB2F9\uD558\uC9C0 \uC54A\uACE0 \uC2A4\uD14C\uC774\uC9C0\uB97C
-    \uD074\uB9AC\uC5B4 \uD55C\uB2E4."
+  m_text: "\uD55C \uBC88\uB3C4 \uD53C\uACA9\uB2F9\uD558\uC9C0 \uC54A\uACE0 \uD074\uB9AC\uC5B4"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0a876345e458bf344bc60bf599601e4b, type: 2}
   m_sharedMaterial: {fileID: 403845436325953494, guid: 0a876345e458bf344bc60bf599601e4b, type: 2}
@@ -3660,7 +3659,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 1
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -5184,7 +5183,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3656249774722279011
 RectTransform:
   m_ObjectHideFlags: 0
