@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameManager.Singleton;
+using System;
 using System.Collections;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -147,7 +148,11 @@ public class HUDPresenter : MonoBehaviour
 
     private void HandleGoToNextStageButtonClicked()
     {
-        //TODO : 스테이지 세이브 관리 매니저 싱글턴 개발 및 통합 예정 (assigner : @digitalism8150)
+        int nextStageNumber = GameSaveManager.Instance.CurrentStageNumber + 1;
+        if(GameSaveManager.Instance.CheckStageUnlockRequirement(nextStageNumber))
+        {
+            GameSaveManager.Instance.LoadStage(nextStageNumber);
+        }
     }
 
     private void HandlePlayerDeath()
