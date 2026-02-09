@@ -74,7 +74,9 @@ namespace GameManager.Singleton // 철자 수정
             }
 
             _saveData[saveDataIndex].IsCleared = true;
-            _saveData[saveDataIndex].AcquiredStars = acquiredStars;            
+            _saveData[saveDataIndex].AcquiredStars = acquiredStars;
+
+            SaveGameData();
         }
 
         /// <summary>
