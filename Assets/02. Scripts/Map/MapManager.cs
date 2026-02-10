@@ -17,6 +17,7 @@ public class PathGroup
     public int CurrentPathIndex = 0;
 }
 
+[RequireComponent(typeof(MapPlayerChecker))]
 public class MapManager : MonoBehaviour
 {
     [Header("맵 선택 이펙트 설정")]
@@ -38,6 +39,8 @@ public class MapManager : MonoBehaviour
     private int _selectedSlotIndex = 0;
     private FloatingCursor _cursorScript;
     private MapPlayerChecker _playerCheckerScript;
+
+    private Color _debugColor = new Color(1, 0, 0, 0.3f);
 
     private void Awake()
     {

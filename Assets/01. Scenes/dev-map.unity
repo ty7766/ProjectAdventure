@@ -644,9 +644,8 @@ MonoBehaviour:
   _originTransform: {fileID: 0}
   _spawnPointToAlign:
   - {fileID: 1516804858}
-  _tileSize: {x: 12, y: 1, z: 10}
-  _startOffset: {x: 0, y: 0, z: 0}
   _gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _mapManager: {fileID: 1664178952}
 --- !u!1001 &1605133888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1725,6 +1724,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664178953}
   - component: {fileID: 1664178952}
+  - component: {fileID: 1664178954}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -1751,9 +1751,11 @@ MonoBehaviour:
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
     - {fileID: 5219475582278080448, guid: be56f71e933d928418715eaa7ba5f780, type: 3}
+    - {fileID: 717346594924164287, guid: af9ec3d934f33384bbff93e0a0bf9c58, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
-  _detectionSize: {x: 12, y: 5, z: 10}
+  _tileSize: {x: 12, y: 1, z: 10}
+  _startOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
@@ -1769,6 +1771,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2052775952}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1664178954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664178951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83873c45f29cb33488893b4a13b7b112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1760962917
 GameObject:
   m_ObjectHideFlags: 0
