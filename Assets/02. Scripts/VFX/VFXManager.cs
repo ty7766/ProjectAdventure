@@ -26,6 +26,7 @@ public class VFXManager : MonoBehaviour
     private List<VFXData> _vfxList;
 
     private Dictionary<VFXType, Queue<GameObject>> _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
+    private Dictionary<VFXType, GameObject> _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
 
     private void Awake()
     {
@@ -56,10 +57,9 @@ public class VFXManager : MonoBehaviour
         //대기열 비었으면 추가 생성
         if (_poolDictionary[type].Count == 0)
         {
-            var data = _vfxList.Find(x => x.Type == type);
-            if(data.Prefab != null)
+            if(_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
             {
-                CreateNewObject(type, data.Prefab);
+                CreateNewObject(type, vfxPrefab);
             }
             else
             {
@@ -68,19 +68,19 @@ public class VFXManager : MonoBehaviour
             }
         }
 
-        GameObject obj = _poolDictionary[type].Dequeue();
-        obj.transform.position = position;
-        obj.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
-        obj.SetActive(true);
+        GameObject vfxObject = _poolDictionary[type].Dequeue();
+        vfxObject.transform.position = position;
+        vfxObject.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
+        vfxObject.SetActive(true);
 
-        return obj;
+        return vfxObject;
     }
 
     /// <summary>
     /// 기존 호환성을 위한 오버로딩
     /// </summary>
-    /// <param name="type"></param>
-    /// <param name="position"></param>
+    /// <param name="type">VFX 타입</param>
+    /// <param name="position">VFX가 생성될 위치</param>
     /// <returns></returns>
     public GameObject PlayVFX(VFXType type, Vector3 position)
     {
@@ -91,28 +91,45 @@ public class VFXManager : MonoBehaviour
     /// 이펙트를 풀에 반납
     /// </summary>
     /// <param name="type">VFX타입</param>
-    /// <param name="obj">반납할 이펙트</param>
-    public void ReturnToPool(VFXType type, GameObject obj)
+    /// <param name="vfxObject">반납할 이펙트</param>
+    public void ReturnToPool(VFXType type, GameObject vfxObject)
     {
-        obj.SetActive(false);
-        _poolDictionary[type].Enqueue(obj);
+        if(!_poolDictionary.ContainsKey(type))
+        {
+            Destroy(vfxObject);
+            return;
+        }
+
+        vfxObject.SetActive(false);
+        _poolDictionary[type].Enqueue(vfxObject);
     }
 
     //설정된 개수만큼 미리 생성
     private void InitializePool()
     {
-        _poolDictionary.Clear();        //중복 방지
+        //중복 방지
+        _poolDictionary.Clear();
+        _vfxPrefabDictionary.Clear();
 
-        foreach(var data in _vfxList)
+        foreach(var vfxType in _vfxList)
         {
-            if(!_poolDictionary.ContainsKey(data.Type))
+            if(_poolDictionary.ContainsKey(vfxType.Type))
             {
-                _poolDictionary.Add(data.Type, new Queue<GameObject>());
+                continue;
             }
 
-            for(int i = 0; i < data.PoolSize; i++)
+            if (vfxType.Prefab == null)
             {
-                CreateNewObject(data.Type, data.Prefab);
+                continue;
+            }
+
+            //Dictionary Init
+            _poolDictionary.Add(vfxType.Type, new Queue<GameObject>());
+            _vfxPrefabDictionary.Add(vfxType.Type, vfxType.Prefab);
+
+            for (int i = 0; i < vfxType.PoolSize; i++)
+            {
+                CreateNewObject(vfxType.Type, vfxType.Prefab);
             }
         }
     }
