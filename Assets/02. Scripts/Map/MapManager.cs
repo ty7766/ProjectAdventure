@@ -29,13 +29,15 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private PathGroup[] _pathGroups;
 
-    [Header("맵 변경 안전장치 설정")]
+    [Header("맵 설정")]
     [SerializeField]
-    //해당 맵 사이즈로 변경 필수
-    private Vector3 _detectionSize = Vector3.zero;
+    private Vector3 _tileSize = new Vector3(12, 1, 10);
+    [SerializeField]
+    private Vector3 _startOffset = Vector3.zero;  //시작위치 보정
 
     private int _selectedSlotIndex = 0;
     private FloatingCursor _cursorScript;
+    private MapPlayerChecker _playerCheckerScript;
 
     private void Awake()
     {
@@ -48,6 +50,7 @@ public class MapManager : MonoBehaviour
         {
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
         }
+        _playerCheckerScript = GetComponent<MapPlayerChecker>();
     }
     private void Start()
     {
@@ -61,6 +64,23 @@ public class MapManager : MonoBehaviour
         HandleMapChangeInput();
     }
 
+    /// <summary>
+    /// MapGuideLine을 위한 타일 사이즈 리턴 메소드
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetTileSize()
+    {
+        return _tileSize;
+    }
+
+    /// <summary>
+    /// MapGuideLine을 위한 타일 이니셜 오프셋 메소드
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetStartOffset()
+    {
+        return _startOffset;
+    }
     private void MapGeneration()
     {
         // 등록된 모든 'PathGroup'을 순회하며 맵 생성
@@ -152,8 +172,9 @@ public class MapManager : MonoBehaviour
             CustomDebug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 프리팹이 없습니다.");
             return;
         }
-
-        if (CheckPlayerOnMap(targetGroup))
+        
+        //플레이어가 해당 맵 위에 있을 경우
+        if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
             CustomDebug.Log("플레이어가 해당 맵 위에 있어 교체할 수 없습니다!");
             return;
@@ -164,30 +185,6 @@ public class MapManager : MonoBehaviour
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
         SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
-    }
-
-    private bool CheckPlayerOnMap(PathGroup group)
-    {
-        //SpawnPoint가 할당되지 않은 맵 방지
-        if (group.SpawnPoint == null)
-        {
-            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
-            return false;
-        }
-        //해당 슬롯 위치에 박스를 만들어 검사
-        Collider[] hitColliders = Physics.OverlapBox(
-            group.SpawnPoint.position,
-            _detectionSize * 0.5f,
-            group.SpawnPoint.rotation);
-
-        foreach(Collider col in hitColliders)
-        {
-            if(col.CompareTag("Player"))
-            {
-                return true;
-            }
-        }
-        return false;
     }
 
     private void SpawnPath(PathGroup group, int index)
