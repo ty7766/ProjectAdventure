@@ -11,22 +11,13 @@ public class MapGuideLine : MonoBehaviour
     [SerializeField]
     private Transform[] _spawnPointToAlign;
 
-    [Header("맵 설정")]
-    [SerializeField]
-    private Vector3 _tileSize = new Vector3(15, 1, 10);
-    [SerializeField]
-    private Vector3 _startOffset = Vector3.zero;  //시작위치 보정
-
     [Header("가이드라인 색상")]
     [SerializeField]
     private Color _gizmoColor = Color.yellow;
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        DrawMapGuideLinesWithGizmos();
-    }
-#endif
+    [Header("연결 컴포넌트")]
+    [SerializeField]
+    private MapManager _mapManager;
 
     /// <summary>
     /// SpawnPoint 배열에 등록된 오브젝트들을 설정된 타일 크기에 맞춰 일렬로 자동 정렬
@@ -34,7 +25,11 @@ public class MapGuideLine : MonoBehaviour
     [ContextMenu("위치 자동 정렬")]
     public void AlignPositions()
     {
-        if(_spawnPointToAlign == null || _spawnPointToAlign.Length == 0)
+        if (_mapManager == null)
+        {
+            return;
+        }
+        if (_spawnPointToAlign == null || _spawnPointToAlign.Length == 0)
         {
             CustomDebug.LogWarning("정렬할 대상 (SpawnPoint) 가 비어있습니다.");
             return;
@@ -56,6 +51,10 @@ public class MapGuideLine : MonoBehaviour
     [Conditional("UNITY_EDITOR")]
     private void DrawMapGuideLinesWithGizmos()
     {
+        if (_mapManager == null)
+        {
+            return;
+        }
         Gizmos.color = _gizmoColor;
 
         //기준점 설정 (설정되지 않으면 해당 오브젝트 기준으로 정렬)
@@ -66,15 +65,22 @@ public class MapGuideLine : MonoBehaviour
         {
             //현재는 -z 방향으로 맵이 이어지므로 -z 축으로 설정
             Vector3 position = CalculatePosition(basePosition, i);
-            Gizmos.DrawWireCube(position, _tileSize);
+            Gizmos.DrawWireCube(position, _mapManager.GetTileSize());
             Gizmos.DrawSphere(position, 0.3f);
         }
     }
 
     private Vector3 CalculatePosition(Vector3 basePosition, int index)
     {
-        float zPosition = -(_tileSize.z * index);
+        float zPosition = -(_mapManager.GetTileSize().z * index);
         Vector3 offset = new Vector3(0,0, zPosition);
-        return basePosition + _startOffset + offset;
+        return basePosition + _mapManager.GetStartOffset() + offset;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        DrawMapGuideLinesWithGizmos();
+    }
+#endif
 }
