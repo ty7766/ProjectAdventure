@@ -6,7 +6,7 @@ public class FloatingCursor : MonoBehaviour
     [SerializeField]
     private float _cursorMoveSpeed = 2f;
     [SerializeField]
-    private float _cursorShakeHeight = 0.5f;
+    private float _cursorBobbingHeight = 0.5f;
 
     private Vector3 _basePosition;
     private bool _isInitialized = false;
@@ -34,7 +34,7 @@ public class FloatingCursor : MonoBehaviour
 
     private void ProcessFloatingCursor()
     {
-        float newY = _basePosition.y + Mathf.Sin(Time.time * _cursorMoveSpeed) * _cursorShakeHeight;
+        float newY = _basePosition.y + Mathf.Sin(Time.time * _cursorMoveSpeed) * _cursorBobbingHeight;
         transform.position = new Vector3(_basePosition.x, newY, _basePosition.z);
     }
 }
