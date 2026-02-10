@@ -14,6 +14,10 @@ public class LavaSurfaceSpawner : MonoBehaviour
     [SerializeField]
     private float _surfaceYOffset = 0f;
 
+    [Header("VFX 설정")]
+    [SerializeField]
+    private VFXType _lavaVFXType = VFXType.LavaPop;
+
     private BoxCollider _spawnArea;
 
     private void Awake()
@@ -40,16 +44,19 @@ public class LavaSurfaceSpawner : MonoBehaviour
 
     private void SpawnLavaEffect()
     {
-        Bounds bounds = _spawnArea.bounds;
+        Vector3 effectSpawnPosition = GetLavaEffectPosition();
+        VFXManager.Instance.PlayVFX(_lavaVFXType, effectSpawnPosition, Quaternion.identity);
+    }
 
+    private Vector3 GetLavaEffectPosition()
+    {
+        Bounds bounds = _spawnArea.bounds;
         float randX = Random.Range(bounds.min.x, bounds.max.x);
         float randZ = Random.Range(bounds.min.z, bounds.max.z);
 
         float fixedY = bounds.center.y + _surfaceYOffset;
 
-        Vector3 spawnPos = new Vector3(randX, fixedY, randZ);
-
-        VFXManager.Instance.PlayVFX(VFXType.LavaPop, spawnPos, Quaternion.Euler(-90, 0, 0));
+        return new Vector3(randX, fixedY, randZ);
     }
 
 #if UNITY_EDITOR
