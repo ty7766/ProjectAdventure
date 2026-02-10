@@ -35,33 +35,30 @@ public class MapManager : MonoBehaviour
     private Vector3 _detectionSize = Vector3.zero;
 
     private int _selectedSlotIndex = 0;
-    private FloatingCursor _cursor;
+    private FloatingCursor _cursorScript;
 
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
         Assert.IsTrue(_pathGroups.Length > 0, $"[MapManager] '{name}'의 Path Groups 배열이 비어있습니다.");
         Assert.IsNotNull(_selectionCursor, $"[MapManager] '{name}'에 Selection Cursor가 할당되지 않았습니다.");
+
+        // 커서 스크립트 캐싱
+        if (_selectionCursor != null)
+        {
+            _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
+        }
     }
-    void Start()
+    private void Start()
     {
-        GetComponentFloatingCursor();
         MapGeneration();
         UpdateCursorPosition();
     }
 
-    void Update()
+    private void Update()
     {
         HandleSelectionInput();
         HandleMapChangeInput();
-    }
-
-    private void GetComponentFloatingCursor()
-    {
-        if(_selectionCursor != null)
-        {
-            _cursor = _selectionCursor.GetComponent<FloatingCursor>();
-        }
     }
 
     private void MapGeneration()
@@ -78,56 +75,55 @@ public class MapManager : MonoBehaviour
 
     private void HandleSelectionInput()
     {
-        bool selectionChanged = false;
-
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            _selectedSlotIndex--;
-            if (_selectedSlotIndex < 0)
-            {
-                _selectedSlotIndex = _pathGroups.Length - 1;
-            }
-
-            selectionChanged = true;
+            ChangeSelection(-1);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            _selectedSlotIndex++;
-            if (_selectedSlotIndex >= _pathGroups.Length)
-            {
-                _selectedSlotIndex = 0;
-            }
-
-            selectionChanged = true;
-        }
-
-        //선택 되었을 때만 이펙트 생성
-        if (selectionChanged)
-        {
-            UpdateCursorPosition();
+            ChangeSelection(1);
         }
     }
+
+    //direction이 -1이면 왼쪽, 1이면 오른쪽
+    private void ChangeSelection(int direction)
+    {
+        _selectedSlotIndex += direction;
+
+        // 인덱스 순환 처리 (Wrap around)
+        if (_selectedSlotIndex < 0)
+        {
+            _selectedSlotIndex = _pathGroups.Length - 1;
+        }
+        else if (_selectedSlotIndex >= _pathGroups.Length)
+        {
+            _selectedSlotIndex = 0;
+        }
+
+        UpdateCursorPosition();
+    }
+
     private void UpdateCursorPosition()
     {
-        if (_selectionCursor == null)
+        if (_selectionCursor == null || _pathGroups.Length == 0)
         {
             return;
         }
 
         Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
-        //SpawnPoint가 할당되지 않은 맵 방지
+
         if (targetSpawnPoint == null)
         {
-            CustomDebug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            CustomDebug.LogWarning($"[MapManager] SpawnPoint 누락: 인덱스 {_selectedSlotIndex}");
             return;
         }
 
-        // 목표 기준 위치 계산
         Vector3 targetBasePos = targetSpawnPoint.position + _cursorOffset;
 
-        if (_cursor != null)
+        // 커서 스크립트 캐싱된 것 사용 (없으면 Transform 직접 이동)
+        if (_cursorScript != null)
         {
-            _cursor.SetBasePositionCursor(targetBasePos);
+            _cursorScript.SetBasePositionCursor(targetBasePos); // 함수명 변경 반영
         }
         else
         {
@@ -137,25 +133,37 @@ public class MapManager : MonoBehaviour
 
     private void HandleMapChangeInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
-
-            //플레이어가 해당 맵 위에 있는지 확인
-            if (CheckPlayerOnMap(targetGroup))
-            {
-                CustomDebug.Log("플레이어가 현재 해당 맵 위에 있어 맵을 교체할 수 없습니다!");
-                return;
-            }
-
-            if (targetGroup.PathPrefabs.Length == 0)
-            {
-                return;
-            }
-
-            targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + 1) % targetGroup.PathPrefabs.Length;
-            SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
+            TryChangeMap(-1);
         }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            TryChangeMap(1);
+        }
+    }
+
+    private void TryChangeMap(int direction)
+    {
+        PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
+
+        if (targetGroup.PathPrefabs == null || targetGroup.PathPrefabs.Length == 0)
+        {
+            CustomDebug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 프리팹이 없습니다.");
+            return;
+        }
+
+        if (CheckPlayerOnMap(targetGroup))
+        {
+            CustomDebug.Log("플레이어가 해당 맵 위에 있어 교체할 수 없습니다!");
+            return;
+        }
+
+        int totalCount = targetGroup.PathPrefabs.Length;
+
+        targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
+
+        SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
     }
 
     private bool CheckPlayerOnMap(PathGroup group)
