@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(BoxCollider))]
-public class LavaSurfaceSpawner : MonoBehaviour
+public class LavaEffectSpawner : MonoBehaviour
 {
     [Header("생성 설정")]
     [SerializeField] 
