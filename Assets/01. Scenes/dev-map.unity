@@ -435,6 +435,9 @@ MonoBehaviour:
   - Type: 5
     Prefab: {fileID: 8557806552546385891, guid: 4279ef4bb6045a144858bb3fd9e63cf4, type: 3}
     PoolSize: 5
+  - Type: 6
+    Prefab: {fileID: 8850600021236025229, guid: 8e3194951cae1b74bba1ca000bd343de, type: 3}
+    PoolSize: 2
 --- !u!4 &674068052
 Transform:
   m_ObjectHideFlags: 0
@@ -513,7 +516,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.09
+      value: 18.71
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -529,15 +532,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1638,7 +1641,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.12
+      value: 4.93
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1747,13 +1750,14 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
-    - {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
-    - {fileID: 3637130621519083799, guid: f34cee57ec42c874185a14a2bfb9d4ab, type: 3}
-    - {fileID: 5353358889816498921, guid: 7232b218e42c9ad43bf191c78e149090, type: 3}
-    - {fileID: 5932052258541337745, guid: f05393e06df27f14f887a84cb9b3d396, type: 3}
-    - {fileID: 6184720362279850812, guid: 2706c214a3df50a41a3ae658c846b968, type: 3}
-    - {fileID: 5254967438987948861, guid: ec9eba1a16393dd498982ab4aa9efe23, type: 3}
-    - {fileID: 41045083440798057, guid: 513c40c524f4c5443b1b735655c3f203, type: 3}
+    - {fileID: 2910512297889539720, guid: d77e3feb34ef9d245bc8001f7999dc1f, type: 3}
+    - {fileID: 2508439079240213857, guid: d52bce99ae3dfa34db0881faf551a35b, type: 3}
+    - {fileID: 1556500274274478124, guid: 5b9731dce80db1b47a16310e4a837a88, type: 3}
+    - {fileID: 1252271583804284471, guid: 2efc3b008bcc7964ea916e4617ca9fa5, type: 3}
+    - {fileID: 2766102709251254700, guid: fab18dfec90473244a2b122d021db220, type: 3}
+    - {fileID: 5248508870652778043, guid: 552f6a98573e920478170e047c328527, type: 3}
+    - {fileID: 6363534732820104948, guid: 337204ab0b5a6a4439fb1360065308f7, type: 3}
+    - {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _detectionSize: {x: 12, y: 5, z: 10}
@@ -1989,7 +1993,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.05
+      value: 9.92
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2045,6 +2049,6 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 2052775952}
   - {fileID: 1133851749}
+  - {fileID: 843756757}
   - {fileID: 1605133888}
   - {fileID: 1760962918}
-  - {fileID: 843756757}
