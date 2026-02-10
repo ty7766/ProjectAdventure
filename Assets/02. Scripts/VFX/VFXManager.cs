@@ -107,13 +107,21 @@ public class VFXManager : MonoBehaviour
     //설정된 개수만큼 미리 생성
     private void InitializePool()
     {
-        //중복 방지
+        VFXDictionaryClear();       //중복 방지
+        FillEveryVFXTypePool();
+    }
+
+    private void VFXDictionaryClear()
+    {
         _poolDictionary.Clear();
         _vfxPrefabDictionary.Clear();
+    }
 
-        foreach(var vfxType in _vfxList)
+    private void FillEveryVFXTypePool()
+    {
+        foreach (var vfxType in _vfxList)
         {
-            if(_poolDictionary.ContainsKey(vfxType.Type))
+            if (_poolDictionary.ContainsKey(vfxType.Type))
             {
                 continue;
             }
@@ -136,18 +144,24 @@ public class VFXManager : MonoBehaviour
 
     private GameObject CreateNewObject(VFXType type, GameObject prefab)
     {
-        GameObject effectObject = Instantiate(prefab, transform);
+        GameObject vfxObject = Instantiate(prefab, transform);
 
-        var returnScript = effectObject.GetComponent<VFXReturnToPool>();
+        GetScriptVFXReturnToPool(vfxObject, type);
+
+        vfxObject.SetActive(false);
+        _poolDictionary[type].Enqueue(vfxObject);
+
+        return vfxObject;
+    }
+
+    private void GetScriptVFXReturnToPool(GameObject vfxObject, VFXType type)
+    {
+        var returnScript = vfxObject.GetComponent<VFXReturnToPool>();
         if(returnScript == null)
         {
-            returnScript = effectObject.AddComponent<VFXReturnToPool>();
+            returnScript = vfxObject.AddComponent<VFXReturnToPool>();
         }
 
         returnScript.Setup(type);
-
-        effectObject.SetActive(false);
-        _poolDictionary[type].Enqueue(effectObject);
-        return effectObject;
     }
 }
