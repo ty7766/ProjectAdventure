@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GameManager.Singleton;
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -297,12 +298,14 @@ public class StageObject
 
     private void SaveStageClearData()
     {
+        int acquiredStars = 0;
         foreach(var obj in _stageObjects)
         {
             if (obj.isCleared)
             {
-                //TODO : 도전과제 클리어 상태 저장하기
+                acquiredStars++;
             }
         }
+        GameSaveManager.Instance.RecordStageClear(acquiredStars);
     }
 }
