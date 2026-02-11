@@ -1745,6 +1745,7 @@ MonoBehaviour:
     - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
     - {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
     - {fileID: 5932052258541337745, guid: f05393e06df27f14f887a84cb9b3d396, type: 3}
+    - {fileID: 6363534732820104948, guid: 337204ab0b5a6a4439fb1360065308f7, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _tileSize: {x: 12, y: 1, z: 10}
