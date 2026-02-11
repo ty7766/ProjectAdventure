@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class RuneStone : MonoBehaviour
 {
@@ -35,96 +36,108 @@ public class RuneStone : MonoBehaviour
 
     private int _currentIndex = 0;
     private GameObject _currentRuneInstance;
-    private Coroutine _runeChangeroutine;
+    private Coroutine _runeChangeRoutine;
+
+    private Dictionary<RuneType, GameObject> _prefabDictionary;
+    private WaitForSeconds _waitInterval;
 
     private void Awake()
     {
-        MeshRenderer meshRenderer = GetComponent<MeshRenderer>();
-        if (meshRenderer != null)
+        if (TryGetComponent<MeshRenderer>(out var meshRenderer))
         {
             meshRenderer.enabled = false;
         }
+
+        // 2. 캐싱
+        _waitInterval = new WaitForSeconds(_changeInterval);
+
+        // 3. 딕셔너리 변환 (검색 속도 최적화)
+        InitializePrefabDictionary();
     }
 
     private void OnEnable()
     {
-        _currentIndex = 0;
+        _currentIndex = -1; // 루프 시작 시 0번부터 시작하도록 -1로 초기화
 
-        if (_runeChangeroutine != null)
+        if (_runeChangeRoutine != null)
         {
-            StopCoroutine(_runeChangeroutine);
+            StopCoroutine(_runeChangeRoutine);
         }
-        _runeChangeroutine = StartCoroutine(RuneChangeRoutine());
+        _runeChangeRoutine = StartCoroutine(RuneChangeLoop());
     }
 
     private void OnDisable()
     {
-        if (_runeChangeroutine != null)
+        if (_runeChangeRoutine != null)
         {
-            StopCoroutine(_runeChangeroutine);
-            _runeChangeroutine = null;
+            StopCoroutine(_runeChangeRoutine);
+            _runeChangeRoutine = null;
         }
 
-        if (_currentRuneInstance != null)
+        DestroyCurrentRune();
+    }
+
+    private void InitializePrefabDictionary()
+    {
+        _prefabDictionary = new Dictionary<RuneType, GameObject>();
+        foreach (var mapping in _prefabDatabase)
         {
-            Destroy(_currentRuneInstance);
+            if (!_prefabDictionary.ContainsKey(mapping.type))
+            {
+                _prefabDictionary.Add(mapping.type, mapping.prefab);
+            }
         }
     }
 
-    private IEnumerator RuneChangeRoutine()
+    private IEnumerator RuneChangeLoop()
     {
-        yield return null;
-
-        if (_runeSequence != null && _runeSequence.Length > 0)
+        if (_runeSequence == null || _runeSequence.Length == 0)
         {
+            Debug.LogError("[RuneStone] 룬 순서(_runeSequence)가 비어있습니다!");
             yield break;
         }
 
-        RuneType firstRune = _runeSequence[0];
-        SpawnRuneObject(firstRune);
-        PlayRuneVFX();      //VFX 재생
-        OnRuneChanged?.Invoke(firstRune);
-
-        WaitForSeconds wait = new WaitForSeconds(_changeInterval);
-
         while (true)
         {
-            yield return wait;
-
+            //인덱스 증가
             _currentIndex = (_currentIndex + 1) % _runeSequence.Length;
             RuneType currentRune = _runeSequence[_currentIndex];
 
+            //룬 생성 및 이벤트 발생
             SpawnRuneObject(currentRune);
             PlayRuneVFX();
             OnRuneChanged?.Invoke(currentRune);
+
+            //대기
+            yield return _waitInterval;
         }
     }
     private void SpawnRuneObject(RuneType targetType)
     {
         //룬 삭제
+        DestroyCurrentRune();
+
+        //딕셔너리에서 룬 검색
+        if (_prefabDictionary.TryGetValue(targetType, out GameObject targetPrefab))
+        {
+            if (targetPrefab != null)
+            {
+                _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation);
+                _currentRuneInstance.transform.SetParent(this.transform);
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"[RuneStone] '{targetType}'에 해당하는 프리팹을 찾을 수 없습니다.");
+        }
+    }
+
+    private void DestroyCurrentRune()
+    {
         if (_currentRuneInstance != null)
         {
             Destroy(_currentRuneInstance);
             _currentRuneInstance = null;
-        }
-
-        //프리팹 찾기
-        GameObject targetPrefab = null;
-
-        foreach (var mapping in _prefabDatabase)
-        {
-            if (mapping.type == targetType)
-            {
-                targetPrefab = mapping.prefab;
-                break;
-            }
-        }
-
-        //찾았으면 생성
-        if (targetPrefab != null)
-        {
-            _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation);
-            _currentRuneInstance.transform.SetParent(this.transform);
         }
     }
 
@@ -132,7 +145,7 @@ public class RuneStone : MonoBehaviour
     {
         if (VFXManager.Instance != null)
         {
-            VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.Euler(-90, 0, 0));
+            VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.identity);
         }
     }
 }
