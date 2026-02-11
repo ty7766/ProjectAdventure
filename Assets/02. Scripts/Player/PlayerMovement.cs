@@ -17,11 +17,15 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 _direction;
     private float _speed;
     private float _turnSpeed;
+    private Vector3 _rayOrigin;
+    private float _rayLength;
+    private bool _isGrounded;
 
     //--- Settings ---//
     [Header("Ground Detection")]
     [SerializeField] private LayerMask _groundLayer; 
     [SerializeField] private float _groundCheckDist = 0.1f;
+    [SerializeField] private float _radius;
 
     //--- Unity Methods ---//
     private void Awake()
@@ -42,6 +46,11 @@ public class PlayerMovement : MonoBehaviour
         }
 
         ApplyMovement();
+    }
+
+    private void OnDrawGizmos()
+    {
+        DebugGizmo(_rayOrigin, _rayLength, _isGrounded);
     }
 
     //--- Public Methods ---//
@@ -97,12 +106,10 @@ public class PlayerMovement : MonoBehaviour
 
     private void ApplyMovement()
     {
-        Vector3 rayOrigin;
-        float rayLength;
-        bool isGrounded;
-        DoGroundCheck(out rayOrigin, out rayLength, out isGrounded);
 
-        if (isGrounded)
+        DoGroundCheck(out _rayOrigin, out _rayLength, out _isGrounded);
+
+        if (_isGrounded)
         {
             ApplyMoveWithAnimation();
         }
@@ -110,22 +117,24 @@ public class PlayerMovement : MonoBehaviour
         {
             RunJumpAnimationOnlyOnce();
         }
-
-        DebugGizmo(rayOrigin, rayLength, isGrounded);
     }
 
     private void DoGroundCheck(out Vector3 rayOrigin, out float rayLength, out bool isGrounded)
     {
         rayOrigin = _col.bounds.center;
         rayLength = _col.bounds.extents.y + _groundCheckDist;
-        isGrounded = Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
+        isGrounded = Physics.SphereCast(rayOrigin, _radius, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
         _animator?.SetBool("isGround", isGrounded);
     }
 
     [Conditional("UNITY_EDITOR")]
-    private static void DebugGizmo(Vector3 rayOrigin, float rayLength, bool isGrounded)
+    private void DebugGizmo(Vector3 rayOrigin, float rayLength, bool isGrounded)
     {
-        UnityEngine.Debug.DrawRay(rayOrigin, Vector3.down * rayLength, isGrounded ? Color.green : Color.red);
+        Gizmos.color = isGrounded ? Color.green : Color.red;
+        Gizmos.DrawWireSphere(rayOrigin, _radius);
+        Vector3 targetPosition = rayOrigin + Vector3.down * rayLength;
+        Gizmos.DrawLine(rayOrigin, targetPosition);
+        Gizmos.DrawWireSphere(targetPosition, _radius);
     }
 
     private void RunJumpAnimationOnlyOnce()

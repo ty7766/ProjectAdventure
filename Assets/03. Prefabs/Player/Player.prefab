@@ -402,6 +402,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   _groundCheckDist: 0.2
+  _radius: 0.1
 --- !u!114 &8123782475422646877
 MonoBehaviour:
   m_ObjectHideFlags: 0
