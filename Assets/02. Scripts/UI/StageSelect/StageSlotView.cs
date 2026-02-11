@@ -37,7 +37,7 @@ public class StageSlotView : MonoBehaviour
             return;
         }
 
-        Mathf.Clamp(stars, 0, _starImages.Count);
+        stars = Mathf.Clamp(stars, 0, _starImages.Count);
         for(int i = 0; i < stars; i++)
         {
             _starImages[i].sprite = _starFilled;
@@ -49,7 +49,7 @@ public class StageSlotView : MonoBehaviour
         }
     }
 
-    public void UpdateLockedBlokcer(bool isUnlocked)
+    public void UpdateLockedBlocker(bool isUnlocked)
     {
         if(_lockedBlocker == null)
         {

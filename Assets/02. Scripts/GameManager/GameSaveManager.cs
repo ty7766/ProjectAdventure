@@ -10,7 +10,32 @@ namespace GameManager.Singleton // 철자 수정
 
     public class GameSaveManager : MonoBehaviour
     {
-        public static GameSaveManager Instance { get; private set; }
+
+        private static GameSaveManager _instance;
+        public static GameSaveManager Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    // 1. 먼저 씬에 이미 존재하는지 찾아봅니다.
+                    _instance = FindFirstObjectByType<GameSaveManager>();
+
+                    // 2. 씬에 없다면 새로 만듭니다.
+                    if (_instance == null)
+                    {
+                        GameObject go = new GameObject("GameSaveManager");
+                        _instance = go.AddComponent<GameSaveManager>();
+                    }
+                }
+                return _instance;
+            }
+
+            private set
+            {
+                _instance = value;
+            }
+        }
 
         [SerializeField] private List<StageData> _stageDataBase;
         [SerializeField] private List<StageSaveRecord> _saveData;
@@ -25,12 +50,12 @@ namespace GameManager.Singleton // 철자 수정
         //--- Unity Lifecycle Methods ---//
         private void Awake()
         {
-            if (Instance != null && Instance != this)
+            if (_instance != null && _instance != this)
             {
                 Destroy(this.gameObject);
                 return;
             }
-            Instance = this;
+            _instance = this;
             DontDestroyOnLoad(this.gameObject);
             InitializeSaveData();
             CustomDebug.Log($"세이브 데이터 초기화 완료, 총 수집 클별 : {GetTotalAcquiredStars()}");

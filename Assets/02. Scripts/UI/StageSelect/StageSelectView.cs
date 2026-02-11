@@ -50,7 +50,7 @@ public class StageSelectView : MonoBehaviour, IStageSelectView
         _stageSlots[index].gameObject.SetActive(true);
         _stageSlots[index].UpdateStageNumber(stageNumber);
         _stageSlots[index].UpdateStarFilled(starCount);
-        _stageSlots[index].UpdateLockedBlokcer(isUnlocked);
+        _stageSlots[index].UpdateLockedBlocker(isUnlocked);
     }
 
     public void ShowPageNextButton()
