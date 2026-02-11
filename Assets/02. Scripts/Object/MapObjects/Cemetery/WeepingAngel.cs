@@ -26,10 +26,17 @@ public class WeepingAngel : MonoBehaviour
     private Quaternion _initialRotation;
     private Transform _playerTransform;
 
+    private float _sqrActiveRange;
+    private float _cosViewAngle;
+
     private void Awake()
     {
         _initialPosition = transform.position;
         _initialRotation = transform.rotation;
+
+        //미리 계산하여 캐싱
+        _sqrActiveRange = _activeRange * _activeRange;
+        _cosViewAngle = Mathf.Cos(_playerViewAngle * 0.5f * Mathf.Deg2Rad);
     }
 
     private void OnEnable()
@@ -37,14 +44,7 @@ public class WeepingAngel : MonoBehaviour
         transform.position = _initialPosition;
         transform.rotation = _initialRotation;
 
-        if (_playerTransform == null)
-        {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null )
-            {
-                _playerTransform = player.transform;
-            }
-        }
+        FindPlayer();
     }
 
     private void Update()
@@ -59,12 +59,13 @@ public class WeepingAngel : MonoBehaviour
             return;
         }
 
-        if (Vector3.Distance(transform.position, _playerTransform.position) > _activeRange)
+        Vector3 directionToPlayer = _playerTransform.position - transform.position;
+        if (directionToPlayer.sqrMagnitude > _sqrActiveRange)
         {
             return;
         }
 
-        if (IsVisibleToPlayer())
+        if (IsVisibleToPlayer(directionToPlayer))
         {
             return;
         }
@@ -72,38 +73,49 @@ public class WeepingAngel : MonoBehaviour
         ChasePlayer();
     }
 
+    private void FindPlayer()
+    {
+        if (_playerTransform == null)
+        {
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+            if (player != null)
+            {
+                _playerTransform = player.transform;
+            }
+        }
+    }
     private bool IsPlayerInMap()
     {
         float dx = Mathf.Abs(_playerTransform.position.x - _mapCenterTransform.position.x);
         float dz = Mathf.Abs(_playerTransform.position.z - _mapCenterTransform.position.z);
-        return (dx <= _mapSize.x / 2f) && (dz <= _mapSize.y / 2f);
+        return (dx <= _mapSize.x * 0.5f) && (dz <= _mapSize.y * 0.5f);
     }
 
     //플레이어가 보이는지 체크
-    private bool IsVisibleToPlayer()
+    private bool IsVisibleToPlayer(Vector3 directionToPlayer)
     {
-        Vector3 directionToAngel = (transform.position - _playerTransform.position).normalized;
+        //플레이어가 위/아래를 봐도 정확히 체크하기 위해 Y축을 제거하고 평면 벡터로 만듦
+        Vector3 playerLookDirFlattened = new Vector3(_playerTransform.forward.x, 0, _playerTransform.forward.z).normalized;
+        Vector3 dirToAngelFlattened = new Vector3(-directionToPlayer.x, 0, -directionToPlayer.z).normalized;
 
-        if (Vector3.Angle(_playerTransform.forward, directionToAngel) < _playerViewAngle / 2f)
-        {
-            return true;
-        }
-        return false;
+        // 내적 계산
+        float dot = Vector3.Dot(playerLookDirFlattened, dirToAngelFlattened);
+
+        // 내적 값이 기준 코사인값보다 크면 시야각 안에 있는 것
+        return dot >= _cosViewAngle;
     }
 
     private void ChasePlayer()
     {
-        //바라보기
-        Vector3 direction = (_playerTransform.position - transform.position).normalized;
-        direction.y = 0;
-
-        if(direction != Vector3.zero)
+        Vector3 targetPos = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
+        Vector3 direction = (targetPos - transform.position).normalized;
+        if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _angelRotationSpeed * Time.deltaTime);
         }
-        //이동
-        Vector3 targetPos = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
+
+        // 이동
         transform.position = Vector3.MoveTowards(transform.position, targetPos, _angelSpeed * Time.deltaTime);
     }
 
@@ -111,15 +123,10 @@ public class WeepingAngel : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            HandlePlayerHit(collision);
-        }
-    }
-
-    private void HandlePlayerHit(Collision collision)
-    {
-        if (collision.gameObject.TryGetComponent<PlayerController>(out var playerController))
-        {
-            playerController.TakeDamage(_damageAmount);
+            if (collision.gameObject.TryGetComponent<PlayerController>(out var playerController))
+            {
+                playerController.TakeDamage(_damageAmount);
+            }
         }
     }
 
