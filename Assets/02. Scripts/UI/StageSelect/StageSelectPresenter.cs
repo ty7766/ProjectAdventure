@@ -14,11 +14,11 @@ public class StageSelectPresenter
 
     public void UpdateStageView()
     {
-        var stageManager = GameManager.Singleton.GameSaveManager.Instance;
-        int totalStages = stageManager.GetTotalStageNumber();
+        var saveManager = GameSaveManager.Instance;
+        int totalStages = saveManager.GetTotalStageNumber();
 
         _view.HideAllSlots();
-        UpdateViewSlots(stageManager, totalStages);
+        UpdateViewSlots(saveManager, totalStages);
         ControlPageButtonVisibility(totalStages);
     }
 
@@ -38,9 +38,9 @@ public class StageSelectPresenter
     {
         int stageNumber = (_pageIndex * STAGES_PER_PAGE) + slotIndex + 1;
 
-        if (stageNumber <= GameManager.Singleton.GameSaveManager.Instance.GetTotalStageNumber())
+        if (stageNumber <= GameSaveManager.Instance?.GetTotalStageNumber())
         {
-            GameSaveManager.Instance.LoadStage(stageNumber);
+            GameSaveManager.Instance?.LoadStage(stageNumber);
         }
     }
 

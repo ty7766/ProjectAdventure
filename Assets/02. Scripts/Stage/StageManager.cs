@@ -306,6 +306,13 @@ public class StageObject
                 acquiredStars++;
             }
         }
-        GameSaveManager.Instance.RecordStageClear(acquiredStars);
+        if(GameSaveManager.Instance != null)
+        {
+            GameSaveManager.Instance.RecordStageClear(acquiredStars);
+        }
+        else
+        {
+            CustomDebug.LogWarning($"게임 세이브 매니저가 초기화 되어 있지 않아 세이브 할 수 없습니다.");
+        }
     }
 }
