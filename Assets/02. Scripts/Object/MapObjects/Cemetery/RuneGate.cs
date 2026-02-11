@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class RuneGate : MonoBehaviour
 {
@@ -13,7 +14,7 @@ public class RuneGate : MonoBehaviour
     [SerializeField]
     private Transform _rightDoor;
 
-    [Header("회전 설정")]
+    [Header("문 설정")]
     [SerializeField]
     private float _openAngle = -90f; // 열리는 각도
     [SerializeField]
@@ -29,25 +30,9 @@ public class RuneGate : MonoBehaviour
 
     private void Awake()
     {
-        // 초기 닫힌 각도 저장
-        if (_leftDoor != null)
-        {
-            _leftClosedRot = _leftDoor.localRotation;
-        }
-        if (_rightDoor != null)
-        {
-            _rightClosedRot = _rightDoor.localRotation;
-        }
-
-        // 왼쪽은 -90도(또는 90도), 오른쪽은 반대로 계산
-        if (_leftDoor != null)
-        {
-        _leftOpenRot = _leftClosedRot * Quaternion.Euler(0, _openAngle, 0);
-        }
-
-        if (_rightDoor != null)
-        { _rightOpenRot = _rightClosedRot * Quaternion.Euler(0, -_openAngle, 0);
-        }
+        Assert.IsNotNull(_leftDoor, $"[RuneGate] {_myRuneType} 문의 Left Door가 없습니다.");
+        Assert.IsNotNull(_rightDoor, $"[RuneGate] {_myRuneType} 문의 Right Door가 없습니다.");
+        InitialCalculateDoorRotation();
     }
 
     private void OnEnable()
@@ -58,6 +43,22 @@ public class RuneGate : MonoBehaviour
     private void OnDisable()
     {
         RuneStone.OnRuneChanged -= HandleRuneChange;
+    }
+
+    private void InitialCalculateDoorRotation()
+    {
+        // 초기 닫힌 각도 저장
+        if (_leftDoor != null)
+        {
+            _leftClosedRot = _leftDoor.localRotation;
+        }
+        if (_rightDoor != null)
+        {
+            _rightClosedRot = _rightDoor.localRotation;
+        }
+
+        _leftOpenRot = _leftClosedRot * Quaternion.Euler(0, _openAngle, 0);
+        _rightOpenRot = _rightClosedRot * Quaternion.Euler(0, -_openAngle, 0);
     }
 
     // 중앙 돌에서 신호가 오면 실행되는 함수
@@ -90,28 +91,25 @@ public class RuneGate : MonoBehaviour
     private IEnumerator MoveDoorRoutine(Quaternion targetLeft, Quaternion targetRight)
     {
         float timer = 0f;
-        Quaternion startLeft = _leftDoor != null ? _leftDoor.localRotation : targetLeft;
-        Quaternion startRight = _rightDoor != null ? _rightDoor.localRotation : targetRight;
+        Quaternion startLeft = _leftDoor.localRotation;
+        Quaternion startRight = _rightDoor.localRotation;
 
         while (timer < _duration)
         {
             timer += Time.deltaTime;
-            float t = timer / _duration;
+            float t = Mathf.Clamp01(timer / _duration);
 
             // 부드러운 움직임을 위해서 추가
-            t = t * t * (3f - 2f * t);
+            float smoothStep = Mathf.SmoothStep(0f, 1f, t);
 
-            if (_leftDoor != null)
-                _leftDoor.localRotation = Quaternion.Slerp(startLeft, targetLeft, t);
-
-            if (_rightDoor != null)
-                _rightDoor.localRotation = Quaternion.Slerp(startRight, targetRight, t);
+            _leftDoor.localRotation = Quaternion.Slerp(startLeft, targetLeft, smoothStep);
+            _rightDoor.localRotation = Quaternion.Slerp(startRight, targetRight, smoothStep);
 
             yield return null;
         }
 
         // 확실하게 목표 각도로 고정
-        if (_leftDoor != null) _leftDoor.localRotation = targetLeft;
-        if (_rightDoor != null) _rightDoor.localRotation = targetRight;
+        _leftDoor.localRotation = targetLeft;
+        _rightDoor.localRotation = targetRight;
     }
 }
