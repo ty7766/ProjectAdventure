@@ -6,13 +6,13 @@ public class MovingRingSpawner : MonoBehaviour
 {
     public enum RingDirection { Left_MinusX, Right_PlusX }
 
-    [Header("링 오브젝트")]
-    [SerializeField]
-    private GameObject _movingRingPrefab;
-
-    [Header("생성 설정")]
+    [Header("오브젝트 풀링 설정")]
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.MovingRing;
+
+    [Header("링 오브젝트")]
+    [SerializeField, Tooltip("기능상에서는 필요 없지만 기즈모의 크기를 설정할 때 필요합니다.")]
+    private GameObject _movingRingPrefab;
 
     [SerializeField, Tooltip("생성 간격 (최소 ~ 최대 랜덤)")]
     private float _minInterval = 2.0f;
@@ -45,13 +45,18 @@ public class MovingRingSpawner : MonoBehaviour
     //맵이 바뀌게 되던 기존에 생성된 링들 제거
     private void OnDisable()
     {
-        if( _spawnCoroutine != null )
+        DeleteAllRingsOnMap();
+    }
+
+    private void DeleteAllRingsOnMap()
+    {
+        if (_spawnCoroutine != null)
         {
-            StopCoroutine(_spawnCoroutine );
+            StopCoroutine(_spawnCoroutine);
             _spawnCoroutine = null;
         }
 
-        foreach(var ring in _spawnedRings)
+        foreach (var ring in _spawnedRings)
         {
             if (ring != null && ring.gameObject.activeInHierarchy)
             {
@@ -68,11 +73,11 @@ public class MovingRingSpawner : MonoBehaviour
         {
             float waitTime = Random.Range(_minInterval, _maxInterval);
             yield return new WaitForSeconds(waitTime);
-            SpawnTile();
+            SpawnRing();
         }
     }
 
-    private void SpawnTile()
+    private void SpawnRing()
     {
         if (ObjectPoolManager.Instance == null)
         {
@@ -84,14 +89,6 @@ public class MovingRingSpawner : MonoBehaviour
 
         if (ringObject != null && ringObject.TryGetComponent<MovingRing>(out var ringScript))
         {
-            for (int i = _spawnedRings.Count - 1; i >= 0; i--)
-            {
-                if (_spawnedRings[i] == null || !_spawnedRings[i].gameObject.activeInHierarchy)
-                {
-                    _spawnedRings.RemoveAt(i);
-                }
-            }
-
             _spawnedRings.Add(ringScript);
 
             Vector3 direction = (_direction == RingDirection.Left_MinusX) ? Vector3.left : Vector3.right;
