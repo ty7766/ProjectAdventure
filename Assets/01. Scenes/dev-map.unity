@@ -436,6 +436,9 @@ MonoBehaviour:
     Prefab: {fileID: 8557806552546385891, guid: 4279ef4bb6045a144858bb3fd9e63cf4, type: 3}
     PoolSize: 5
   - Type: 6
+    Prefab: {fileID: 1675773185623416151, guid: a608a4fa8f002484987d17d4d6613714, type: 3}
+    PoolSize: 2
+  - Type: 7
     Prefab: {fileID: 8850600021236025229, guid: 8e3194951cae1b74bba1ca000bd343de, type: 3}
     PoolSize: 2
 --- !u!4 &674068052
@@ -1752,6 +1755,7 @@ MonoBehaviour:
     PathPrefabs:
     - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
     - {fileID: 5115908956258582257, guid: c3056e18d5d04b44aad9e762e9694b72, type: 3}
+    - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _tileSize: {x: 12, y: 1, z: 10}
