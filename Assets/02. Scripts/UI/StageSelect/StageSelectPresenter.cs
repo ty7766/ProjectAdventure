@@ -45,7 +45,7 @@ public class StageSelectPresenter
     }
 
     //--- Private Helper ---//
-    private void UpdateViewSlots(GameSaveManager saveManager, int totalStages)
+    private void UpdateViewSlots(GameSaveManager stageManager, int totalStages)
     {
         int startIndex = _pageIndex * STAGES_PER_PAGE;
 
@@ -56,8 +56,8 @@ public class StageSelectPresenter
             if (currentStageIndex < totalStages)
             {
                 int stageNumber = currentStageIndex + 1;
-                var record = saveManager.GetSaveRecord(stageNumber);
-                bool isUnlocked = saveManager.CheckStageUnlockRequirement(stageNumber);
+                var record = stageManager.GetSaveRecord(stageNumber);
+                bool isUnlocked = stageManager.CheckStageUnlockRequirement(stageNumber);
                 _view.UpdateStageSlotByIndex(i, (int)record?.StageNumber, (int)record?.AcquiredStars, isUnlocked);
             }
         }
