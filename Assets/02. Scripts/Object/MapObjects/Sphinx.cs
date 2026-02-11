@@ -2,9 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Sphinx : MonoBehaviour
+public class Sphinx : SpawnedObjectManager<Transform>
 {
-    [Header("풀링 설정")]
+    [Header("오브젝트 풀링 설정")]
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.SphinxFallingRock;
 
@@ -45,11 +45,36 @@ public class Sphinx : MonoBehaviour
     private WaitForSeconds _waitEyeGlow;
     private WaitForSeconds _waitWarning;
 
-    private void Start()
+    private void Awake()
     {
         CachingCoroutines();
         SetupEyeEffects();
-        StartCoroutine(AttackPatternLoop());
+    }
+
+    //SpawnedObjectManager 상속
+    protected override IEnumerator SpawnRoutine()
+    {
+        while (true)
+        {
+            yield return _waitPatternInterval;
+
+            // 눈 이펙트 활성
+            SetEyeEffectActive(true);
+            yield return _waitEyeGlow;
+            SetEyeEffectActive(false);
+
+            // 공격 시작
+            yield return StartCoroutine(SpawnRocksSequence());
+        }
+    }
+    //SpawnedObjectManager 상속
+    protected override void ReturnObjectToPool(Transform rock)
+    {
+        if (ObjectPoolManager.Instance != null && rock != null)
+        {
+            // Transform을 통해 GameObject를 찾아서 반납
+            ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
+        }
     }
 
     private void CachingCoroutines()
@@ -75,22 +100,6 @@ public class Sphinx : MonoBehaviour
                 effect.SetActive(false);
                 _spawnedEyeEffects.Add(effect);
             }
-        }
-    }
-
-    private IEnumerator AttackPatternLoop()
-    {
-        while(true)
-        {
-            yield return _waitPatternInterval;
-
-            //눈 이펙트 활성
-            SetEyeEffectActive(true);
-            yield return _waitEyeGlow;
-            SetEyeEffectActive(false);
-
-            //공격 시작
-            StartCoroutine(SpawnRocksSequence());
         }
     }
 
@@ -120,11 +129,19 @@ public class Sphinx : MonoBehaviour
 
     private IEnumerator DropRockRoutine(Vector3 targetPosition)
     {
-        yield return new WaitForSeconds(_warningDuration);
+        yield return _waitWarning;
 
         Vector3 spawnPosition = targetPosition + Vector3.up * _dropHeight;
 
-        ObjectPoolManager.Instance.SpawnObject(_objectType, spawnPosition, Random.rotation);
+        if (ObjectPoolManager.Instance != null)
+        {
+            GameObject rockObject = ObjectPoolManager.Instance.SpawnObject(_objectType, spawnPosition, Random.rotation);
+
+            if (rockObject != null)
+            {
+                RegisterObject(rockObject.transform);
+            }
+        }
     }
 
     private Vector3 GetRandomPosition()

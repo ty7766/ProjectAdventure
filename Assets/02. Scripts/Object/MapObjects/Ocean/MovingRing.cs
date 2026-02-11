@@ -18,15 +18,6 @@ public class MovingRing : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
-    private void OnEnable()
-    {
-        if (_rigidbody != null)
-        {
-            _rigidbody.linearVelocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
-        }
-    }
-
     private void FixedUpdate()
     {
         if (_movedDistance >= _maxDistance)

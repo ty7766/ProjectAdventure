@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingRingSpawner : MonoBehaviour
+public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
 {
     public enum RingDirection { Left_MinusX, Right_PlusX }
 
@@ -28,53 +28,19 @@ public class MovingRingSpawner : MonoBehaviour
     [SerializeField, Tooltip("링 이동 속도")]
     private float _tileSpeed = 5.0f;
 
-    //생성된 링들 추적용 리스트
-    private List<MovingRing> _spawnedRings = new List<MovingRing>();
-
-    private Coroutine _spawnCoroutine;
-
-    private void OnEnable()
-    {
-        if( _spawnCoroutine == null )
-        {
-            _spawnCoroutine = StartCoroutine(MovingRingSpawnRoutine());
-        }
-    }
-
-
-    //맵이 바뀌게 되던 기존에 생성된 링들 제거
-    private void OnDisable()
-    {
-        DeleteAllRingsOnMap();
-    }
-
-    private void DeleteAllRingsOnMap()
-    {
-        if (_spawnCoroutine != null)
-        {
-            StopCoroutine(_spawnCoroutine);
-            _spawnCoroutine = null;
-        }
-
-        foreach (var ring in _spawnedRings)
-        {
-            if (ring != null && ring.gameObject.activeInHierarchy)
-            {
-                ring.ReturnToPool();
-            }
-        }
-
-        _spawnedRings.Clear();
-    }
-
-    private IEnumerator MovingRingSpawnRoutine()
+    //SpawnedObjectManager 상속
+    protected override IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            float waitTime = Random.Range(_minInterval, _maxInterval);
-            yield return new WaitForSeconds(waitTime);
+            yield return new WaitForSeconds(Random.Range(_minInterval, _maxInterval));
             SpawnRing();
         }
+    }
+    //SpawnedObjectManager 상속
+    protected override void ReturnObjectToPool(MovingRing movingRing)
+    {
+        movingRing.ReturnToPool();
     }
 
     private void SpawnRing()
@@ -89,7 +55,7 @@ public class MovingRingSpawner : MonoBehaviour
 
         if (ringObject != null && ringObject.TryGetComponent<MovingRing>(out var ringScript))
         {
-            _spawnedRings.Add(ringScript);
+            RegisterObject(ringScript);
 
             Vector3 direction = (_direction == RingDirection.Left_MinusX) ? Vector3.left : Vector3.right;
             ringScript.InitializeForRingAttributs(_tileSpeed, _moveDistance, direction);

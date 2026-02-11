@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class FallingRockSpawner : MonoBehaviour
+public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
 {
     [Header("화산 설정")]
     [SerializeField]
@@ -42,17 +42,21 @@ public class FallingRockSpawner : MonoBehaviour
         _waitSpawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
-    private void Start()
-    {
-        StartCoroutine(SpawnLoop());
-    }
-
-    private IEnumerator SpawnLoop()
+    //SpawnedObjectManager 상속
+    protected override IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            ProcessRockSpawning();
             yield return _waitSpawnInterval;
+            ProcessRockSpawning();
+        }
+    }
+    //SpawnedObjectManager 상속
+    protected override void ReturnObjectToPool(FallingRock fallingRock)
+    {
+        if (fallingRock != null)
+        {
+            Destroy(fallingRock.gameObject);
         }
     }
 
@@ -63,14 +67,18 @@ public class FallingRockSpawner : MonoBehaviour
             return;
         }
 
-        GameObject rock = SpawnRock();
-        ApplyLaunchForce(rock);
         PlayLaunchEffect();
-    }
 
-    private GameObject SpawnRock()
-    {
-        return Instantiate(_rockPrefab, _firePoint.position, Random.rotation);
+        GameObject rock = Instantiate(_rockPrefab, _firePoint.position, Random.rotation);
+        if (rock.TryGetComponent<FallingRock>(out var rockScript))
+        {
+            RegisterObject(rockScript);
+            ApplyLaunchForce(rock);
+        }
+        else
+        {
+            Destroy(rock);
+        }
     }
 
     private void ApplyLaunchForce(GameObject rock)
@@ -79,11 +87,6 @@ public class FallingRockSpawner : MonoBehaviour
         {
             Vector3 direction = FallingRockTrajectoryCalculator.GetRandomLaunchDirection(transform.up, _spread);
             rigidbody.AddForce(direction * _launchSpeed, ForceMode.VelocityChange);
-        }
-        else
-        {
-            CustomDebug.LogError($"[FallingRockSpawner] 프리팹 '{rock.name}'에 Rigidbody가 없습니다!");
-            Destroy(rock);
         }
     }
 
