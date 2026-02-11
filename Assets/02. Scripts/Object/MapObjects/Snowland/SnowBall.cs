@@ -5,10 +5,6 @@ using UnityEngine;
 [RequireComponent(typeof(SphereCollider))]
 public class SnowBall : MonoBehaviour
 {
-    [Header("충돌 설정")]
-    [SerializeField]
-    private int _damageAmount = 1;
-
     [Header("VFX 설정")]
     [SerializeField]
     private VFXType _destroyVFXType = VFXType.SnowBallHit;
@@ -16,26 +12,54 @@ public class SnowBall : MonoBehaviour
     [Header("오브젝트 풀링 설정")]
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.SnowBall;
+
+    [Header("스노우볼 속성 설정")]
+    [SerializeField]
+    private int _damageAmount = 1;
     [SerializeField]
     private float _lifeTime = 10f;
 
-    private Rigidbody _rb;
+    private Rigidbody _rigidBody;
+    private WaitForSeconds _lifeTimeInterval;
 
     private void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
+        _rigidBody = GetComponent<Rigidbody>();
+        _lifeTimeInterval = new WaitForSeconds(_lifeTime);
     }
 
     private void OnEnable()
     {
-        if (_rb != null)
-        {
-            _rb.linearVelocity = Vector3.zero;
-            _rb.angularVelocity = Vector3.zero;
-            _rb.Sleep();
-            _rb.WakeUp();
-        }
+        InitializeSnowBallRigidBody();
         StartCoroutine(ActivateSnowBallRoutine());
+    }
+
+    /// <summary>
+    /// SnowBall을 Pool에 반납
+    /// </summary>
+    public void ReturnToPool()
+    {
+        StopAllCoroutines();
+
+        if (ObjectPoolManager.Instance != null)
+        {
+            ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void InitializeSnowBallRigidBody()
+    {
+        if (_rigidBody != null)
+        {
+            _rigidBody.linearVelocity = Vector3.zero;
+            _rigidBody.angularVelocity = Vector3.zero;
+            _rigidBody.Sleep();
+            _rigidBody.WakeUp();
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -48,11 +72,13 @@ public class SnowBall : MonoBehaviour
 
     private void HandlePlayerHit(Collision collision)
     {
+        //데미지 적용
         if(collision.gameObject.TryGetComponent<PlayerController>(out var playerController))
         {
             playerController.TakeDamage(_damageAmount);
         }
 
+        //VFX 재생
         if(VFXManager.Instance != null)
         {
             ContactPoint contact = collision.GetContact(0);
@@ -64,24 +90,7 @@ public class SnowBall : MonoBehaviour
 
     private IEnumerator ActivateSnowBallRoutine()
     {
-        yield return new WaitForSeconds(_lifeTime);
+        yield return _lifeTimeInterval;
         ReturnToPool();
-    }
-
-    /// <summary>
-    /// SnowBall을 Pool에 반납
-    /// </summary>
-    public void ReturnToPool()
-    {
-        StopAllCoroutines();
-
-        if(ObjectPoolManager.Instance != null)
-        {
-            ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
     }
 }
