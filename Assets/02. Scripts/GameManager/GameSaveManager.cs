@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Utils.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
@@ -37,32 +38,15 @@ namespace GameManager.Singleton // 철자 수정
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (pauseStatus) SaveGameData();
+            if (pauseStatus) SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         private void OnApplicationQuit()
         {
-            SaveGameData();
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         //--- Public Methods ---//
-        /// <summary>
-        /// 게임 데이터를 디스크에 저장합니다
-        /// </summary>
-        public void SaveGameData()
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(_saveData, Formatting.Indented);
-                File.WriteAllText(SavePath, json);
-                CustomDebug.Log($"저장 완료: {SavePath}");
-            }
-            catch (System.Exception e)
-            {
-                CustomDebug.LogError($"저장 실패: {e.Message}");
-            }
-        }
-
         public void RecordStageClear(int acquiredStars)
         {
             var record = GetSaveRecord(_currentStage);
@@ -74,8 +58,8 @@ namespace GameManager.Singleton // 철자 수정
             }    
 
             record.IsCleared = true;
-            record.AcquiredStars = acquiredStars;
-            SaveGameData();
+            record.AcquiredStars = Mathf.Max(acquiredStars, record.AcquiredStars);
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         /// <summary>
@@ -194,30 +178,19 @@ namespace GameManager.Singleton // 철자 수정
 
             if (File.Exists(SavePath))
             {
-                try
+                var loadedData = SaveSystem.LoadGameData(SavePath);
+                if (loadedData != null)
                 {
-                    string json = File.ReadAllText(SavePath);
-                    var loadedData = JsonConvert.DeserializeObject<List<StageSaveRecord>>(json);
-
-                    if (loadedData != null)
+                    foreach (var record in loadedData)
                     {
-                        // 기존 데이터를 순회하며 _saveData에 반영
-                        foreach (var record in loadedData)
+                        var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
+                        if (target != null)
                         {
-                            // Find를 사용해 동일한 스테이지 번호를 가진 항목을 찾음 (Class일 때 유효)
-                            var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
-                            if (target != null)
-                            {
-                                target.IsCleared = record.IsCleared;
-                                target.AcquiredStars = record.AcquiredStars;
-                            }
+                            target.IsCleared = record.IsCleared;
+                            target.AcquiredStars = record.AcquiredStars;
                         }
-                        CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
                     }
-                }
-                catch (System.Exception e)
-                {
-                    CustomDebug.LogError($"세이브 파일 로드/병합 실패 : {e.Message}");
+                    CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
                 }
             }
             else
@@ -225,7 +198,7 @@ namespace GameManager.Singleton // 철자 수정
                 CustomDebug.Log("새 세이브 파일을 생성합니다.");
             }
 
-            SaveGameData();
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
     }
