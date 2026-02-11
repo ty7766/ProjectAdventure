@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class ObjectPoolManager : MonoBehaviour
+public class ObjectPoolManager : Singleton<ObjectPoolManager>
 {
-    public static ObjectPoolManager Instance { get; private set; }
-
     [System.Serializable]
     public struct PoolInfo
     {
@@ -19,17 +17,9 @@ public class ObjectPoolManager : MonoBehaviour
 
     private Dictionary<PoolObjectType, Queue<GameObject>> _poolDictionary = new Dictionary<PoolObjectType, Queue<GameObject>>();
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            InitializePool();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();   //싱글톤 Awake 실행
     }
 
     /// <summary>

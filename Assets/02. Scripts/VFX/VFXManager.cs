@@ -1,18 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class VFXManager : MonoBehaviour
+public class VFXManager : Singleton<VFXManager>
 {
-    private static VFXManager _instance;
-
-    public static VFXManager Instance
-    {
-        get
-        {
-            return _instance;
-        }
-    }
-
     [System.Serializable]
     public struct VFXData
     {
@@ -28,17 +18,9 @@ public class VFXManager : MonoBehaviour
     private Dictionary<VFXType, Queue<GameObject>> _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
     private Dictionary<VFXType, GameObject> _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
 
-    private void Awake()
+    protected override void Awake()
     {
-        if(_instance == null)
-        {
-            _instance = this;
-            InitializePool();
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        base.Awake();   //싱글톤 Awake 실행
     }
 
     /// <summary>
