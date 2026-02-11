@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +23,12 @@ public class SnowBallSpawner : MonoBehaviour
     private List<SnowBall> _spawnedSnowBalls = new List<SnowBall>();
 
     private Coroutine _spawnCoroutine;
+    private WaitForSeconds _snowBallspawnInterval;
+
+    private void Awake()
+    {
+        _snowBallspawnInterval = new WaitForSeconds(_spawnInterval);
+    }
 
     private void OnEnable()
     {
@@ -41,11 +46,11 @@ public class SnowBallSpawner : MonoBehaviour
             _spawnCoroutine = null;
         }
 
-        foreach (var ring in _spawnedSnowBalls)
+        foreach (var ball in _spawnedSnowBalls)
         {
-            if (ring != null && ring.gameObject.activeInHierarchy)
+            if (ball != null && ball.gameObject.activeInHierarchy)
             {
-                ring.ReturnToPool();
+                ball.ReturnToPool();
             }
         }
 
@@ -54,11 +59,9 @@ public class SnowBallSpawner : MonoBehaviour
 
     private IEnumerator ActivateSnowBall()
     {
-        WaitForSeconds wait = new WaitForSeconds(_spawnInterval);
-
         while (true)
         {
-            yield return wait;
+            yield return _snowBallspawnInterval;
             SpawnSnowBallRandomArea();
         }
     }
@@ -78,14 +81,6 @@ public class SnowBallSpawner : MonoBehaviour
 
             if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
             {
-                for (int i = _spawnedSnowBalls.Count - 1; i >= 0; i--)
-                {
-                    if (_spawnedSnowBalls[i] == null || !_spawnedSnowBalls[i].gameObject.activeInHierarchy)
-                    {
-                        _spawnedSnowBalls.RemoveAt(i);
-                    }
-                }
-
                 _spawnedSnowBalls.Add(ballScript);
             }
         }
@@ -108,8 +103,6 @@ public class SnowBallSpawner : MonoBehaviour
     {
         if (snowBall != null && snowBall.TryGetComponent<Rigidbody>(out var rb))
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
             rb.AddForce(_initialForce, ForceMode.Impulse);
         }
     }
