@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class Sphinx : MonoBehaviour
 {
+    [Header("풀링 설정")]
+    [SerializeField]
+    private PoolObjectType _objectType = PoolObjectType.SphinxFallingRock;
+
     [Header("연결 요소")]
     [SerializeField]
     private GameObject _rockPrefab;
@@ -37,11 +41,22 @@ public class Sphinx : MonoBehaviour
     private float _randomDurationMax = 0.3f;
 
     private List<GameObject> _spawnedEyeEffects = new List<GameObject>();
+    private WaitForSeconds _waitPatternInterval;
+    private WaitForSeconds _waitEyeGlow;
+    private WaitForSeconds _waitWarning;
 
     private void Start()
     {
+        CachingCoroutines();
         SetupEyeEffects();
-        StartCoroutine(PatternLoop());
+        StartCoroutine(AttackPatternLoop());
+    }
+
+    private void CachingCoroutines()
+    {
+        _waitPatternInterval = new WaitForSeconds(_patternInterval);
+        _waitEyeGlow = new WaitForSeconds(_eyeGlowDuration);
+        _waitWarning = new WaitForSeconds(_warningDuration);
     }
 
     private void SetupEyeEffects()
@@ -62,15 +77,16 @@ public class Sphinx : MonoBehaviour
             }
         }
     }
-    private IEnumerator PatternLoop()
+
+    private IEnumerator AttackPatternLoop()
     {
         while(true)
         {
-            yield return new WaitForSeconds(_patternInterval);
+            yield return _waitPatternInterval;
 
             //눈 이펙트 활성
             SetEyeEffectActive(true);
-            yield return new WaitForSeconds(_eyeGlowDuration);
+            yield return _waitEyeGlow;
             SetEyeEffectActive(false);
 
             //공격 시작
@@ -95,29 +111,10 @@ public class Sphinx : MonoBehaviour
         for (int i = 0; i < _rockCount; i++)
         {
             Vector3 targetPosition = GetRandomPosition();
-            SpawnWarningEffect(targetPosition);
+            GroundWarning.CreateGroundWarningEffects(VFXType.SphinxWarning, targetPosition, _warningDuration);
             StartCoroutine(DropRockRoutine(targetPosition));
 
             yield return new WaitForSeconds(Random.Range(_randomDurationMin, _randomDurationMax));
-        }
-    }
-
-    private void SpawnWarningEffect(Vector3 position)
-    {
-        Vector3 spawnPosition = position + Vector3.up * 0.08f;
-        Quaternion rotation = Quaternion.Euler(90, 0, 0);
-
-        //VFXManager에게 요청
-        GameObject warningObject = VFXManager.Instance.PlayVFX(VFXType.SphinxWarning, spawnPosition, rotation);
-
-        // 가져온 오브젝트에서 스크립트 꺼내서 실행
-        if (warningObject != null)
-        {
-            GroundWarning warningScript = warningObject.GetComponent<GroundWarning>();
-            if (warningScript != null)
-            {
-                warningScript.Activate(_warningDuration);
-            }
         }
     }
 
@@ -127,7 +124,7 @@ public class Sphinx : MonoBehaviour
 
         Vector3 spawnPosition = targetPosition + Vector3.up * _dropHeight;
 
-        Instantiate(_rockPrefab, spawnPosition, Random.rotation);
+        ObjectPoolManager.Instance.SpawnObject(_objectType, spawnPosition, Random.rotation);
     }
 
     private Vector3 GetRandomPosition()
