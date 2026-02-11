@@ -21,6 +21,7 @@ public class VFXManager : Singleton<VFXManager>
     protected override void Awake()
     {
         base.Awake();   //싱글톤 Awake 실행
+        InitializePool();
     }
 
     /// <summary>
