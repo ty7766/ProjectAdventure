@@ -185,24 +185,48 @@ namespace GameManager.Singleton // 철자 수정
         //--- Private Methods ---//
         private void InitializeSaveData()
         {
+            _saveData = new List<StageSaveRecord>();
+            foreach (var stage in _stageDataBase)
+            {
+                if (stage == null) continue;
+                _saveData.Add(new StageSaveRecord(stage.StageNumber, false, 0));
+            }
+
             if (File.Exists(SavePath))
             {
-                string json = File.ReadAllText(SavePath);
-                _saveData = JsonConvert.DeserializeObject<List<StageSaveRecord>>(json);
+                try
+                {
+                    string json = File.ReadAllText(SavePath);
+                    var loadedData = JsonConvert.DeserializeObject<List<StageSaveRecord>>(json);
+
+                    if (loadedData != null)
+                    {
+                        // 기존 데이터를 순회하며 _saveData에 반영
+                        foreach (var record in loadedData)
+                        {
+                            // Find를 사용해 동일한 스테이지 번호를 가진 항목을 찾음 (Class일 때 유효)
+                            var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
+                            if (target != null)
+                            {
+                                target.IsCleared = record.IsCleared;
+                                target.AcquiredStars = record.AcquiredStars;
+                            }
+                        }
+                        CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
+                    }
+                }
+                catch (System.Exception e)
+                {
+                    CustomDebug.LogError($"세이브 파일 로드/병합 실패 : {e.Message}");
+                }
             }
             else
             {
-                _saveData = new List<StageSaveRecord>();
-                foreach (var stage in _stageDataBase)
-                {
-                    if(stage == null)
-                    {
-                        continue;
-                    }
-                    _saveData.Add(new StageSaveRecord(stage.StageNumber, false, 0));
-                }
-                SaveGameData();
+                CustomDebug.Log("새 세이브 파일을 생성합니다.");
             }
+
+            SaveGameData();
         }
+
     }
 }
