@@ -65,17 +65,16 @@ namespace GameManager.Singleton // 철자 수정
 
         public void RecordStageClear(int acquiredStars)
         {
-            int saveDataIndex = _currentStage - 1;
+            var record = GetSaveRecord(_currentStage);
 
-            if(saveDataIndex < 0 || saveDataIndex >= _saveData.Count)
+            if(record == null)
             {
-                CustomDebug.LogError($"[Out Of Index] 스테이지 세이브를 기록하지 못함, 세이브 데이터 인덱스 : {saveDataIndex}");
+                CustomDebug.LogError($"스테이지 세이브를 기록하지 못함, 스테이지 번호 : {_currentStage}");
                 return;
-            }
+            }    
 
-            _saveData[saveDataIndex].IsCleared = true;
-            _saveData[saveDataIndex].AcquiredStars = acquiredStars;
-
+            record.IsCleared = true;
+            record.AcquiredStars = acquiredStars;
             SaveGameData();
         }
 
