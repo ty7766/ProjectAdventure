@@ -28,6 +28,8 @@ public class FallingRockSpawner : MonoBehaviour
     [SerializeField]
     private float _fallHeight = 10f;
 
+    private WaitForSeconds _waitSpawnInterval;
+
     private void Awake()
     {
         Assert.IsNotNull(_rockPrefab, $"[FallingRockSpawner] '{name}'에 Rock Prefab이 할당되지 않았습니다.");
@@ -36,6 +38,8 @@ public class FallingRockSpawner : MonoBehaviour
         {
             _firePoint = transform;
         }
+
+        _waitSpawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
     private void Start()
@@ -43,23 +47,15 @@ public class FallingRockSpawner : MonoBehaviour
         StartCoroutine(SpawnLoop());
     }
 
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        DrawTrajectoryGizmos();
-    }
-#endif
-
     private IEnumerator SpawnLoop()
     {
         while (true)
         {
             ProcessRockSpawning();
-            yield return new WaitForSeconds(_spawnInterval);
+            yield return _waitSpawnInterval;
         }
     }
 
-    //--- Private Methods ---//
     private void ProcessRockSpawning()
     {
         if (_rockPrefab == null)
@@ -79,75 +75,52 @@ public class FallingRockSpawner : MonoBehaviour
 
     private void ApplyLaunchForce(GameObject rock)
     {
-        Rigidbody rockRigidbody = rock.GetComponent<Rigidbody>();
-        if (rockRigidbody == null)
+        if (rock.TryGetComponent(out Rigidbody rigidbody))
+        {
+            Vector3 direction = FallingRockTrajectoryCalculator.GetRandomLaunchDirection(transform.up, _spread);
+            rigidbody.AddForce(direction * _launchSpeed, ForceMode.VelocityChange);
+        }
+        else
         {
             CustomDebug.LogError($"[FallingRockSpawner] 프리팹 '{rock.name}'에 Rigidbody가 없습니다!");
             Destroy(rock);
-            return;
         }
-
-        Vector3 launchDirection = CalculateLaunchDirection();
-        rockRigidbody.AddForce(launchDirection * _launchSpeed, ForceMode.VelocityChange);
-    }
-
-    private Vector3 CalculateLaunchDirection()
-    {
-        Vector3 randomSpread = Random.insideUnitSphere * _spread;
-        randomSpread.y = 0;
-        return (transform.up + randomSpread).normalized;
     }
 
     private void PlayLaunchEffect()
     {
         Vector3 effectPos = _firePoint.position;
         effectPos.y -= _effectOffsetY; // 오프셋 적용
-
         VFXManager.Instance.PlayVFX(VFXType.VolcanoFire, effectPos, _firePoint.rotation);
     }
 
 #if UNITY_EDITOR
-    //--- Gizmos Logic ---//
-    private void DrawTrajectoryGizmos()
+    private void OnDrawGizmos()
     {
-        Transform startPoint = (_firePoint != null) ? _firePoint : transform;
+        if (_firePoint == null) return;
 
-        Vector3 landingPosition = CalculateLandingPosition(startPoint);
+        // 기즈모 그릴 때도 계산기(Calculator) 사용
+        Vector3 startPos = _firePoint.position;
+        Vector3 velocity = _firePoint.up * _launchSpeed;
 
-        // 1. 착탄 지점
+        // 예상 착탄 지점 받아오기
+        Vector3 landingPos = FallingRockTrajectoryCalculator.PredictLandingPosition(startPos, velocity, _fallHeight);
+
+        // 1. 착탄 지점 표시
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(landingPosition, 1f);
+        Gizmos.DrawWireSphere(landingPos, 1f);
 
-        // 2. 탄퍼짐 범위
-        DrawSpreadDisc(startPoint.position, landingPosition);
-
-        // 3. 가이드 라인
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawLine(startPoint.position, landingPosition);
-    }
-
-    // 물리 공식을 이용한 낙하 위치 예측 계산
-    private Vector3 CalculateLandingPosition(Transform startPoint)
-    {
-        Vector3 initialVelocity = startPoint.up * _launchSpeed;
-        float gravity = Mathf.Abs(Physics.gravity.y);
-
-        float timeToImpact = (initialVelocity.y + Mathf.Sqrt(initialVelocity.y * initialVelocity.y + 2 * gravity * _fallHeight)) / gravity;
-
-        Vector3 landingPosition = startPoint.position + (initialVelocity * timeToImpact);
-        landingPosition.y = startPoint.position.y - _fallHeight;
-
-        return landingPosition;
-    }
-
-    private void DrawSpreadDisc(Vector3 startPos, Vector3 landingPos)
-    {
+        // 2. 탄퍼짐 범위 표시 (Spread Disc)
         float distance = Vector3.Distance(startPos, landingPos);
         float impactRadius = distance * _spread;
 
-        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        Gizmos.color = new Color(1f, 0f, 0f, 0.3f);
         UnityEditor.Handles.color = Color.red;
         UnityEditor.Handles.DrawWireDisc(landingPos, Vector3.up, impactRadius);
+
+        // 3. 궤적 선
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawLine(startPos, landingPos);
     }
 #endif
 }
