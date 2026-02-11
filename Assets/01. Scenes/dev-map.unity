@@ -1750,8 +1750,8 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
-    - {fileID: 5219475582278080448, guid: be56f71e933d928418715eaa7ba5f780, type: 3}
-    - {fileID: 717346594924164287, guid: af9ec3d934f33384bbff93e0a0bf9c58, type: 3}
+    - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
+    - {fileID: 5115908956258582257, guid: c3056e18d5d04b44aad9e762e9694b72, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _tileSize: {x: 12, y: 1, z: 10}
@@ -1989,7 +1989,10 @@ MonoBehaviour:
     PoolSize: 5
   - Type: 2
     Prefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-    PoolSize: 8
+    PoolSize: 10
+  - Type: 3
+    Prefab: {fileID: 900153162240191724, guid: d592326ba5885304f8bce1d11d9c3a84, type: 3}
+    PoolSize: 5
 --- !u!1001 &9087487803484164213
 PrefabInstance:
   m_ObjectHideFlags: 0

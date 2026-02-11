@@ -100,5 +100,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab9b407a86e650643bab3897eeacd777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _vfxType: 2
   _blinkSpeed: 10
   _spriteRenderer: {fileID: 0}
+  _warningOffset: {x: 0, y: 0.08, z: 0}
+  _wanrningRotation: {x: 90, y: 0, z: 0}
