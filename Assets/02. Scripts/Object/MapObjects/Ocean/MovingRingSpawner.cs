@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MovingRingSpawner : MonoBehaviour
+public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
 {
     public enum RingDirection { Left_MinusX, Right_PlusX }
 
-    [Header("링 오브젝트")]
-    [SerializeField]
-    private GameObject _movingRingPrefab;
-
-    [Header("생성 설정")]
+    [Header("오브젝트 풀링 설정")]
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.MovingRing;
+
+    [Header("링 오브젝트")]
+    [SerializeField, Tooltip("기능상에서는 필요 없지만 기즈모의 크기를 설정할 때 필요합니다.")]
+    private GameObject _movingRingPrefab;
 
     [SerializeField, Tooltip("생성 간격 (최소 ~ 최대 랜덤)")]
     private float _minInterval = 2.0f;
@@ -28,51 +28,22 @@ public class MovingRingSpawner : MonoBehaviour
     [SerializeField, Tooltip("링 이동 속도")]
     private float _tileSpeed = 5.0f;
 
-    //생성된 링들 추적용 리스트
-    private List<MovingRing> _spawnedRings = new List<MovingRing>();
-
-    private Coroutine _spawnCoroutine;
-
-    private void OnEnable()
-    {
-        if( _spawnCoroutine == null )
-        {
-            _spawnCoroutine = StartCoroutine(MovingRingSpawnRoutine());
-        }
-    }
-
-
-    //맵이 바뀌게 되던 기존에 생성된 링들 제거
-    private void OnDisable()
-    {
-        if( _spawnCoroutine != null )
-        {
-            StopCoroutine(_spawnCoroutine );
-            _spawnCoroutine = null;
-        }
-
-        foreach(var ring in _spawnedRings)
-        {
-            if (ring != null && ring.gameObject.activeInHierarchy)
-            {
-                ring.ReturnToPool();
-            }
-        }
-
-        _spawnedRings.Clear();
-    }
-
-    private IEnumerator MovingRingSpawnRoutine()
+    //SpawnedObjectManager 상속
+    protected override IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            float waitTime = Random.Range(_minInterval, _maxInterval);
-            yield return new WaitForSeconds(waitTime);
-            SpawnTile();
+            yield return new WaitForSeconds(Random.Range(_minInterval, _maxInterval));
+            SpawnRing();
         }
     }
+    //SpawnedObjectManager 상속
+    protected override void ReturnObjectToPool(MovingRing movingRing)
+    {
+        movingRing.ReturnToPool();
+    }
 
-    private void SpawnTile()
+    private void SpawnRing()
     {
         if (ObjectPoolManager.Instance == null)
         {
@@ -84,15 +55,7 @@ public class MovingRingSpawner : MonoBehaviour
 
         if (ringObject != null && ringObject.TryGetComponent<MovingRing>(out var ringScript))
         {
-            for (int i = _spawnedRings.Count - 1; i >= 0; i--)
-            {
-                if (_spawnedRings[i] == null || !_spawnedRings[i].gameObject.activeInHierarchy)
-                {
-                    _spawnedRings.RemoveAt(i);
-                }
-            }
-
-            _spawnedRings.Add(ringScript);
+            RegisterObject(ringScript);
 
             Vector3 direction = (_direction == RingDirection.Left_MinusX) ? Vector3.left : Vector3.right;
             ringScript.InitializeForRingAttributs(_tileSpeed, _moveDistance, direction);

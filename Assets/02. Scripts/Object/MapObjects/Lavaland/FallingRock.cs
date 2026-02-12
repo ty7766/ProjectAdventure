@@ -5,6 +5,10 @@ using UnityEngine.Assertions;
 public class FallingRock : SpecialObject
 {
     //--- Settings ---//
+    [Header("VFX 설정")]
+    [SerializeField]
+    private VFXType _vfxType = VFXType.FallingRockHit;
+
     [Header("돌 속성 설정")]
     [SerializeField] 
     private int _damageAmount = 1;
@@ -36,6 +40,7 @@ public class FallingRock : SpecialObject
 
     protected override void ApplyEffect(GameObject player)
     {
+        VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
         ApplyPlayerDamage(player);
     }
 
@@ -65,7 +70,7 @@ public class FallingRock : SpecialObject
     {
         if (!other.CompareTag("Player"))
         {
-            //TODO : 추후 이펙트 추가
+            VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
     }

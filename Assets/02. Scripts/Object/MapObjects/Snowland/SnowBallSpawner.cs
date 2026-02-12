@@ -1,18 +1,16 @@
-﻿using NUnit.Framework;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SnowBallSpawner : MonoBehaviour
+public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 {
-    [Header("구역 설정")]
-    [SerializeField, Tooltip("눈덩이가 생성될 랜덤 범위")]
-    private BoxCollider _spawnArea;
-
-    [Header("생성 설정")]
+    [Header("오브젝트 풀링 설정")]
     [SerializeField]
     private PoolObjectType _snowBallType = PoolObjectType.SnowBall;
 
+    [Header("구역 설정")]
+    [SerializeField, Tooltip("눈덩이가 생성될 랜덤 범위")]
+    private BoxCollider _spawnArea;
     [SerializeField, Tooltip("눈덩이 생성 간격 (초)")]
     private float _spawnInterval = 3.0f;
 
@@ -20,48 +18,28 @@ public class SnowBallSpawner : MonoBehaviour
     [SerializeField, Tooltip("-x 방향으로 굴러가도록 설정")]
     private Vector3 _initialForce = new Vector3(-2f, 0f, 0f);
 
-    //생성된 스노우볼 추적용 리스트
-    private List<SnowBall> _spawnedSnowBalls = new List<SnowBall>();
+    private WaitForSeconds _snowBallspawnInterval;
 
-    private Coroutine _spawnCoroutine;
-
-    private void OnEnable()
+    private void Awake()
     {
-        if( _spawnCoroutine == null )
-        {
-            _spawnCoroutine = StartCoroutine(ActivateSnowBall());
-        }
+        _snowBallspawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
-    private void OnDisable()
+    //SpawnedObjectManager 상속
+    protected override IEnumerator SpawnRoutine()
     {
-        if(_spawnCoroutine != null)
-        {
-            StopCoroutine(_spawnCoroutine);
-            _spawnCoroutine = null;
-        }
-
-        foreach (var ring in _spawnedSnowBalls)
-        {
-            if (ring != null && ring.gameObject.activeInHierarchy)
-            {
-                ring.ReturnToPool();
-            }
-        }
-
-        _spawnedSnowBalls.Clear();
-    }
-
-    private IEnumerator ActivateSnowBall()
-    {
-        WaitForSeconds wait = new WaitForSeconds(_spawnInterval);
-
         while (true)
         {
-            yield return wait;
+            yield return _snowBallspawnInterval;
             SpawnSnowBallRandomArea();
         }
     }
+    //SpawnedObjectManager 상속
+    protected override void ReturnObjectToPool(SnowBall obj)
+    {
+        obj.ReturnToPool();
+    }
+
     private void SpawnSnowBallRandomArea()
     {
         if (ObjectPoolManager.Instance == null || _spawnArea == null)
@@ -78,15 +56,7 @@ public class SnowBallSpawner : MonoBehaviour
 
             if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
             {
-                for (int i = _spawnedSnowBalls.Count - 1; i >= 0; i--)
-                {
-                    if (_spawnedSnowBalls[i] == null || !_spawnedSnowBalls[i].gameObject.activeInHierarchy)
-                    {
-                        _spawnedSnowBalls.RemoveAt(i);
-                    }
-                }
-
-                _spawnedSnowBalls.Add(ballScript);
+                RegisterObject(ballScript);
             }
         }
     }
@@ -108,8 +78,6 @@ public class SnowBallSpawner : MonoBehaviour
     {
         if (snowBall != null && snowBall.TryGetComponent<Rigidbody>(out var rb))
         {
-            rb.linearVelocity = Vector3.zero;
-            rb.angularVelocity = Vector3.zero;
             rb.AddForce(_initialForce, ForceMode.Impulse);
         }
     }

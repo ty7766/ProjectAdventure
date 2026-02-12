@@ -34,7 +34,7 @@ public class MovingRing : MonoBehaviour
 
 
     /// <summary>
-    /// 움직이는 링의 속성을 초기화하는 함수 (TileSpawner.cs에서 속성 할당)
+    /// 움직이는 링의 속성을 초기화하는 함수 (MovingRingSpawner.cs에서 속성 할당)
     /// </summary>
     /// <param name="speed">링 속도</param>
     /// <param name="maxDistance">링이 이동할 거리</param>
@@ -51,6 +51,7 @@ public class MovingRing : MonoBehaviour
     /// </summary>
     public void ReturnToPool()
     {
+        //플레이어가 타고 있으면 내리게 함
         if (transform.childCount > 0)
         {
             transform.DetachChildren();

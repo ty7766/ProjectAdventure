@@ -17,6 +17,7 @@ public class PathGroup
     public int CurrentPathIndex = 0;
 }
 
+[RequireComponent(typeof(MapPlayerChecker))]
 public class MapManager : MonoBehaviour
 {
     [Header("맵 선택 이펙트 설정")]
@@ -29,41 +30,60 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private PathGroup[] _pathGroups;
 
-    [Header("맵 변경 안전장치 설정")]
+    [Header("맵 설정")]
     [SerializeField]
-    //해당 맵 사이즈로 변경 필수
-    private Vector3 _detectionSize = Vector3.zero;
+    private Vector3 _tileSize = new Vector3(12, 1, 10);
+    [SerializeField]
+    private Vector3 _startOffset = Vector3.zero;  //시작위치 보정
 
     private int _selectedSlotIndex = 0;
-    private FloatingCursor _cursor;
+    private FloatingCursor _cursorScript;
+    private MapPlayerChecker _playerCheckerScript;
+
+    private Color _debugColor = new Color(1, 0, 0, 0.3f);
 
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
         Assert.IsTrue(_pathGroups.Length > 0, $"[MapManager] '{name}'의 Path Groups 배열이 비어있습니다.");
         Assert.IsNotNull(_selectionCursor, $"[MapManager] '{name}'에 Selection Cursor가 할당되지 않았습니다.");
+
+        // 커서 스크립트 캐싱
+        if (_selectionCursor != null)
+        {
+            _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
+        }
+        _playerCheckerScript = GetComponent<MapPlayerChecker>();
     }
-    void Start()
+    private void Start()
     {
-        GetComponentFloatingCursor();
         MapGeneration();
         UpdateCursorPosition();
     }
 
-    void Update()
+    private void Update()
     {
         HandleSelectionInput();
         HandleMapChangeInput();
     }
 
-    private void GetComponentFloatingCursor()
+    /// <summary>
+    /// MapGuideLine을 위한 타일 사이즈 리턴 메소드
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetTileSize()
     {
-        if(_selectionCursor != null)
-        {
-            _cursor = _selectionCursor.GetComponent<FloatingCursor>();
-        }
+        return _tileSize;
     }
 
+    /// <summary>
+    /// MapGuideLine을 위한 타일 이니셜 오프셋 메소드
+    /// </summary>
+    /// <returns></returns>
+    public Vector3 GetStartOffset()
+    {
+        return _startOffset;
+    }
     private void MapGeneration()
     {
         // 등록된 모든 'PathGroup'을 순회하며 맵 생성
@@ -78,56 +98,55 @@ public class MapManager : MonoBehaviour
 
     private void HandleSelectionInput()
     {
-        bool selectionChanged = false;
-
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            _selectedSlotIndex--;
-            if (_selectedSlotIndex < 0)
-            {
-                _selectedSlotIndex = _pathGroups.Length - 1;
-            }
-
-            selectionChanged = true;
+            ChangeSelection(-1);
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            _selectedSlotIndex++;
-            if (_selectedSlotIndex >= _pathGroups.Length)
-            {
-                _selectedSlotIndex = 0;
-            }
-
-            selectionChanged = true;
-        }
-
-        //선택 되었을 때만 이펙트 생성
-        if (selectionChanged)
-        {
-            UpdateCursorPosition();
+            ChangeSelection(1);
         }
     }
+
+    //direction이 -1이면 왼쪽, 1이면 오른쪽
+    private void ChangeSelection(int direction)
+    {
+        _selectedSlotIndex += direction;
+
+        // 인덱스 순환 처리 (Wrap around)
+        if (_selectedSlotIndex < 0)
+        {
+            _selectedSlotIndex = _pathGroups.Length - 1;
+        }
+        else if (_selectedSlotIndex >= _pathGroups.Length)
+        {
+            _selectedSlotIndex = 0;
+        }
+
+        UpdateCursorPosition();
+    }
+
     private void UpdateCursorPosition()
     {
-        if (_selectionCursor == null)
+        if (_selectionCursor == null || _pathGroups.Length == 0)
         {
             return;
         }
 
         Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
-        //SpawnPoint가 할당되지 않은 맵 방지
+
         if (targetSpawnPoint == null)
         {
-            CustomDebug.LogWarning($"[MapManager] PathGroup[{_selectedSlotIndex}]의 spawnPoint가 설정되지 않았습니다.");
+            CustomDebug.LogWarning($"[MapManager] SpawnPoint 누락: 인덱스 {_selectedSlotIndex}");
             return;
         }
 
-        // 목표 기준 위치 계산
         Vector3 targetBasePos = targetSpawnPoint.position + _cursorOffset;
 
-        if (_cursor != null)
+        // 커서 스크립트 캐싱된 것 사용 (없으면 Transform 직접 이동)
+        if (_cursorScript != null)
         {
-            _cursor.SetBasePositionCursor(targetBasePos);
+            _cursorScript.SetBasePositionCursor(targetBasePos); // 함수명 변경 반영
         }
         else
         {
@@ -137,49 +156,38 @@ public class MapManager : MonoBehaviour
 
     private void HandleMapChangeInput()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
-            PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
-
-            //플레이어가 해당 맵 위에 있는지 확인
-            if (CheckPlayerOnMap(targetGroup))
-            {
-                CustomDebug.Log("플레이어가 현재 해당 맵 위에 있어 맵을 교체할 수 없습니다!");
-                return;
-            }
-
-            if (targetGroup.PathPrefabs.Length == 0)
-            {
-                return;
-            }
-
-            targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + 1) % targetGroup.PathPrefabs.Length;
-            SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
+            TryChangeMap(-1);
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            TryChangeMap(1);
         }
     }
 
-    private bool CheckPlayerOnMap(PathGroup group)
+    private void TryChangeMap(int direction)
     {
-        //SpawnPoint가 할당되지 않은 맵 방지
-        if (group.SpawnPoint == null)
-        {
-            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}' 그룹에 Spawn Point가 없습니다! Inspector를 확인하세요.");
-            return false;
-        }
-        //해당 슬롯 위치에 박스를 만들어 검사
-        Collider[] hitColliders = Physics.OverlapBox(
-            group.SpawnPoint.position,
-            _detectionSize * 0.5f,
-            group.SpawnPoint.rotation);
+        PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
 
-        foreach(Collider col in hitColliders)
+        if (targetGroup.PathPrefabs == null || targetGroup.PathPrefabs.Length == 0)
         {
-            if(col.CompareTag("Player"))
-            {
-                return true;
-            }
+            CustomDebug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 프리팹이 없습니다.");
+            return;
         }
-        return false;
+        
+        //플레이어가 해당 맵 위에 있을 경우
+        if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
+        {
+            CustomDebug.Log("플레이어가 해당 맵 위에 있어 교체할 수 없습니다!");
+            return;
+        }
+
+        int totalCount = targetGroup.PathPrefabs.Length;
+
+        targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
+
+        SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
     }
 
     private void SpawnPath(PathGroup group, int index)

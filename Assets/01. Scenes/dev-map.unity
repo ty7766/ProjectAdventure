@@ -131,7 +131,6 @@ GameObject:
   - component: {fileID: 330585545}
   - component: {fileID: 330585544}
   - component: {fileID: 330585547}
-  - component: {fileID: 330585548}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -257,18 +256,6 @@ MonoBehaviour:
     m_MipBias: 0
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
---- !u!114 &330585548
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 330585543}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dcf5908b0d799ca40837bca4783bf18f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -430,12 +417,15 @@ MonoBehaviour:
     Prefab: {fileID: 9001070013301290477, guid: 08a4447e23161b74f82e153d9a525b54, type: 3}
     PoolSize: 3
   - Type: 4
-    Prefab: {fileID: 7334528263537467426, guid: 014cc0938e080db4d894201a50ebd38b, type: 3}
-    PoolSize: 5
+    Prefab: {fileID: 6673855999189061258, guid: 014cc0938e080db4d894201a50ebd38b, type: 3}
+    PoolSize: 7
   - Type: 5
     Prefab: {fileID: 8557806552546385891, guid: 4279ef4bb6045a144858bb3fd9e63cf4, type: 3}
     PoolSize: 5
   - Type: 6
+    Prefab: {fileID: 1675773185623416151, guid: a608a4fa8f002484987d17d4d6613714, type: 3}
+    PoolSize: 2
+  - Type: 7
     Prefab: {fileID: 8850600021236025229, guid: 8e3194951cae1b74bba1ca000bd343de, type: 3}
     PoolSize: 2
 --- !u!4 &674068052
@@ -644,9 +634,8 @@ MonoBehaviour:
   _originTransform: {fileID: 0}
   _spawnPointToAlign:
   - {fileID: 1516804858}
-  _tileSize: {x: 12, y: 1, z: 10}
-  _startOffset: {x: 0, y: 0, z: 0}
   _gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  _mapManager: {fileID: 1664178952}
 --- !u!1001 &1605133888
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1725,6 +1714,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1664178953}
   - component: {fileID: 1664178952}
+  - component: {fileID: 1664178954}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -1750,17 +1740,16 @@ MonoBehaviour:
   - GroupName: Map1
     SpawnPoint: {fileID: 1516804858}
     PathPrefabs:
-    - {fileID: 2910512297889539720, guid: d77e3feb34ef9d245bc8001f7999dc1f, type: 3}
-    - {fileID: 2508439079240213857, guid: d52bce99ae3dfa34db0881faf551a35b, type: 3}
-    - {fileID: 1556500274274478124, guid: 5b9731dce80db1b47a16310e4a837a88, type: 3}
-    - {fileID: 1252271583804284471, guid: 2efc3b008bcc7964ea916e4617ca9fa5, type: 3}
-    - {fileID: 2766102709251254700, guid: fab18dfec90473244a2b122d021db220, type: 3}
-    - {fileID: 5248508870652778043, guid: 552f6a98573e920478170e047c328527, type: 3}
+    - {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
+    - {fileID: 5115908956258582257, guid: c3056e18d5d04b44aad9e762e9694b72, type: 3}
+    - {fileID: 2378734899503848549, guid: 17ce53edd6df6fa46b155e5a0cb70008, type: 3}
+    - {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
+    - {fileID: 5932052258541337745, guid: f05393e06df27f14f887a84cb9b3d396, type: 3}
     - {fileID: 6363534732820104948, guid: 337204ab0b5a6a4439fb1360065308f7, type: 3}
-    - {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
-  _detectionSize: {x: 12, y: 5, z: 10}
+  _tileSize: {x: 12, y: 1, z: 10}
+  _startOffset: {x: 0, y: 0, z: 0}
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
@@ -1776,6 +1765,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2052775952}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1664178954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1664178951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83873c45f29cb33488893b4a13b7b112, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1760962917
 GameObject:
   m_ObjectHideFlags: 0
@@ -1982,7 +1983,10 @@ MonoBehaviour:
     PoolSize: 5
   - Type: 2
     Prefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-    PoolSize: 8
+    PoolSize: 10
+  - Type: 3
+    Prefab: {fileID: 900153162240191724, guid: d592326ba5885304f8bce1d11d9c3a84, type: 3}
+    PoolSize: 5
 --- !u!1001 &9087487803484164213
 PrefabInstance:
   m_ObjectHideFlags: 0
