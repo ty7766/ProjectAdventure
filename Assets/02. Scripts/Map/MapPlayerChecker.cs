@@ -21,7 +21,7 @@ public class MapPlayerChecker : MonoBehaviour
         int hitCount = Physics.OverlapBoxNonAlloc(
             group.SpawnPoint.position,
             checkSize * 0.5f,
-            _hitBuffer, // 이제 자리가 20개라 웬만하면 다 들어감
+            _hitBuffer,
             group.SpawnPoint.rotation
         );
 
