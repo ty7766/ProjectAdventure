@@ -20,6 +20,10 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
     protected override void Awake()
     {
         base.Awake();   //싱글톤 Awake 실행
+        if(Instance != this)
+        {
+            return;
+        }
         InitializePool();
     }
 
