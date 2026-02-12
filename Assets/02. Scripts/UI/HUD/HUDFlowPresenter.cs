@@ -1,18 +1,50 @@
-﻿using System;
+﻿using NUnit.Framework;
+using System;
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+
+[System.Serializable]
+public struct StageMissionData
+{
+    public StageObjectType Type;
+    [TextArea] public string FormatText; // 인스펙터에서 줄바꿈 편하게
+}
 
 public class HUDFlowPresenter : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private HUDView _hudView;
-    [SerializeField] private StageManager _stageManager;
-    [SerializeField] private PlayerProperties _playerModel;
+    [SerializeField]
+    private HUDView _hudView;
+    [SerializeField]
+    private StageManager _stageManager;
+    [SerializeField]
+    private PlayerProperties _playerModel;
+
+    [Header("Text Strings")]
+    [SerializeField]
+    private List<StageMissionData> _missionDataList;
+    [SerializeField]
+    private string _stageReadyString = "준비하세요!";
+    [SerializeField]
+    private string _stageGoString = "GO!";
+
+    private Dictionary<StageObjectType, string> _missionTextDict;
+    
+
 
     private void Awake()
     {
-        if (_hudView == null) _hudView = GetComponent<HUDView>();
+        _missionTextDict = new Dictionary<StageObjectType, string>();
+        foreach(var data in _missionDataList)
+        {
+            if (!_missionTextDict.ContainsKey(data.Type))
+            {
+                _missionTextDict.Add(data.Type, data.FormatText);
+            }
+        }
 
+        if (_hudView == null) _hudView = GetComponent<HUDView>();
         if (_stageManager != null) _stageManager.OnStageCleared += HandleStageClear;
         if (_playerModel != null) _playerModel.OnPlayerDeath += HandlePlayerDeath;
     }
@@ -45,7 +77,7 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private IEnumerator StartCountDown()
     {
-        _hudView.UpdateStageCountDownContent("준비하세요!");
+        _hudView.UpdateStageCountDownContent(_stageReadyString);
         _hudView.ApplyStageCountDownAnimation(80f, 1.0f);
         yield return new WaitForSecondsRealtime(1.5f);
 
@@ -58,7 +90,7 @@ public class HUDFlowPresenter : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.5f);
         }
 
-        _hudView.UpdateStageCountDownContent("GO!");
+        _hudView.UpdateStageCountDownContent(_stageGoString);
         _hudView.ApplyStageCountDownAnimation(120f, 0.2f);
         yield return new WaitForSecondsRealtime(0.5f);
 
@@ -115,15 +147,27 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private string GetObjectDescription(StageObject obj)
     {
+        if (!_missionTextDict.TryGetValue(obj.stageObjectType, out string format))
+        {
+            CustomDebug.LogWarning($"알 수 없는 도전과제! : {obj.stageObjectType}");
+            return "알 수 없는 도전과제";
+        }
+
         switch (obj.stageObjectType)
         {
             case StageObjectType.TimeLimitClear:
                 var ts = TimeSpan.FromSeconds(obj.value);
-                return $"{ts.Minutes}분 {ts.Seconds}초 이내에 클리어";
-            case StageObjectType.NoFallClear: return "한 번도 세상 밖으로 떨어지지 않고 클리어";
-            case StageObjectType.NoDamageClear: return "한 번도 데미지를 입지 않고 클리어";
-            case StageObjectType.RemainHealthClear: return $"체력을 {obj.value} 이상 남기고 클리어";
-            default: return "알 수 없는 도전과제";
+                return string.Format(format, ts.Minutes, ts.Seconds);
+
+            case StageObjectType.RemainHealthClear:
+                return string.Format(format, obj.value);
+
+            case StageObjectType.NoFallClear:
+            case StageObjectType.NoDamageClear:
+                return format;
+
+            default:
+                return format;
         }
     }
 
