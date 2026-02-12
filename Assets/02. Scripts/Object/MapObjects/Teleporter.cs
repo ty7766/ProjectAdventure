@@ -17,6 +17,8 @@ public class Teleporter : MonoBehaviour
     // 현재 작동 가능한 상태인지 확인
     private bool _isReady = true;
 
+    private Coroutine _cooldownCoroutine;
+
     private void OnTriggerEnter(Collider other)
     {
         if(!CanTeleport(other))
@@ -59,7 +61,11 @@ public class Teleporter : MonoBehaviour
 
     private void ReceivePlayer(float duration)
     {
-        StartCoroutine(ApplyCooldown(duration));
+        if(_cooldownCoroutine != null)
+        {
+            StopCoroutine( _cooldownCoroutine );
+        }
+        _cooldownCoroutine = StartCoroutine(ApplyCooldown(duration));
     }
 
     private IEnumerator ApplyCooldown(float duration)
@@ -67,5 +73,6 @@ public class Teleporter : MonoBehaviour
         _isReady = false;
         yield return new WaitForSeconds(duration);
         _isReady = true;
+        _cooldownCoroutine = null;
     }
 }
