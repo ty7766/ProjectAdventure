@@ -37,6 +37,7 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
     //SpawnedObjectManager 상속
     protected override void ReturnObjectToPool(SnowBall snowBallObject)
     {
+        UnregisterObject(snowBallObject);
         snowBallObject.ReturnToPool();
     }
 

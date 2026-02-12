@@ -70,6 +70,7 @@ public class Sphinx : SpawnedObjectManager<Transform>
     //SpawnedObjectManager 상속
     protected override void ReturnObjectToPool(Transform rock)
     {
+        UnregisterObject(rock);
         if (ObjectPoolManager.Instance != null && rock != null)
         {
             ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);

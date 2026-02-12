@@ -13,10 +13,11 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
 
     protected virtual void OnEnable()
     {
-        if (_spawnCoroutine == null)
+        if (_spawnCoroutine != null)
         {
-            _spawnCoroutine = StartCoroutine(SpawnRoutine());
+            StopCoroutine(_spawnCoroutine);
         }
+        _spawnCoroutine = StartCoroutine(SpawnRoutine());
     }
 
     protected virtual void OnDisable()
@@ -27,15 +28,16 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
             _spawnCoroutine = null;
         }
 
-        foreach (var spawnedObject in _spawnedObjects)
+        List<T> copyList = new List<T>(_spawnedObjects);
+
+        foreach (var spawnedObject in copyList)
         {
-            if (spawnedObject != null && spawnedObject.gameObject.activeInHierarchy)
+            if (spawnedObject != null && spawnedObject.gameObject != null)
             {
-                ReturnObjectToPool(spawnedObject); // 구체적인 반납 방식은 자식이 결정
+                ReturnObjectToPool(spawnedObject);
             }
         }
 
-        // 3. 리스트 초기화
         _spawnedObjects.Clear();
     }
 
@@ -45,6 +47,14 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
     protected void RegisterObject(T spawnedObejct)
     {
         _spawnedObjects.Add(spawnedObejct);
+    }
+
+    protected void UnregisterObject(T spawnedObject)
+    {
+        if (_spawnedObjects.Contains(spawnedObject))
+        {
+            _spawnedObjects.Remove(spawnedObject);
+        }
     }
 
     /// <summary>
