@@ -31,12 +31,12 @@ public class Teleporter : MonoBehaviour
 
     private bool CanTeleport(Collider other)
     {
-        if (!_isReady || !other.CompareTag("Player"))
+        if (!_isReady)
         {
             return false;
         }
 
-        if(!other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
         {
             return false;
         }
