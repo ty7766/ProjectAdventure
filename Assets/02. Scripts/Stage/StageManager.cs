@@ -19,10 +19,8 @@ public class StageObject
     public bool isCleared = false;
 }
 
-    public class StageManager : MonoBehaviour
+public class StageManager : MonoBehaviour
 {
-    public static StageManager Instance { get; private set; }
-
     //--- Components & Settings ---//
     [Header("Components")]
     [SerializeField] private PlayerController _playerController;
@@ -56,23 +54,12 @@ public class StageObject
     //--- Unity Methods ---//
     private void Awake()
     {
-        bool isInstanceNull = TryInitializeSingleton();
-        if (!isInstanceNull)
-        {
-            return;
-        }
-
         SubscribeEvents();
         LoadStageObjectStatusFromSave();
     }
 
     private void OnDestroy() 
     {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
-
         if (_playerController != null)
         {
             _playerController.OnPlayerDamageTaken -= HandlePlayerDamageTakenEvent;
@@ -144,20 +131,6 @@ public class StageObject
 
 
     //--- Private Helpers ---//
-    private bool TryInitializeSingleton()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-            return true;
-        }
-        else
-        {
-            Destroy(gameObject);
-            return false;
-        }
-    }
-
     private void SubscribeEvents()
     {
         if (_playerController != null)
