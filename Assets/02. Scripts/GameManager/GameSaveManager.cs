@@ -5,7 +5,7 @@ using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
-namespace GameManager.Singleton // 철자 수정
+namespace GameManager.Singleton
 {
 
     public class GameSaveManager : MonoBehaviour

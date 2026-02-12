@@ -1484,10 +1484,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3863874594044101346, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _playerModel
+      value: 
+      objectReference: {fileID: 2087836098}
+    - target: {fileID: 3863874594044101346, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _stageManager
+      value: 
+      objectReference: {fileID: 1664178954}
+    - target: {fileID: 3863874594044101346, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _effectController
+      value: 
+      objectReference: {fileID: 2087836105}
+    - target: {fileID: 5588261144679708998, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _playerModel
+      value: 
+      objectReference: {fileID: 2087836098}
+    - target: {fileID: 5588261144679708998, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _stageManager
+      value: 
+      objectReference: {fileID: 1664178954}
     - target: {fileID: 7364052008053566843, guid: be66360aa35981147a78907d7129fb4c, type: 3}
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 8392730427458882404, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+      propertyPath: _stageManager
+      value: 
+      objectReference: {fileID: 1664178954}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
