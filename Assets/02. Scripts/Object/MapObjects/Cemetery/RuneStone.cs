@@ -43,6 +43,10 @@ public class RuneStone : MonoBehaviour
 
     private void Awake()
     {
+        Assert.IsNotNull(_runeSequence, "[RuneStone] _runeSequence가 설정되지 않았습니다.");
+        Assert.IsTrue(_runeSequence.Length > 0, "[RuneStone] _runeSequence가 비어있습니다.");
+        Assert.IsNotNull(_prefabDatabase, "[RuneStone] _prefabDatabase가 설정되지 않았습니다.");
+
         if (TryGetComponent<MeshRenderer>(out var meshRenderer))
         {
             meshRenderer.enabled = false;
