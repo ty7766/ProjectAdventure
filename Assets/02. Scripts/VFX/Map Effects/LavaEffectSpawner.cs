@@ -30,6 +30,12 @@ public class LavaEffectSpawner : MonoBehaviour
     {
         StartCoroutine(SpawnLoop());
     }
+    private void OnValidate()
+    {
+        if (_minInterval< 0f) _minInterval = 0f;
+        if (_maxInterval< 0f) _maxInterval = 0f;
+        if (_maxInterval<_minInterval) _maxInterval = _minInterval;
+    }
 
     private IEnumerator SpawnLoop()
     {
