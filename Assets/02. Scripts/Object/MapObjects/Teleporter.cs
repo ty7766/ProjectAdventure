@@ -59,10 +59,10 @@ public class Teleporter : MonoBehaviour
 
     private void ReceivePlayer(float duration)
     {
-        StartCoroutine(CooldownRoutine(duration));
+        StartCoroutine(ApplyCooldown(duration));
     }
 
-    private IEnumerator CooldownRoutine(float duration)
+    private IEnumerator ApplyCooldown(float duration)
     {
         _isReady = false;
         yield return new WaitForSeconds(duration);
