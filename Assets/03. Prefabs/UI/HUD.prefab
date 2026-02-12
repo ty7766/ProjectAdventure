@@ -5446,7 +5446,9 @@ GameObject:
   - component: {fileID: 7336755366969853423}
   - component: {fileID: 4029878197649540780}
   - component: {fileID: 8421891443032858731}
-  - component: {fileID: 3014092985143233897}
+  - component: {fileID: 3863874594044101346}
+  - component: {fileID: 5588261144679708998}
+  - component: {fileID: 8392730427458882404}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -5604,7 +5606,7 @@ MonoBehaviour:
   _stageFailPanel: {fileID: 6962354552959428953}
   _retryButtonStageFail: {fileID: 4969909976904829985}
   _returnToMainMenuButtonStageFail: {fileID: 6970113112181169645}
---- !u!114 &3014092985143233897
+--- !u!114 &3863874594044101346
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5613,11 +5615,54 @@ MonoBehaviour:
   m_GameObject: {fileID: 7364052008053566843}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c43ef349c1f2894fac4fc96f538653d, type: 3}
+  m_Script: {fileID: 11500000, guid: 5b98d04c52975bb479409417b4d07bef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _hudView: {fileID: 8421891443032858731}
   _playerModel: {fileID: 0}
+  _stageManager: {fileID: 0}
   _effectController: {fileID: 0}
+--- !u!114 &5588261144679708998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7364052008053566843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186743a51a99ecd4bb1d6737a341e28f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hudView: {fileID: 8421891443032858731}
+  _stageManager: {fileID: 0}
+  _playerModel: {fileID: 0}
+  _missionDataList:
+  - Type: 0
+    FormatText: "\uD55C \uBC88\uB3C4 \uD53C\uACA9\uB2F9\uD558\uC9C0 \uC54A\uACE0
+      \uD074\uB9AC\uC5B4"
+  - Type: 1
+    FormatText: "\uD55C \uBC88\uB3C4 \uC138\uC0C1 \uBC16\uC73C\uB85C \uB5A8\uC5B4\uC9C0\uC9C0
+      \uC54A\uACE0 \uD074\uB9AC\uC5B4"
+  - Type: 2
+    FormatText: "{0}\uBD84 {1}\uCD08 \uC774\uB0B4\uC5D0 \uD074\uB9AC\uC5B4"
+  - Type: 3
+    FormatText: "\uCCB4\uB825\uC744 {0} \uC774\uC0C1 \uB0A8\uAE30\uACE0 \uD074\uB9AC\uC5B4"
+  _stageReadyString: "\uC900\uBE44\uD558\uC138\uC694!"
+  _stageGoString: GO!
+--- !u!114 &8392730427458882404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7364052008053566843}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70eeeb503eb497c429d2692ced477cd0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _hudView: {fileID: 8421891443032858731}
   _stageManager: {fileID: 0}
 --- !u!1 &7526893052170233451
 GameObject:
