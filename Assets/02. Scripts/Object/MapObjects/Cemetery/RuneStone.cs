@@ -126,8 +126,7 @@ public class RuneStone : MonoBehaviour
         {
             if (targetPrefab != null)
             {
-                _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation);
-                _currentRuneInstance.transform.SetParent(this.transform);
+                _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation, this.transform);
             }
         }
         else
