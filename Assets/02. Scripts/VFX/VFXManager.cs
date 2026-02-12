@@ -57,6 +57,10 @@ public class VFXManager : Singleton<VFXManager>
         }
 
         GameObject vfxObject = _poolDictionary[type].Dequeue();
+        if (vfxObject == null)
+        {
+            return PlayVFX(type, position, rotation);
+        }
         vfxObject.transform.position = position;
         vfxObject.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
         vfxObject.SetActive(true);
