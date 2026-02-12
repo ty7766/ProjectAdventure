@@ -354,7 +354,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1435634289576837414}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 6b405125d6b3cb04fb914ecfccd33042, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -366,7 +366,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.125
+  m_Radius: 0.16718343
   m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0.5, z: 0}
@@ -382,7 +382,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43027956e4e826643af8c207b90d3321, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 3
+  _speed: 2
   _health: 3
   _stamina: 100
   _turnSpeed: 15
@@ -401,7 +401,8 @@ MonoBehaviour:
   _groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
-  _groundCheckDist: 0.1
+  _groundCheckDist: 0.2
+  _radius: 0.1
 --- !u!114 &8123782475422646877
 MonoBehaviour:
   m_ObjectHideFlags: 0

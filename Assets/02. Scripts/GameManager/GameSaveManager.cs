@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using Utils.IO;
 using UnityEngine;
 using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
-namespace GameManager.Singleton // 철자 수정
+namespace GameManager.Singleton
 {
 
     public class GameSaveManager : MonoBehaviour
@@ -37,46 +38,28 @@ namespace GameManager.Singleton // 철자 수정
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (pauseStatus) SaveGameData();
+            if (pauseStatus) SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         private void OnApplicationQuit()
         {
-            SaveGameData();
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         //--- Public Methods ---//
-        /// <summary>
-        /// 게임 데이터를 디스크에 저장합니다
-        /// </summary>
-        public void SaveGameData()
-        {
-            try
-            {
-                string json = JsonConvert.SerializeObject(_saveData, Formatting.Indented);
-                File.WriteAllText(SavePath, json);
-                CustomDebug.Log($"저장 완료: {SavePath}");
-            }
-            catch (System.Exception e)
-            {
-                CustomDebug.LogError($"저장 실패: {e.Message}");
-            }
-        }
-
         public void RecordStageClear(int acquiredStars)
         {
-            int saveDataIndex = _currentStage - 1;
+            var record = GetSaveRecord(_currentStage);
 
-            if(saveDataIndex < 0 || saveDataIndex >= _saveData.Count)
+            if(record == null)
             {
-                CustomDebug.LogError($"[Out Of Index] 스테이지 세이브를 기록하지 못함, 세이브 데이터 인덱스 : {saveDataIndex}");
+                CustomDebug.LogError($"스테이지 세이브를 기록하지 못함, 스테이지 번호 : {_currentStage}");
                 return;
-            }
+            }    
 
-            _saveData[saveDataIndex].IsCleared = true;
-            _saveData[saveDataIndex].AcquiredStars = acquiredStars;
-
-            SaveGameData();
+            record.IsCleared = true;
+            record.AcquiredStars = Mathf.Max(acquiredStars, record.AcquiredStars);
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
 
         /// <summary>
@@ -186,24 +169,37 @@ namespace GameManager.Singleton // 철자 수정
         //--- Private Methods ---//
         private void InitializeSaveData()
         {
+            _saveData = new List<StageSaveRecord>();
+            foreach (var stage in _stageDataBase)
+            {
+                if (stage == null) continue;
+                _saveData.Add(new StageSaveRecord(stage.StageNumber, false, 0));
+            }
+
             if (File.Exists(SavePath))
             {
-                string json = File.ReadAllText(SavePath);
-                _saveData = JsonConvert.DeserializeObject<List<StageSaveRecord>>(json);
+                var loadedData = SaveSystem.LoadGameData(SavePath);
+                if (loadedData != null)
+                {
+                    foreach (var record in loadedData)
+                    {
+                        var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
+                        if (target != null)
+                        {
+                            target.IsCleared = record.IsCleared;
+                            target.AcquiredStars = record.AcquiredStars;
+                        }
+                    }
+                    CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
+                }
             }
             else
             {
-                _saveData = new List<StageSaveRecord>();
-                foreach (var stage in _stageDataBase)
-                {
-                    if(stage == null)
-                    {
-                        continue;
-                    }
-                    _saveData.Add(new StageSaveRecord(stage.StageNumber, false, 0));
-                }
-                SaveGameData();
+                CustomDebug.Log("새 세이브 파일을 생성합니다.");
             }
+
+            SaveSystem.SaveGameData(SavePath, _saveData);
         }
+
     }
 }
