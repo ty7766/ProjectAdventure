@@ -8,8 +8,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.SphinxFallingRock;
 
-    
-
     [Header("눈 이펙트 및 위치 설정")]
     [SerializeField]
     private GameObject _eyeEffectPrefab;
