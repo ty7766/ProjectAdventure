@@ -40,7 +40,10 @@ public class FallingRock : SpecialObject
 
     protected override void ApplyEffect(GameObject player)
     {
-        VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+        }
         ApplyPlayerDamage(player);
     }
 
@@ -70,7 +73,10 @@ public class FallingRock : SpecialObject
     {
         if (!other.CompareTag("Player"))
         {
-            VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+            if (VFXManager.Instance != null)
+            {
+                VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+            }
             Destroy(gameObject);
         }
     }
