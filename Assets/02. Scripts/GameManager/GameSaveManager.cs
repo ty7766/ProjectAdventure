@@ -8,10 +8,8 @@ using UnityEngine.SceneManagement;
 namespace GameManager.Singleton
 {
 
-    public class GameSaveManager : MonoBehaviour
+    public class GameSaveManager : Singleton<GameSaveManager>
     {
-        public static GameSaveManager Instance { get; private set; }
-
         [SerializeField] private List<StageData> _stageDataBase;
         [SerializeField] private List<StageSaveRecord> _saveData;
 
@@ -23,15 +21,9 @@ namespace GameManager.Singleton
         public int CurrentStageNumber => _currentStage;
 
         //--- Unity Lifecycle Methods ---//
-        private void Awake()
+        override protected void Awake()
         {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(this.gameObject);
-                return;
-            }
-            Instance = this;
-            DontDestroyOnLoad(this.gameObject);
+            base.Awake();
             InitializeSaveData();
             CustomDebug.Log($"세이브 데이터 초기화 완료, 총 수집 클별 : {GetTotalAcquiredStars()}");
         }
