@@ -40,8 +40,6 @@ public class MapManager : MonoBehaviour
     private FloatingCursor _cursorScript;
     private MapPlayerChecker _playerCheckerScript;
 
-    private Color _debugColor = new Color(1, 0, 0, 0.3f);
-
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
