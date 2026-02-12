@@ -26,28 +26,13 @@ public class VFXManager : Singleton<VFXManager>
     }
 
     /// <summary>
-    /// 이펙트 생성 외부 호출용
+    /// 이펙트 생성
     /// </summary>
-    public static GameObject PlayVFX(VFXType type, Vector3 position, Quaternion rotation = default)
+    /// <param name="type">VFX타입</param>
+    /// <param name="position">이펙트 생성될 위치</param>
+    public GameObject PlayVFX(VFXType type, Vector3 position, Quaternion rotation = default)
     {
-        if (Instance == null)
-        {
-            return null;
-        }
-        return Instance.PlayVFXInternal(type, position, rotation);
-    }
-
-    /// <summary>
-    /// 기존 호환성을 위한 오버로딩 (외부 호출용)
-    /// </summary>
-    public static GameObject PlayVFX(VFXType type, Vector3 position)
-    {
-        return PlayVFX(type, position, Quaternion.identity);
-    }
-
-    private GameObject PlayVFXInternal(VFXType type, Vector3 position, Quaternion rotation)
-    {
-        if (!_poolDictionary.ContainsKey(type))
+        if(!_poolDictionary.ContainsKey(type))
         {
             CustomDebug.LogWarning($"VFXManager: {type} 타입의 풀이 존재하지 않습니다.");
             return null;
@@ -56,7 +41,7 @@ public class VFXManager : Singleton<VFXManager>
         //대기열 비었으면 추가 생성
         if (_poolDictionary[type].Count == 0)
         {
-            if (_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
+            if(_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
             {
                 CreateNewObject(type, vfxPrefab);
             }
@@ -73,6 +58,17 @@ public class VFXManager : Singleton<VFXManager>
         vfxObject.SetActive(true);
 
         return vfxObject;
+    }
+
+    /// <summary>
+    /// 기존 호환성을 위한 오버로딩
+    /// </summary>
+    /// <param name="type">VFX 타입</param>
+    /// <param name="position">VFX가 생성될 위치</param>
+    /// <returns></returns>
+    public GameObject PlayVFX(VFXType type, Vector3 position)
+    {
+        return PlayVFX(type, position, Quaternion.identity);
     }
 
     /// <summary>
