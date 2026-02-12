@@ -49,7 +49,16 @@ public class WeepingAngel : MonoBehaviour
 
     private void Update()
     {
-        if (_playerTransform == null || _mapCenterTransform == null)
+        if (_playerTransform == null)
+        {
+            FindPlayer();
+            if (_playerTransform == null)
+            {
+                return;
+            }
+        }
+
+        if (_mapCenterTransform == null)
         {
             return;
         }
