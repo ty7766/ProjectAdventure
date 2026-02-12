@@ -72,7 +72,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
     {
         if (ObjectPoolManager.Instance != null && rock != null)
         {
-            // Transform을 통해 GameObject를 찾아서 반납
             ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
         }
     }
@@ -143,7 +142,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
             }
         }
     }
-
     private Vector3 GetRandomPosition()
     {
         Vector2 circle = Random.insideUnitCircle * _spawnRadius;

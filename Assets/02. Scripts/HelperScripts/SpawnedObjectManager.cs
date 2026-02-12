@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Component
@@ -26,11 +27,11 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
             _spawnCoroutine = null;
         }
 
-        foreach (var obj in _spawnedObjects)
+        foreach (var spawnedObject in _spawnedObjects)
         {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            if (spawnedObject != null && spawnedObject.gameObject.activeInHierarchy)
             {
-                ReturnObjectToPool(obj); // 구체적인 반납 방식은 자식이 결정
+                ReturnObjectToPool(spawnedObject); // 구체적인 반납 방식은 자식이 결정
             }
         }
 
@@ -41,9 +42,9 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
     /// <summary>
     /// 생성된 오브젝트를 관리 리스트에 등록 (자식 클래스에서 호출)
     /// </summary>
-    protected void RegisterObject(T obj)
+    protected void RegisterObject(T spawnedObejct)
     {
-        _spawnedObjects.Add(obj);
+        _spawnedObjects.Add(spawnedObejct);
     }
 
     /// <summary>

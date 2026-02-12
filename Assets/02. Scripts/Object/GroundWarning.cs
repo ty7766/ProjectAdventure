@@ -36,7 +36,7 @@ public class GroundWarning : MonoBehaviour
     /// <param name="duration">지속 시간</param>
     public static void CreateGroundWarningEffects(VFXType vfxType, Vector3 position, float duration)
     {
-        if (VFXManager.Instance != null)
+        if (VFXManager.Instance == null)
         {
             return;
         }
