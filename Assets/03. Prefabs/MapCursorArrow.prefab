@@ -46,8 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 159f5359d5dfd394b9d1a9ca245f67d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cursorMoveSpeed: 2
-  _cursorBobbingHeight: 0.5
+  _cursorMoveSpeed: 2.5
+  _cursorBobbingHeight: 0.3
 --- !u!1 &8570239382107334066
 GameObject:
   m_ObjectHideFlags: 0

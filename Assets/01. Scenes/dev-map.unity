@@ -544,6 +544,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5225383586974683585, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
+      propertyPath: _cursorMoveSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5225383586974683585, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
+      propertyPath: _cursorBobbingHeight
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
