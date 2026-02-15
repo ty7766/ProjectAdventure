@@ -1,6 +1,18 @@
 ﻿using UnityEngine;
 using UnityEngine.Assertions;
 
+//맵 프리팹 클래스 
+[System.Serializable]
+public class MapInfo
+{
+    public string Name = "Map Description";
+    public GameObject Prefab;
+
+    [Header("개별 위치/회전 보정")]
+    public Vector3 OffsetPosition; // 이 맵만의 고유 위치 보정
+    public Vector3 OffsetRotation; // 이 맵만의 고유 회전 보정
+}
+
 //PathGroup 데이터 클래스
 [System.Serializable]
 public class PathGroup
@@ -9,11 +21,7 @@ public class PathGroup
 
     public string GroupName = DefaultGroupName;
     public Transform SpawnPoint;
-    public GameObject[] PathPrefabs;
-
-    [Header("위치/회전 추가 보정")]
-    public Vector3 AdditionalPosition;
-    public Vector3 AdditionalRotation;
+    public MapInfo[] Maps;
 
     [HideInInspector]
     public GameObject CurrentActivePath;
@@ -72,7 +80,6 @@ public class MapManager : MonoBehaviour
     /// <summary>
     /// MapGuideLine을 위한 타일 사이즈 리턴 메소드
     /// </summary>
-    /// <returns></returns>
     public Vector3 GetTileSize()
     {
         return _tileSize;
@@ -81,7 +88,6 @@ public class MapManager : MonoBehaviour
     /// <summary>
     /// MapGuideLine을 위한 타일 이니셜 오프셋 메소드
     /// </summary>
-    /// <returns></returns>
     public Vector3 GetStartOffset()
     {
         return _startOffset;
@@ -91,7 +97,7 @@ public class MapManager : MonoBehaviour
         // 등록된 모든 'PathGroup'을 순회하며 맵 생성
         foreach (PathGroup group in _pathGroups)
         {
-            if (group.PathPrefabs.Length > 0 && group.SpawnPoint != null)
+            if (group.Maps != null && group.Maps.Length > 0 && group.SpawnPoint != null)
             {
                 SpawnPath(group, group.CurrentPathIndex);
             }
@@ -136,18 +142,13 @@ public class MapManager : MonoBehaviour
         }
 
         PathGroup currentGroup = _pathGroups[_selectedSlotIndex];
-        Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
-
-        if (targetSpawnPoint == null)
+        if (currentGroup.SpawnPoint == null)
         {
-            CustomDebug.LogWarning($"[MapManager] SpawnPoint 누락: 인덱스 {_selectedSlotIndex}");
             return;
         }
 
-        Vector3 finalGroupPos = targetSpawnPoint.position + currentGroup.AdditionalPosition;
-        Vector3 targetBasePos = finalGroupPos + _cursorOffset;
-
-
+        Vector3 finalPos = currentGroup.SpawnPoint.position;
+        Vector3 targetBasePos = finalPos + _cursorOffset;
         // 커서 스크립트 캐싱된 것 사용 (없으면 Transform 직접 이동)
         if (_cursorScript != null)
         {
@@ -175,12 +176,12 @@ public class MapManager : MonoBehaviour
     {
         PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
 
-        if (targetGroup.PathPrefabs == null || targetGroup.PathPrefabs.Length == 0)
+        if (targetGroup.Maps == null || targetGroup.Maps.Length == 0)
         {
-            CustomDebug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 프리팹이 없습니다.");
+            Debug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 정보가 없습니다.");
             return;
         }
-        
+
         //플레이어가 해당 맵 위에 있을 경우
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
@@ -188,11 +189,13 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        int totalCount = targetGroup.PathPrefabs.Length;
+        int totalCount = targetGroup.Maps.Length;
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
         SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
+
+        UpdateCursorPosition();
     }
 
     private void SpawnPath(PathGroup group, int index)
@@ -202,16 +205,20 @@ public class MapManager : MonoBehaviour
             Destroy(group.CurrentActivePath);
         }
 
-        GameObject pathPrefabToSpawn = group.PathPrefabs[index];
+        MapInfo mapInfo = group.Maps[index];
+        if (mapInfo.Prefab == null)
+        {
+            Debug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
+            return;
+        }
+        Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
 
-        //최종 생성 위치 및 회전
-        Vector3 finalPosition = group.SpawnPoint.position + group.AdditionalPosition;
-        Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(group.AdditionalRotation);
+        // [핵심] 스폰 포인트 회전 * 개별 맵의 회전
+        Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
 
-        //이 'group'의 'spawnPoint' 위치/회전 값으로 새 길을 생성
-        group.CurrentActivePath = Instantiate(pathPrefabToSpawn, finalPosition, finalRotation);
+        group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
-        CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
+        Debug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
     }
 }
