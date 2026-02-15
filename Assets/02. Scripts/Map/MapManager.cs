@@ -5,7 +5,6 @@ using UnityEngine.Assertions;
 [System.Serializable]
 public class MapInfo
 {
-    public string Name = "Map Description";
     public GameObject Prefab;
 
     [Header("개별 위치/회전 보정")]
