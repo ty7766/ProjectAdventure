@@ -11,6 +11,10 @@ public class PathGroup
     public Transform SpawnPoint;
     public GameObject[] PathPrefabs;
 
+    [Header("위치/회전 추가 보정")]
+    public Vector3 AdditionalPosition;
+    public Vector3 AdditionalRotation;
+
     [HideInInspector]
     public GameObject CurrentActivePath;
     [HideInInspector]
@@ -131,6 +135,7 @@ public class MapManager : MonoBehaviour
             return;
         }
 
+        PathGroup currentGroup = _pathGroups[_selectedSlotIndex];
         Transform targetSpawnPoint = _pathGroups[_selectedSlotIndex].SpawnPoint;
 
         if (targetSpawnPoint == null)
@@ -139,7 +144,9 @@ public class MapManager : MonoBehaviour
             return;
         }
 
-        Vector3 targetBasePos = targetSpawnPoint.position + _cursorOffset;
+        Vector3 finalGroupPos = targetSpawnPoint.position + currentGroup.AdditionalPosition;
+        Vector3 targetBasePos = finalGroupPos + _cursorOffset;
+
 
         // 커서 스크립트 캐싱된 것 사용 (없으면 Transform 직접 이동)
         if (_cursorScript != null)
@@ -197,8 +204,12 @@ public class MapManager : MonoBehaviour
 
         GameObject pathPrefabToSpawn = group.PathPrefabs[index];
 
+        //최종 생성 위치 및 회전
+        Vector3 finalPosition = group.SpawnPoint.position + group.AdditionalPosition;
+        Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(group.AdditionalRotation);
+
         //이 'group'의 'spawnPoint' 위치/회전 값으로 새 길을 생성
-        group.CurrentActivePath = Instantiate(pathPrefabToSpawn, group.SpawnPoint.position, group.SpawnPoint.rotation);
+        group.CurrentActivePath = Instantiate(pathPrefabToSpawn, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
         CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {pathPrefabToSpawn.name}");
