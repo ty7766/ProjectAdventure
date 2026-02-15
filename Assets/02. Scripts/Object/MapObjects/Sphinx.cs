@@ -8,10 +8,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
     [SerializeField]
     private PoolObjectType _objectType = PoolObjectType.SphinxFallingRock;
 
-    [Header("연결 요소")]
-    [SerializeField]
-    private GameObject _rockPrefab;
-
     [Header("눈 이펙트 및 위치 설정")]
     [SerializeField]
     private GameObject _eyeEffectPrefab;
@@ -70,9 +66,9 @@ public class Sphinx : SpawnedObjectManager<Transform>
     //SpawnedObjectManager 상속
     protected override void ReturnObjectToPool(Transform rock)
     {
+        UnregisterObject(rock);
         if (ObjectPoolManager.Instance != null && rock != null)
         {
-            // Transform을 통해 GameObject를 찾아서 반납
             ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
         }
     }
@@ -143,7 +139,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
             }
         }
     }
-
     private Vector3 GetRandomPosition()
     {
         Vector2 circle = Random.insideUnitCircle * _spawnRadius;

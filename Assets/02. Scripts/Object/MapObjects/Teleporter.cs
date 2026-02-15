@@ -17,9 +17,8 @@ public class Teleporter : MonoBehaviour
     // 현재 작동 가능한 상태인지 확인
     private bool _isReady = true;
 
-    /// <summary>
-    /// 플레이어가 텔레포터에 닿았을 때 처리
-    /// </summary>
+    private Coroutine _cooldownCoroutine;
+
     private void OnTriggerEnter(Collider other)
     {
         if(!CanTeleport(other))
@@ -31,12 +30,12 @@ public class Teleporter : MonoBehaviour
 
     private bool CanTeleport(Collider other)
     {
-        if (!_isReady || !other.CompareTag("Player"))
+        if (!_isReady)
         {
             return false;
         }
 
-        if(!other.CompareTag("Player"))
+        if (!other.CompareTag("Player"))
         {
             return false;
         }
@@ -60,21 +59,20 @@ public class Teleporter : MonoBehaviour
         _destination.ReceivePlayer(_cooldownTime);
     }
 
-    /// <summary>
-    /// 무한 루프 방지를 위해 외부에서 쿨타임을 거는 메소드
-    /// </summary>
     private void ReceivePlayer(float duration)
     {
-        StartCoroutine(CooldownRoutine(duration));
+        if(_cooldownCoroutine != null)
+        {
+            StopCoroutine( _cooldownCoroutine );
+        }
+        _cooldownCoroutine = StartCoroutine(ApplyCooldown(duration));
     }
 
-    /// <summary>
-    /// 일정 시간 동안 텔레포터를 비활성화했다가 다시 활성화함
-    /// </summary>
-    private IEnumerator CooldownRoutine(float duration)
+    private IEnumerator ApplyCooldown(float duration)
     {
         _isReady = false;
         yield return new WaitForSeconds(duration);
         _isReady = true;
+        _cooldownCoroutine = null;
     }
 }

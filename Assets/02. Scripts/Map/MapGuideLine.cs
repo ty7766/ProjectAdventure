@@ -27,6 +27,7 @@ public class MapGuideLine : MonoBehaviour
     {
         if (_mapManager == null)
         {
+            CustomDebug.LogWarning("[MapGuideLine] MapManager가 할당되지 않았습니다.");
             return;
         }
         if (_spawnPointToAlign == null || _spawnPointToAlign.Length == 0)

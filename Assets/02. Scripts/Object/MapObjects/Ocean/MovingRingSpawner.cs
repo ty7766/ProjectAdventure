@@ -40,6 +40,7 @@ public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
     //SpawnedObjectManager 상속
     protected override void ReturnObjectToPool(MovingRing movingRing)
     {
+        UnregisterObject(movingRing);
         movingRing.ReturnToPool();
     }
 

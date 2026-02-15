@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 
 public class VFXManager : Singleton<VFXManager>
 {
@@ -21,6 +22,10 @@ public class VFXManager : Singleton<VFXManager>
     protected override void Awake()
     {
         base.Awake();   //싱글톤 Awake 실행
+        if (Instance != this)
+        {
+            return;
+        }
         InitializePool();
     }
 
@@ -52,6 +57,10 @@ public class VFXManager : Singleton<VFXManager>
         }
 
         GameObject vfxObject = _poolDictionary[type].Dequeue();
+        if (vfxObject == null)
+        {
+            return PlayVFX(type, position, rotation);
+        }
         vfxObject.transform.position = position;
         vfxObject.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
         vfxObject.SetActive(true);
@@ -129,7 +138,7 @@ public class VFXManager : Singleton<VFXManager>
     {
         GameObject vfxObject = Instantiate(prefab, transform);
 
-        GetScriptVFXReturnToPool(vfxObject, type);
+        SetupVFXReturnToPool(vfxObject, type);
 
         vfxObject.SetActive(false);
         _poolDictionary[type].Enqueue(vfxObject);
@@ -137,7 +146,7 @@ public class VFXManager : Singleton<VFXManager>
         return vfxObject;
     }
 
-    private void GetScriptVFXReturnToPool(GameObject vfxObject, VFXType type)
+    private void SetupVFXReturnToPool(GameObject vfxObject, VFXType type)
     {
         var returnScript = vfxObject.GetComponent<VFXReturnToPool>();
         if(returnScript == null)

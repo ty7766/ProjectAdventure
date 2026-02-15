@@ -18,7 +18,7 @@ public class GroundWarning : MonoBehaviour
     [SerializeField]
     private Vector3 _warningOffset = new Vector3(0, 0.08f, 0);
     [SerializeField]
-    private Vector3 _wanrningRotation = new Vector3(90, 0, 0);
+    private Vector3 _warningRotation = new Vector3(90, 0, 0);
 
     private Coroutine _blinkCoroutine;
 
@@ -36,6 +36,11 @@ public class GroundWarning : MonoBehaviour
     /// <param name="duration">지속 시간</param>
     public static void CreateGroundWarningEffects(VFXType vfxType, Vector3 position, float duration)
     {
+        if (VFXManager.Instance == null)
+        {
+            return;
+        }
+
         GameObject vfxObject = VFXManager.Instance.PlayVFX(vfxType, position, Quaternion.identity);
 
         if (vfxObject != null && vfxObject.TryGetComponent(out GroundWarning warning))
@@ -58,7 +63,7 @@ public class GroundWarning : MonoBehaviour
     private void InitializeTransform(Vector3 centerPos)
     {
         transform.position = centerPos + _warningOffset;
-        transform.rotation = Quaternion.Euler(_wanrningRotation);
+        transform.rotation = Quaternion.Euler(_warningRotation);
     }
 
     private IEnumerator BlinkAndReturn(float duration)
@@ -83,6 +88,9 @@ public class GroundWarning : MonoBehaviour
             yield return null;
         }
 
-        VFXManager.Instance.ReturnToPool(_vfxType, gameObject);
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.ReturnToPool(_vfxType, gameObject);
+        }
     }
 }

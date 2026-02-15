@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class FallingRockTrajectoryCalculator : MonoBehaviour
+public static class FallingRockTrajectoryCalculator
 {
     /// <summary>
     /// 탄퍼짐을 적용한 발사 방향 벡터 계산

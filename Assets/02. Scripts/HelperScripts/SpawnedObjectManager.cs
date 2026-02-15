@@ -1,21 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Component
 {
-    // 공통 리스트
-    protected List<T> _spawnedObjects = new List<T>();
+    // 공통 해시 풀
+    protected HashSet<T> _spawnedObjects = new HashSet<T>();
 
     // 공통 코루틴 변수
     protected Coroutine _spawnCoroutine;
 
     protected virtual void OnEnable()
     {
-        if (_spawnCoroutine == null)
+        if (_spawnCoroutine != null)
         {
-            _spawnCoroutine = StartCoroutine(SpawnRoutine());
+            StopCoroutine(_spawnCoroutine);
         }
+        _spawnCoroutine = StartCoroutine(SpawnRoutine());
     }
 
     protected virtual void OnDisable()
@@ -26,24 +28,33 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
             _spawnCoroutine = null;
         }
 
-        foreach (var obj in _spawnedObjects)
+        List<T> copyList = new List<T>(_spawnedObjects);
+
+        foreach (var spawnedObject in copyList)
         {
-            if (obj != null && obj.gameObject.activeInHierarchy)
+            if (spawnedObject != null && spawnedObject.gameObject != null)
             {
-                ReturnObjectToPool(obj); // 구체적인 반납 방식은 자식이 결정
+                ReturnObjectToPool(spawnedObject);
             }
         }
 
-        // 3. 리스트 초기화
         _spawnedObjects.Clear();
     }
 
     /// <summary>
     /// 생성된 오브젝트를 관리 리스트에 등록 (자식 클래스에서 호출)
     /// </summary>
-    protected void RegisterObject(T obj)
+    protected void RegisterObject(T spawnedObject)
     {
-        _spawnedObjects.Add(obj);
+        _spawnedObjects.Add(spawnedObject);
+    }
+
+    protected void UnregisterObject(T spawnedObject)
+    {
+        if (_spawnedObjects.Contains(spawnedObject))
+        {
+            _spawnedObjects.Remove(spawnedObject);
+        }
     }
 
     /// <summary>

@@ -30,6 +30,12 @@ public class LavaEffectSpawner : MonoBehaviour
     {
         StartCoroutine(SpawnLoop());
     }
+    private void OnValidate()
+    {
+        if (_minInterval< 0f) _minInterval = 0f;
+        if (_maxInterval< 0f) _maxInterval = 0f;
+        if (_maxInterval<_minInterval) _maxInterval = _minInterval;
+    }
 
     private IEnumerator SpawnLoop()
     {
@@ -45,7 +51,10 @@ public class LavaEffectSpawner : MonoBehaviour
     private void SpawnLavaEffect()
     {
         Vector3 effectSpawnPosition = GetLavaEffectPosition();
-        VFXManager.Instance.PlayVFX(_lavaVFXType, effectSpawnPosition, Quaternion.identity);
+        if (VFXManager.Instance != null)
+        {
+            VFXManager.Instance.PlayVFX(_lavaVFXType, effectSpawnPosition, Quaternion.identity);
+        }
     }
 
     private Vector3 GetLavaEffectPosition()

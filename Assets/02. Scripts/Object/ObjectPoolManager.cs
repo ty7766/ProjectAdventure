@@ -20,6 +20,10 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
     protected override void Awake()
     {
         base.Awake();   //싱글톤 Awake 실행
+        if(Instance != this)
+        {
+            return;
+        }
         InitializePool();
     }
 
@@ -48,12 +52,16 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
             }
         }
 
-        GameObject obj = _poolDictionary[type].Dequeue();
-        obj.transform.position = position;
-        obj.transform.rotation = rotation;
-        obj.SetActive(true);
+        GameObject spawnedObject = _poolDictionary[type].Dequeue();
+        if (spawnedObject == null)
+        {
+            return SpawnObject(type, position, rotation);
+        }
+        spawnedObject.transform.position = position;
+        spawnedObject.transform.rotation = rotation;
+        spawnedObject.SetActive(true);
 
-        return obj;
+        return spawnedObject;
     }
 
     /// <summary>

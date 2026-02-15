@@ -48,14 +48,8 @@ public class RuneGate : MonoBehaviour
     private void InitialCalculateDoorRotation()
     {
         // 초기 닫힌 각도 저장
-        if (_leftDoor != null)
-        {
-            _leftClosedRot = _leftDoor.localRotation;
-        }
-        if (_rightDoor != null)
-        {
-            _rightClosedRot = _rightDoor.localRotation;
-        }
+        _leftClosedRot = _leftDoor.localRotation;
+        _rightClosedRot = _rightDoor.localRotation;
 
         _leftOpenRot = _leftClosedRot * Quaternion.Euler(0, _openAngle, 0);
         _rightOpenRot = _rightClosedRot * Quaternion.Euler(0, -_openAngle, 0);
