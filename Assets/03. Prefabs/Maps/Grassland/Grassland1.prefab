@@ -111,7 +111,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1235999902496482920, guid: f7f7ccc176b06b74d9c5da1a697e5cf4, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -185,7 +186,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1248862192937689396, guid: 6bbbb5f5dc7ec794b9109e4b79fa6145, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -333,7 +335,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Pansy_Flower_Red_08
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6722239431653945142, guid: 94df9fe29eb2f9641935d07e869d6cb9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -481,7 +484,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Pansy_Flower_Red_08 (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6722239431653945142, guid: 94df9fe29eb2f9641935d07e869d6cb9, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -555,7 +559,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5990839969366643977, guid: 31154d0100fdb614182263a39fa774f2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -629,7 +634,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Arum_Lily_Red_11
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5411154953086784020, guid: 49643820ad0120346a68c0033c52db96, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -777,7 +783,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Arum_Lily_Red_11 (1)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5411154953086784020, guid: 49643820ad0120346a68c0033c52db96, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -925,7 +932,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Arum_Lily_Red_11 (2)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5411154953086784020, guid: 49643820ad0120346a68c0033c52db96, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -999,7 +1007,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Pansy_Flower_Red_06
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5198244118680738721, guid: c2f12a58fa8b7714fb4aa8559f317a60, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1139,7 +1148,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6070930206897719588, guid: b2204e2443dbb1d4d870a07d1dba23f1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
