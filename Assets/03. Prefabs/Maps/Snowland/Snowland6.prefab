@@ -284,6 +284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Bridge_Snow_01
       objectReference: {fileID: 0}
+    - target: {fileID: 7439866866364389797, guid: 2c0676565c7de0947a1cbef4b79aa8da, type: 3}
+      propertyPath: m_Convex
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7814985412206215966, guid: 2c0676565c7de0947a1cbef4b79aa8da, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.3
@@ -404,6 +408,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4828950251030298653, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5208465777891580582, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
+      propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5208465777891580583, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
@@ -556,6 +564,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4828950251030298653, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5208465777891580582, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
+      propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5208465777891580583, guid: f635831783ecdec4790c1f0e72855ca3, type: 3}
