@@ -274,6 +274,7 @@ GameObject:
   - component: {fileID: 8123782475422646877}
   - component: {fileID: 1355756777541619086}
   - component: {fileID: 4410633879104235828}
+  - component: {fileID: 2715594334800057069}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -418,7 +419,7 @@ MonoBehaviour:
   _cameraAngleOffset: -75
   _fallThresholdY: -10
   _respawnDelay: 2
-  _invincibleTime: 3
+  _invincibleTime: 2
   _stunTime: 0.39
 --- !u!114 &1355756777541619086
 MonoBehaviour:
@@ -450,6 +451,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0588c90fbcbefb34bba972a8f8d50b09, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2715594334800057069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435634289576837414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d04230cace45eff49b0a6ba323ceea7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _blinkCount: 7
+  _blinkInterval: 0.1
 --- !u!1 &1653475845376044346
 GameObject:
   m_ObjectHideFlags: 0

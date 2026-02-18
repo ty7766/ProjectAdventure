@@ -6,11 +6,13 @@ using UnityEngine.InputSystem.Processors;
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerProperties))]
 [RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(PlayerHitEffect))]
 public class PlayerController : MonoBehaviour
 {
     //--- Components ---//
     private PlayerMovement _movement;
     private PlayerProperties _properties;
+    private PlayerHitEffect _hitEffect;
     private Animator _animator;
 
     //--- Settings ---//
@@ -91,8 +93,6 @@ public class PlayerController : MonoBehaviour
         //데드존에 지속적으로 있을 때
         if (collision.gameObject.CompareTag("Dead"))
         {
-            //Stay는 매 프레임 실행
-            //but 무적시간으로 영향 X
             TakeDamage(1);
         }
     }
@@ -109,6 +109,10 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (_hitEffect != null)
+        {
+            _hitEffect.PlayHitEffect();
+        }
         _properties.Health -= damage;
         OnPlayerDamageTaken?.Invoke();
 
@@ -165,6 +169,7 @@ public class PlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _movement = GetComponent<PlayerMovement>();
         _properties = GetComponent<PlayerProperties>();
+        _hitEffect = GetComponent<PlayerHitEffect>();
     }
 
     private void InitializeTimer()
