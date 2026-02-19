@@ -21,9 +21,13 @@ namespace GameManager.Singleton
         public int CurrentStageNumber => _currentStage;
 
         //--- Unity Lifecycle Methods ---//
-        override protected void Awake()
+        protected override void Awake()
         {
             base.Awake();
+            if(Instance != this)
+            {
+                return;
+            }
             InitializeSaveData();
             CustomDebug.Log($"세이브 데이터 초기화 완료, 총 수집 클별 : {GetTotalAcquiredStars()}");
         }
