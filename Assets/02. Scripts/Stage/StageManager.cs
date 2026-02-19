@@ -83,7 +83,7 @@ public class StageManager : MonoBehaviour
 
     //--- Public Methods ---//
     /// <summary>
-    /// 스테이지 클리어 조건인 보석 수집을 처리하고 클리어 목표를 달성한 경우 스테이지를 클리어합니다.
+    /// 스테이지 부가 목표인 보석을 수집합니다.
     /// </summary>
     public void CollectGem()
     {

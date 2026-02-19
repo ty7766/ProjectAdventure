@@ -31,7 +31,7 @@ public class FlagObject : SpecialObject
         }
         else
         {
-            CustomDebug.LogWarning("StageManager reference is missing in GemObject.");
+            CustomDebug.LogWarning("StageManager reference is missing in FlagObject.");
         }
     }
 
@@ -46,7 +46,7 @@ public class FlagObject : SpecialObject
         _stageManager = FindAnyObjectByType<StageManager>();
         if (_stageManager == null)
         {
-            CustomDebug.LogError("StageManager not found in the scene for GemObject.", this);
+            CustomDebug.LogError("StageManager not found in the scene for FlagObject.", this);
         }
     }
 }
