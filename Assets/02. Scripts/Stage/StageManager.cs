@@ -8,7 +8,8 @@ public enum  StageObjectType
     NoDamageClear,
     NoFallClear,
     TimeLimitClear,
-    RemainHealthClear
+    RemainHealthClear,
+    CollectGemsClear
 }
 
 [Serializable]
@@ -88,10 +89,11 @@ public class StageManager : MonoBehaviour
     {
         _collectedGems++;
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
-        if (_collectedGems >= _requiredGemsToClear)
-        {
-            ClearStage();
-        }
+    }
+
+    public void StageClear()
+    {
+        ClearStage();
     }
 
     public void StartStage()
@@ -210,6 +212,13 @@ public class StageManager : MonoBehaviour
 
                 case StageObjectType.RemainHealthClear:
                     if (_playerController != null && _playerController.Health >= obj.value)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+
+                case StageObjectType.CollectGemsClear:
+                    if(_collectedGems >= obj.value)
                     {
                         obj.isCleared = true;
                     }

@@ -162,7 +162,12 @@ public class HUDFlowPresenter : MonoBehaviour
             case StageObjectType.RemainHealthClear:
                 return string.Format(format, obj.value);
 
+            case StageObjectType.CollectGemsClear:
+                return string.Format(format, obj.value);
+
             case StageObjectType.NoFallClear:
+                return format;
+
             case StageObjectType.NoDamageClear:
                 return format;
 
