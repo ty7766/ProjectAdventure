@@ -5648,6 +5648,9 @@ MonoBehaviour:
     FormatText: "{0}\uBD84 {1}\uCD08 \uC774\uB0B4\uC5D0 \uD074\uB9AC\uC5B4"
   - Type: 3
     FormatText: "\uCCB4\uB825\uC744 {0} \uC774\uC0C1 \uB0A8\uAE30\uACE0 \uD074\uB9AC\uC5B4"
+  - Type: 4
+    FormatText: "\uBCF4\uC11D\uC744 {0}\uAC1C \uC774\uC0C1 \uC218\uC9D1\uD558\uACE0
+      \uD074\uB9AC\uC5B4"
   _stageReadyString: "\uC900\uBE44\uD558\uC138\uC694!"
   _stageGoString: GO!
 --- !u!114 &8392730427458882404

@@ -8,7 +8,8 @@ public enum  StageObjectType
     NoDamageClear,
     NoFallClear,
     TimeLimitClear,
-    RemainHealthClear
+    RemainHealthClear,
+    CollectGemsClear
 }
 
 [Serializable]
@@ -82,16 +83,17 @@ public class StageManager : MonoBehaviour
 
     //--- Public Methods ---//
     /// <summary>
-    /// 스테이지 클리어 조건인 보석 수집을 처리하고 클리어 목표를 달성한 경우 스테이지를 클리어합니다.
+    /// 스테이지 부가 목표인 보석을 수집합니다.
     /// </summary>
     public void CollectGem()
     {
         _collectedGems++;
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
-        if (_collectedGems >= _requiredGemsToClear)
-        {
-            ClearStage();
-        }
+    }
+
+    public void StageClear()
+    {
+        ClearStage();
     }
 
     public void StartStage()
@@ -210,6 +212,13 @@ public class StageManager : MonoBehaviour
 
                 case StageObjectType.RemainHealthClear:
                     if (_playerController != null && _playerController.Health >= obj.value)
+                    {
+                        obj.isCleared = true;
+                    }
+                    break;
+
+                case StageObjectType.CollectGemsClear:
+                    if(_collectedGems >= obj.value)
                     {
                         obj.isCleared = true;
                     }
