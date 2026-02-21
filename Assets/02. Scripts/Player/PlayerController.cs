@@ -38,6 +38,8 @@ public class PlayerController : MonoBehaviour
     private float _invTimer;
     private WaitForSeconds _stunDelay;
     private Vector3 _respawnPoint;
+    private GameControls _controls;
+    private Vector2 _moveInput;
     private bool _isAlive = true;
     private bool _isMovable = true;
 
@@ -52,6 +54,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         GetPlayerComponents();
+        _controls = new GameControls();
     }
 
     private void Start()
@@ -85,6 +88,16 @@ public class PlayerController : MonoBehaviour
 
         UpdateTimer();
 
+    }
+
+    private void OnEnable()
+    {
+        _controls.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _controls.Player.Disable();
     }
 
     //지속 장판 관련
@@ -209,23 +222,11 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputs()
     {
-        if (!_isMovable)
-        {
-            return;
-        }
-
-        Vector3 inputDirection = new Vector3(-Input.GetAxis("Horizontal"), 0, -Input.GetAxis("Vertical"));
+        if (!_isMovable) return;
+        _moveInput = _controls.Player.Move.ReadValue<Vector2>();
+        Vector3 inputDirection = new Vector3(-_moveInput.x, 0, -_moveInput.y);
         Quaternion camRotation = Quaternion.Euler(0, _cameraAngleOffset, 0);
         _movement.Move(camRotation * inputDirection, _properties.Speed, _properties.TurnSpeed);
-
-
-#if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Debug.Log("Damage Taken Simulated");
-            TakeDamage(1);
-        }
-#endif
     }
 
     private void UpdateTimer()
