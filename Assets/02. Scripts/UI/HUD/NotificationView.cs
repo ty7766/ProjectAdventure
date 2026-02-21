@@ -48,7 +48,7 @@ public class NotificationView : MonoBehaviour
 
     public void ShowPopupAt(Vector2 position, PopupContext context)
     {
-        if (context == null || !_messageText || !_popupPanel || !_popupIcon || !_popupRect || !_popupPanel)
+        if (context == null || !_messageText || !_popupPanel || !_popupIcon || !_popupRect)
         {
             return;
         }

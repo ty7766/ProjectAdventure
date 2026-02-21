@@ -1,5 +1,4 @@
 ﻿using GameManager.Singleton;
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -105,6 +104,7 @@ public class StageManager : MonoBehaviour
         _stageTimer = 0f;
         ResumeGameSmoothly();
         EnablePlayerControl();
+        CheckStageObject();
     }
 
     /// <summary>
@@ -186,31 +186,18 @@ public class StageManager : MonoBehaviour
     {
         foreach (var obj in _stageObjects)
         {
-            if (obj.isCleared)
-            {
-                continue; //이미 클리어된 도전과제는 건너뜀
-            }
             switch (obj.stageObjectType)
             {
                 case StageObjectType.NoDamageClear:
-                    if (!_isPlayerDamageTaken)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = !_isPlayerDamageTaken;
                     break;
 
                 case StageObjectType.NoFallClear:
-                    if (!_isPlayerFallenDown)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = !_isPlayerFallenDown;
                     break;
 
                 case StageObjectType.TimeLimitClear:
-                    if (_stageTimer <= obj.value)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = (_stageTimer <= obj.value);
                     break;
 
                 case StageObjectType.RemainHealthClear:
@@ -218,12 +205,20 @@ public class StageManager : MonoBehaviour
                     {
                         obj.isCleared = true;
                     }
+                    else
+                    {
+                        obj.isCleared = false;
+                    }
                     break;
 
                 case StageObjectType.CollectGemsClear:
                     if(_collectedGems >= obj.value)
                     {
                         obj.isCleared = true;
+                    }
+                    else
+                    {
+                        obj.isCleared = false;
                     }
                     break;
             }

@@ -88,6 +88,21 @@ public class StageObjectObserver : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        if (_stageManager)
+        {
+            _stageManager.OnGemCountChanged -= HandleCollectedGems;
+
+            if (_stageManager.PlayerController)
+            {
+                _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
+                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
+                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
+            }
+        }
+    }
+
     private void HandleCollectedGems(int collectedNumberOfGems, int totalNumberOfGems)
     {
         var gemObjects = _stageManager.StageObjects
@@ -135,14 +150,18 @@ public class StageObjectObserver : MonoBehaviour
 
         foreach (var healthObject in healthObjects)
         {
-            if(_stageManager.PlayerController.Health < healthObject.value)
+            if(_stageManager.PlayerController.Health < healthObject.value && healthObject.isCleared)
             {
-                //한 번만 알림을 표시하고 이벤트 구독 해제
-                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
+                healthObject.isCleared = false;
                 string content = string.Format(HUDFlowPresenter.MissionTextDict[StageObjectType.RemainHealthClear], healthObject.value);
                 content += _failedString;
                 NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
             }
+        }
+
+        if(healthObjects.All(obj => obj.isCleared == false))
+        {
+            _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
         }
     }
 }

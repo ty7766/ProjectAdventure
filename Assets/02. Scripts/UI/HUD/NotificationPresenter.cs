@@ -21,7 +21,7 @@ public class PopupContext
 public class NotificationPresenter : MonoBehaviour
 {
     private static Queue<PopupContext> _popupQueue = new Queue<PopupContext>();
-    private bool _isShowingPopup = false;
+    private static bool _isShowingPopup = false;
 
     [Header("Position Settings")]
     [SerializeField]

@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -29,13 +28,12 @@ public class HUDFlowPresenter : MonoBehaviour
     [SerializeField]
     private string _stageGoString = "GO!";
 
-    public static Dictionary<StageObjectType, string> MissionTextDict;
+    public static Dictionary<StageObjectType, string> MissionTextDict = new Dictionary<StageObjectType, string>();
     
 
 
     private void Awake()
     {
-        MissionTextDict = new Dictionary<StageObjectType, string>();
         foreach(var data in _missionDataList)
         {
             if (!MissionTextDict.ContainsKey(data.Type))
