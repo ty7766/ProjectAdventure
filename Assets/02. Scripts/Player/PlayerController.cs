@@ -91,12 +91,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnEnable()
     {
-        _controls.Player.Enable();
+        _controls?.Player.Enable();
     }
 
     private void OnDisable()
     {
-        _controls.Player.Disable();
+        _controls?.Player.Disable();
     }
 
     private void OnDestroy()

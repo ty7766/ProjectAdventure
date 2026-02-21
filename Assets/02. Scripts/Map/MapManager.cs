@@ -80,16 +80,22 @@ public class MapManager : MonoBehaviour
 
     private void OnEnable()
     {
-        _controls.Map.Enable();
-        _controls.Map.SelectMap.started += _onSelectMap;
-        _controls.Map.ChangeMap.started += _onChangeMap;
+        if(_controls != null)
+        {
+            _controls?.Map.Enable();
+            _controls.Map.SelectMap.started += _onSelectMap;
+            _controls.Map.ChangeMap.started += _onChangeMap;
+        }
     }
 
     private void OnDisable()
     {
-        _controls.Map.Disable();
-        _controls.Map.SelectMap.started -= _onSelectMap;
-        _controls.Map.ChangeMap.started -= _onChangeMap;
+        if(_controls != null)
+        {
+            _controls?.Map.Disable();
+            _controls.Map.SelectMap.started -= _onSelectMap;
+            _controls.Map.ChangeMap.started -= _onChangeMap;
+        }
     }
 
     private void OnDestroy()
