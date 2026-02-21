@@ -35,6 +35,7 @@ Transform:
   - {fileID: 6476072585110813867}
   - {fileID: 6975260024272107159}
   - {fileID: 4746702907459293369}
+  - {fileID: 7248613016675883078}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5792399894065085189
@@ -189,16 +190,28 @@ PrefabInstance:
       value: Sphinx
       objectReference: {fileID: 0}
     - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
+      propertyPath: _rockCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
       propertyPath: _objectType
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
       propertyPath: _spawnRadius
-      value: 5
+      value: 4.8
       objectReference: {fileID: 0}
     - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
       propertyPath: _eyeGlowDuration
-      value: 2
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
+      propertyPath: _patternInterval
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
+      propertyPath: _warningDuration
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5430106088458578952, guid: 37c526af712959c4cb92bf6c3ae21b6d, type: 3}
       propertyPath: _spawnCenterPoint
@@ -503,4 +516,70 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6301030785977202245, guid: cfbf57c69feea58458951c98ee2c4ec8, type: 3}
   m_PrefabInstance: {fileID: 6762661789887124506}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8466429797884877049
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 3943101576620036388}
+    m_Modifications:
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.72683084
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.086750984
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1922230573086579205, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: m_Name
+      value: Gem
+      objectReference: {fileID: 0}
+    - target: {fileID: 6907107067081402509, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: _gemID
+      value: Desert5_Gem
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+--- !u!4 &7248613016675883078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1289984601456427199, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+  m_PrefabInstance: {fileID: 8466429797884877049}
   m_PrefabAsset: {fileID: 0}

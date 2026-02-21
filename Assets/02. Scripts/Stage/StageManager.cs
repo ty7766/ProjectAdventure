@@ -1,6 +1,7 @@
 ﻿using GameManager.Singleton;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum  StageObjectType
@@ -38,6 +39,8 @@ public class StageManager : MonoBehaviour
     private float _initialFixedDeltaTime;
     private float _stageTimer = 0f;
     private bool _isTimerRunning = true;
+
+    private HashSet<string> _collectedGemIDs = new HashSet<string>();
 
     //--- Stage Objeect related States ---//
     private bool _isPlayerDamageTaken = false;
@@ -85,8 +88,13 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// 스테이지 부가 목표인 보석을 수집합니다.
     /// </summary>
-    public void CollectGem()
+    public void CollectGem(string gemID)
     {
+        if (string.IsNullOrEmpty(gemID))
+        {
+            return;
+        }
+        _collectedGemIDs.Add(gemID);
         _collectedGems++;
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
     }
@@ -129,7 +137,19 @@ public class StageManager : MonoBehaviour
         _timeScaleCoroutine = StartCoroutine(ChangeTimeScale(targetScale, duration));
     }
 
-
+    /// <summary>
+    /// 해당 gemID를 가지고 있는 Gem이 수집 되었는지 확인하는 메소드
+    /// </summary>
+    /// <param name="gemID"></param>
+    /// <returns></returns>
+    public bool IsGemCollected(string gemID)
+    {
+        if (string.IsNullOrEmpty(gemID))
+        {
+            return false;
+        }
+        return _collectedGemIDs.Contains(gemID);
+    }
 
 
     //--- Private Helpers ---//

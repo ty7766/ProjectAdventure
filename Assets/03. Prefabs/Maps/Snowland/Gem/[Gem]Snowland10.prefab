@@ -314,6 +314,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gem
       objectReference: {fileID: 0}
+    - target: {fileID: 6907107067081402509, guid: 5056e0b9eff402a408045777661c4bd4, type: 3}
+      propertyPath: _gemID
+      value: Snowland10_Gem
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
