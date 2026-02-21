@@ -1,6 +1,8 @@
 ﻿using GameManager.Singleton;
+using NUnit.Framework;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum  StageObjectType
@@ -30,7 +32,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int _requiredGemsToClear = 1;
 
     [Header("Stage Objects")]
-    [SerializeField] private StageObject[] _stageObjects;
+    [SerializeField] private List<StageObject> _stageObjects;
 
     //--- Fields ---//
     private int _collectedGems = 0;
@@ -50,7 +52,8 @@ public class StageManager : MonoBehaviour
     //--- Properties ---// 
     public float StageTimer => _stageTimer;
     public bool IsTimerRunning => _isTimerRunning;
-    public StageObject[] StageObjects => _stageObjects;
+    public List<StageObject> StageObjects => _stageObjects;
+    public PlayerController PlayerController => _playerController;
 
     //--- Unity Methods ---//
     private void Awake()
