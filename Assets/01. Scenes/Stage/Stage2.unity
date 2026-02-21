@@ -392,6 +392,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _target: {fileID: 595027232}
   _smoothSpeed: 0.1
+  _playerOffset: {x: -11.224451, y: 7.813, z: 1.653532}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1382,6 +1383,7 @@ MonoBehaviour:
     CurrentPathIndex: 0
   _tileSize: {x: 12, y: 1, z: 10}
   _startOffset: {x: 0, y: 0, z: 0}
+  _mapChangeCooldownTime: 1
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0

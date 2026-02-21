@@ -566,15 +566,46 @@ MonoBehaviour:
   _playerController: {fileID: 1435260843}
   _requiredGemsToClear: 3
   _stageObjects:
-  - stageObjectType: 1
-    value: 0
+  - stageObjectType: 4
+    value: 4
     isCleared: 0
   - stageObjectType: 2
-    value: 100
+    value: 150
     isCleared: 0
-  - stageObjectType: 3
-    value: 1
+  - stageObjectType: 0
+    value: 3
     isCleared: 0
+--- !u!1 &637561372
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 637561373}
+  m_Layer: 0
+  m_Name: PathSpawnPoint4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &637561373
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 637561372}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.201763, y: -2.4268632, z: -30.345562}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1133851749}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &674068052 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2820647475876775672, guid: b516266fd780155408f7eb865c09999d, type: 3}
@@ -797,6 +828,7 @@ Transform:
   - {fileID: 1516804858}
   - {fileID: 1635724485}
   - {fileID: 1523008751}
+  - {fileID: 637561373}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1278221713
@@ -1206,7 +1238,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.8000002
+      value: -1.7580001
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1314,6 +1346,7 @@ MonoBehaviour:
   - {fileID: 1516804858}
   - {fileID: 1635724485}
   - {fileID: 1523008751}
+  - {fileID: 637561373}
   _gizmoColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   _mapManager: {fileID: 1664178952}
 --- !u!1 &1523008750
@@ -1411,53 +1444,58 @@ MonoBehaviour:
   _selectionCursor: {fileID: 843756758}
   _cursorOffset: {x: 0, y: 5, z: 0}
   _pathGroups:
-  - GroupName: 'Map1[Ocean]'
+  - GroupName: 'Map1[Lavaland]'
     SpawnPoint: {fileID: 1516804858}
     Maps:
-    - Prefab: {fileID: 6184720362279850812, guid: 2706c214a3df50a41a3ae658c846b968, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 8015026961216476902, guid: 898d6e23f461e504582119fba816735e, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5695258571126021032, guid: 11ee77c960f180a4ca33233b315b30fa, type: 3}
-      OffsetPosition: {x: 0, y: -1, z: -1}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 6405714472980178338, guid: e36d7f9bb4d0a0047abd0ecf316d50f4, type: 3}
-      OffsetPosition: {x: -1, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    CurrentActivePath: {fileID: 0}
-    CurrentPathIndex: 0
-  - GroupName: 'Map2[Lavaland]'
-    SpawnPoint: {fileID: 1635724485}
-    Maps:
-    - Prefab: {fileID: 8201682014230367498, guid: 94fd454697b894c4bbc075a4ac6520e5, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 8521698158416923414, guid: 1cc9d2bb5e50bf24290ebb5b26d6752c, type: 3}
+    - Prefab: {fileID: 2378734899503848549, guid: 08aa5320453f539498eecb7a4470dbe3, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     - Prefab: {fileID: 1201460272801685308, guid: e3fa2532a96dec24b9a54df7b42135b5, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5024839322967423167, guid: 3e68ae10c7330f146b394fc4042347c8, type: 3}
+    - Prefab: {fileID: 265998197849684176, guid: 50c914683a686c24fbbec3666239e8be, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
-  - GroupName: 'Map3[Snowland]'
+  - GroupName: 'Map2[Desert]'
+    SpawnPoint: {fileID: 1635724485}
+    Maps:
+    - Prefab: {fileID: 9127166993104370049, guid: e8ba2d15b0c99ee47b9f63574fc29325, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    CurrentActivePath: {fileID: 0}
+    CurrentPathIndex: 0
+  - GroupName: 'Map3[Cemetery]'
     SpawnPoint: {fileID: 1523008751}
     Maps:
+    - Prefab: {fileID: 2508439079240213857, guid: d52bce99ae3dfa34db0881faf551a35b, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 1252271583804284471, guid: 2efc3b008bcc7964ea916e4617ca9fa5, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    CurrentActivePath: {fileID: 0}
+    CurrentPathIndex: 0
+  - GroupName: 'Map4[Snowland]'
+    SpawnPoint: {fileID: 637561373}
+    Maps:
     - Prefab: {fileID: 1849501178850213521, guid: d91356d274a41344893454605391f5c9, type: 3}
+      OffsetPosition: {x: 0, y: 180, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 4898819785125874793, guid: c2c2cb7201822f94192840f1ad921d32, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5353358889816498921, guid: fa3d5a777cd3b5b4da06b6b8db9a0e17, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 3637130621519083799, guid: f34cee57ec42c874185a14a2bfb9d4ab, type: 3}
+    - Prefab: {fileID: 5235255453237804214, guid: baf5d4af087cf4b4195f08ba395caf90, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
@@ -1539,7 +1577,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.5
+      value: -4.4
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1547,7 +1585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -16.2
+      value: -26.188
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1763,7 +1801,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9
+      value: 3.4
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
