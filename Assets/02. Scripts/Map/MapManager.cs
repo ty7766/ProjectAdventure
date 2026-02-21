@@ -66,9 +66,10 @@ public class MapManager : MonoBehaviour
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
+
         _controls = new GameControls();
-        _onSelectMap = ctx => ChangeSelection((int)ctx.ReadValue<float>());
-        _onChangeMap = ctx => TryChangeMap((int)ctx.ReadValue<float>());
+        _onSelectMap = ctx => ChangeSelection(Mathf.RoundToInt(ctx.ReadValue<float>()));
+        _onChangeMap = ctx => TryChangeMap(Mathf.RoundToInt(ctx.ReadValue<float>()));
     }
 
     private void Start()
