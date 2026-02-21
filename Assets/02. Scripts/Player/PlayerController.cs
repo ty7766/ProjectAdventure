@@ -39,7 +39,6 @@ public class PlayerController : MonoBehaviour
     private WaitForSeconds _stunDelay;
     private Vector3 _respawnPoint;
     private GameControls _controls;
-    private Vector2 _moveInput;
     private bool _isAlive = true;
     private bool _isMovable = true;
 
@@ -227,9 +226,13 @@ public class PlayerController : MonoBehaviour
 
     private void HandleInputs()
     {
-        if (!_isMovable) return;
-        _moveInput = _controls.Player.Move.ReadValue<Vector2>();
-        Vector3 inputDirection = new Vector3(-_moveInput.x, 0, -_moveInput.y);
+        if (!_isMovable)
+        {
+            return;
+        }
+
+        Vector2 moveInput = _controls.Player.Move.ReadValue<Vector2>();
+        Vector3 inputDirection = new Vector3(-moveInput.x, 0, -moveInput.y);
         Quaternion camRotation = Quaternion.Euler(0, _cameraAngleOffset, 0);
         _movement.Move(camRotation * inputDirection, _properties.Speed, _properties.TurnSpeed);
     }
