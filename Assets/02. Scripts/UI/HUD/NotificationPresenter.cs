@@ -55,6 +55,10 @@ public class NotificationPresenter : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 플레이어 HUD에 표출할 알림을 등록합니다.
+    /// </summary>
+    /// <param name="context"></param>
     public static void AddPopup(PopupContext context)
     {
         if (context == null)
@@ -62,6 +66,18 @@ public class NotificationPresenter : MonoBehaviour
             return;
         }
         _popupQueue.Enqueue(context);
+    }
+
+    /// <summary>
+    /// 플레이어 HUD에 표출할 알림을 등록합니다.
+    /// </summary>
+    /// <param name="content">표출할 내용입니다.</param>
+    /// <param name="icon">표출할 아이콘입니다.</param>
+    /// <param name="backgroundColor">알림 팝업의 배경 색상입니다.</param>
+    public static void AddPopup(string content, Sprite icon, Color backgroundColor)
+    {
+        var context = new PopupContext(content, icon, backgroundColor);
+        AddPopup(context);
     }
 
     private IEnumerator ShowPopupRoutine()
