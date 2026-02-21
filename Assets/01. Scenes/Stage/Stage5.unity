@@ -1410,53 +1410,36 @@ MonoBehaviour:
   _selectionCursor: {fileID: 843756758}
   _cursorOffset: {x: 0, y: 5, z: 0}
   _pathGroups:
-  - GroupName: 'Map1[Ocean]'
+  - GroupName: 'Map1[Snowland]'
     SpawnPoint: {fileID: 1516804858}
     Maps:
-    - Prefab: {fileID: 6184720362279850812, guid: 2706c214a3df50a41a3ae658c846b968, type: 3}
+    - Prefab: {fileID: 7849585590471810532, guid: f1f59e5d68dee9245ac3a1b0a20c4cd0, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 8015026961216476902, guid: 898d6e23f461e504582119fba816735e, type: 3}
+    - Prefab: {fileID: 6707614242750483430, guid: 9c6ed67da1640d74f81a8ea63e2398fd, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5695258571126021032, guid: 11ee77c960f180a4ca33233b315b30fa, type: 3}
-      OffsetPosition: {x: 0, y: -1, z: -1}
+    - Prefab: {fileID: 5784679207109243959, guid: 6f0069113a8c5474eaa68cdb797c2bae, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 6405714472980178338, guid: e36d7f9bb4d0a0047abd0ecf316d50f4, type: 3}
-      OffsetPosition: {x: -1, y: 0, z: 0}
+    - Prefab: {fileID: 4898819785125874793, guid: f55ef10a93589294caf90e88e93ebc86, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
-  - GroupName: 'Map2[Lavaland]'
+  - GroupName: 'Map2[Desert]'
     SpawnPoint: {fileID: 1635724485}
     Maps:
-    - Prefab: {fileID: 8201682014230367498, guid: 94fd454697b894c4bbc075a4ac6520e5, type: 3}
+    - Prefab: {fileID: 7849585590471810532, guid: f1f59e5d68dee9245ac3a1b0a20c4cd0, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 8521698158416923414, guid: 1cc9d2bb5e50bf24290ebb5b26d6752c, type: 3}
+    - Prefab: {fileID: 6707614242750483430, guid: 9c6ed67da1640d74f81a8ea63e2398fd, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 1201460272801685308, guid: e3fa2532a96dec24b9a54df7b42135b5, type: 3}
+    - Prefab: {fileID: 5784679207109243959, guid: 6f0069113a8c5474eaa68cdb797c2bae, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5024839322967423167, guid: 3e68ae10c7330f146b394fc4042347c8, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    CurrentActivePath: {fileID: 0}
-    CurrentPathIndex: 0
-  - GroupName: 'Map3[Snowland]'
-    SpawnPoint: {fileID: 1523008751}
-    Maps:
-    - Prefab: {fileID: 1849501178850213521, guid: d91356d274a41344893454605391f5c9, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 4898819785125874793, guid: c2c2cb7201822f94192840f1ad921d32, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5353358889816498921, guid: fa3d5a777cd3b5b4da06b6b8db9a0e17, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 3637130621519083799, guid: f34cee57ec42c874185a14a2bfb9d4ab, type: 3}
+    - Prefab: {fileID: 4898819785125874793, guid: f55ef10a93589294caf90e88e93ebc86, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
