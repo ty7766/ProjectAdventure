@@ -91,6 +91,11 @@ public class MapManager : MonoBehaviour
         _controls.Map.ChangeMap.started -= _onChangeMap;
     }
 
+    private void OnDestroy()
+    {
+        _controls?.Dispose();
+    }
+
     /// <summary>
     /// MapGuideLine을 위한 타일 사이즈 리턴 메소드
     /// </summary>

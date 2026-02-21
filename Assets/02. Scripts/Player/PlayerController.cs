@@ -100,6 +100,11 @@ public class PlayerController : MonoBehaviour
         _controls.Player.Disable();
     }
 
+    private void OnDestroy()
+    {
+        _controls?.Dispose();
+    }
+
     //지속 장판 관련
     private void OnCollisionStay(Collision collision)
     {
