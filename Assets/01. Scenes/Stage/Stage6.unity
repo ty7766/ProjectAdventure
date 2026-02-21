@@ -564,13 +564,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerController: {fileID: 1435260843}
-  _requiredGemsToClear: 3
+  _requiredGemsToClear: 5
   _stageObjects:
   - stageObjectType: 4
     value: 4
     isCleared: 0
   - stageObjectType: 2
-    value: 150
+    value: 120
     isCleared: 0
   - stageObjectType: 0
     value: 3
@@ -1453,7 +1453,7 @@ MonoBehaviour:
     - Prefab: {fileID: 1201460272801685308, guid: e3fa2532a96dec24b9a54df7b42135b5, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 265998197849684176, guid: 50c914683a686c24fbbec3666239e8be, type: 3}
+    - Prefab: {fileID: 265998197849684176, guid: 6c7cf4a50bedb7f41acf792ed629ffaf, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
@@ -1464,7 +1464,7 @@ MonoBehaviour:
     - Prefab: {fileID: 9127166993104370049, guid: e8ba2d15b0c99ee47b9f63574fc29325, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 859116954290996870, guid: 46289e3bee8fa964e846c13079462f76, type: 3}
+    - Prefab: {fileID: 859116954290996870, guid: a9f4b383db101744a98a4900042ffae5, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
@@ -1472,16 +1472,13 @@ MonoBehaviour:
   - GroupName: 'Map3[Cemetery]'
     SpawnPoint: {fileID: 1523008751}
     Maps:
-    - Prefab: {fileID: 2508439079240213857, guid: d52bce99ae3dfa34db0881faf551a35b, type: 3}
+    - Prefab: {fileID: 2766102709251254700, guid: fab18dfec90473244a2b122d021db220, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
+    - Prefab: {fileID: 775241407378445643, guid: 0142f5503d612264e9dea634028d2a2b, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 775241407378445643, guid: d144a737b22cc314a99d3864133946ff, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 1252271583804284471, guid: 2efc3b008bcc7964ea916e4617ca9fa5, type: 3}
+    - Prefab: {fileID: 1252271583804284471, guid: 0978920810efe0844864f84cdbbde96f, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
@@ -1490,12 +1487,9 @@ MonoBehaviour:
     SpawnPoint: {fileID: 637561373}
     Maps:
     - Prefab: {fileID: 1849501178850213521, guid: d91356d274a41344893454605391f5c9, type: 3}
-      OffsetPosition: {x: 0, y: 180, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5235255453237804214, guid: baf5d4af087cf4b4195f08ba395caf90, type: 3}
+      OffsetRotation: {x: 0, y: 180, z: 0}
+    - Prefab: {fileID: 5638541731751481159, guid: 16e37fb5df5107b4681ceb6ae12488e6, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
@@ -1577,7 +1571,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -4.4
+      value: -2.49
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
