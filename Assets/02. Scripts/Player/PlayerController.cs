@@ -102,7 +102,8 @@ public class PlayerController : MonoBehaviour
     /// 플레이어에게 데미지를 적용합니다. 일반적으로 데미지는 1이어야 하지만 기획에 따라 다를 수 있습니다.
     /// </summary>
     /// <param name="damage">적용 데미지 양 (기본값 = 1)</param>
-    public void TakeDamage(int damage = 1)
+    /// <param name="applyStun">경직 적용 여부</param>
+    public void TakeDamage(int damage = 1, bool applyStun = true)
     {
         if (!_isAlive || _invTimer < _invincibleTime)
         {
@@ -125,8 +126,11 @@ public class PlayerController : MonoBehaviour
         else
         {
             _animator.SetTrigger("Damage");
-            _isMovable = false;
-            StartCoroutine(EnableMovementAfterDelay(_stunDelay));
+            if(applyStun)
+            {
+                _isMovable = false;
+                StartCoroutine(EnableMovementAfterDelay(_stunDelay));
+            }
         }
     }
 
@@ -197,7 +201,7 @@ public class PlayerController : MonoBehaviour
         OnPlayerFallenDown?.Invoke();
         _isMovable = false;
         _movement.TeleportTo(_respawnPoint);
-        TakeDamage(damage);
+        TakeDamage(damage, false); //리스폰 경직 적용을 위해 데미지 경직은 적용하지 않음.
         if (_isAlive)
         {
             _animator.SetTrigger("GetUp");
