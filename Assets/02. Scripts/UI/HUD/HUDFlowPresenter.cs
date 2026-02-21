@@ -67,6 +67,7 @@ public class HUDFlowPresenter : MonoBehaviour
         _hudView.HideHUD();
         _hudView.HidePauseMenu();
         _hudView.HideStageClearPanel();
+        _hudView.IsPauseMenuActive = false;
 
         UpdateStageObjectText();
         _hudView.ShowStageStartPanel();
