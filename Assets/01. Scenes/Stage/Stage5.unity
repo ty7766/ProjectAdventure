@@ -565,14 +565,14 @@ MonoBehaviour:
   _playerController: {fileID: 1435260843}
   _requiredGemsToClear: 3
   _stageObjects:
-  - stageObjectType: 1
-    value: 0
+  - stageObjectType: 4
+    value: 3
     isCleared: 0
   - stageObjectType: 2
-    value: 100
+    value: 120
     isCleared: 0
   - stageObjectType: 3
-    value: 1
+    value: 3
     isCleared: 0
 --- !u!4 &674068052 stripped
 Transform:
@@ -1205,7 +1205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.8000002
+      value: 1.372
       objectReference: {fileID: 0}
     - target: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1413,11 +1413,11 @@ MonoBehaviour:
   - GroupName: 'Map1[Snowland]'
     SpawnPoint: {fileID: 1516804858}
     Maps:
-    - Prefab: {fileID: 7849585590471810532, guid: f1f59e5d68dee9245ac3a1b0a20c4cd0, type: 3}
-      OffsetPosition: {x: 0, y: 0, z: 0}
-      OffsetRotation: {x: 0, y: 0, z: 0}
     - Prefab: {fileID: 6707614242750483430, guid: 9c6ed67da1640d74f81a8ea63e2398fd, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 7849585590471810532, guid: 67a9806a07ed96b409b5eb598a31f022, type: 3}
+      OffsetPosition: {x: -1, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     - Prefab: {fileID: 5784679207109243959, guid: 6f0069113a8c5474eaa68cdb797c2bae, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
@@ -1427,25 +1427,40 @@ MonoBehaviour:
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
-  - GroupName: 'Map2[Desert]'
+  - GroupName: 'Map2[Ocean]'
     SpawnPoint: {fileID: 1635724485}
     Maps:
-    - Prefab: {fileID: 7849585590471810532, guid: f1f59e5d68dee9245ac3a1b0a20c4cd0, type: 3}
+    - Prefab: {fileID: 8433848253134641072, guid: a241519dc20a08248871fef89c41a5dd, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 6707614242750483430, guid: 9c6ed67da1640d74f81a8ea63e2398fd, type: 3}
+    - Prefab: {fileID: 372187102251910809, guid: afd018e586a5c954faa6414d45414e2d, type: 3}
+      OffsetPosition: {x: -2, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 41045083440798057, guid: 513c40c524f4c5443b1b735655c3f203, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 5784679207109243959, guid: 6f0069113a8c5474eaa68cdb797c2bae, type: 3}
+    - Prefab: {fileID: 3448280223632252455, guid: 817838ce64410f64e97c4fb2ceac591e, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
-    - Prefab: {fileID: 4898819785125874793, guid: f55ef10a93589294caf90e88e93ebc86, type: 3}
+    CurrentActivePath: {fileID: 0}
+    CurrentPathIndex: 0
+  - GroupName: 'Map3[Desert]'
+    SpawnPoint: {fileID: 1523008751}
+    Maps:
+    - Prefab: {fileID: 9127166993104370049, guid: e8ba2d15b0c99ee47b9f63574fc29325, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 1509016994126531578, guid: fa426cff3f361d94498abea2d966ae9e, type: 3}
+      OffsetPosition: {x: 0, y: 0, z: 0}
+      OffsetRotation: {x: 0, y: 0, z: 0}
+    - Prefab: {fileID: 8290647674106872464, guid: 20b89a1b3c08cc3409f0f3edaf39a742, type: 3}
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     CurrentActivePath: {fileID: 0}
     CurrentPathIndex: 0
   _tileSize: {x: 12, y: 1, z: 10}
   _startOffset: {x: 0, y: 0, z: 0}
+  _mapChangeCooldownTime: 1
 --- !u!4 &1664178953
 Transform:
   m_ObjectHideFlags: 0
@@ -1744,7 +1759,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9
+      value: 6.53
       objectReference: {fileID: 0}
     - target: {fileID: 235204710084618389, guid: da42f69cb92bdc8428d0276e2ab3d6a9, type: 3}
       propertyPath: m_LocalPosition.y
