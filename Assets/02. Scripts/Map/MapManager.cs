@@ -51,6 +51,8 @@ public class MapManager : MonoBehaviour
     private FloatingCursor _cursorScript;
     private MapPlayerChecker _playerCheckerScript;
     private GameControls _controls;
+    private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onSelectMap;
+    private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onChangeMap;
 
     private void Awake()
     {
@@ -65,6 +67,8 @@ public class MapManager : MonoBehaviour
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
         _controls = new GameControls();
+        _onSelectMap = ctx => ChangeSelection((int)ctx.ReadValue<float>());
+        _onChangeMap = ctx => TryChangeMap((int)ctx.ReadValue<float>());
     }
 
     private void Start()
@@ -76,15 +80,15 @@ public class MapManager : MonoBehaviour
     private void OnEnable()
     {
         _controls.Map.Enable();
-        _controls.Map.SelectMap.started += ctx => ChangeSelection((int)ctx.ReadValue<float>());
-        _controls.Map.ChangeMap.started += ctx => TryChangeMap((int)ctx.ReadValue<float>());
+        _controls.Map.SelectMap.started += _onSelectMap;
+        _controls.Map.ChangeMap.started += _onChangeMap;
     }
 
     private void OnDisable()
     {
         _controls.Map.Disable();
-        _controls.Map.SelectMap.started -= ctx => ChangeSelection((int)ctx.ReadValue<float>());
-        _controls.Map.ChangeMap.started -= ctx => TryChangeMap((int)ctx.ReadValue<float>());
+        _controls.Map.SelectMap.started -= _onSelectMap;
+        _controls.Map.ChangeMap.started -= _onChangeMap;
     }
 
     /// <summary>
