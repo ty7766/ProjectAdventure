@@ -94,9 +94,11 @@ public class StageManager : MonoBehaviour
         {
             return;
         }
-        _collectedGemIDs.Add(gemID);
-        _collectedGems++;
-        OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+        if (_collectedGemIDs.Add(gemID))
+        {
+            _collectedGems++;
+            OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+        }
     }
 
     public void StageClear()
