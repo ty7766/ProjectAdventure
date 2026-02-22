@@ -31,6 +31,8 @@ public class WeepingAngel : MonoBehaviour
     private float _sqrActiveRange;
     private float _cosViewAngle;
 
+    private bool _canChase = false;
+
     private void Awake()
     {
         _initialPosition = transform.position;
@@ -51,6 +53,8 @@ public class WeepingAngel : MonoBehaviour
 
     private void Update()
     {
+        _canChase = false;
+
         if (_playerTransform == null)
         {
             FindPlayer();
@@ -59,12 +63,10 @@ public class WeepingAngel : MonoBehaviour
                 return;
             }
         }
-
         if (_mapCenterTransform == null)
         {
             return;
         }
-
         if (!IsPlayerInMap())
         {
             return;
@@ -75,13 +77,20 @@ public class WeepingAngel : MonoBehaviour
         {
             return;
         }
-
         if (IsVisibleToPlayer(directionToPlayer))
         {
             return;
         }
 
-        ChasePlayer();
+        _canChase = true;
+    }
+
+    private void FixedUpdate()
+    {
+        if(_canChase)
+        {
+            ChasePlayer();
+        }
     }
 
     private void FindPlayer()
@@ -123,11 +132,11 @@ public class WeepingAngel : MonoBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _angelRotationSpeed * Time.deltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _angelRotationSpeed * Time.fixedDeltaTime);
         }
 
         // 이동
-        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, _angelSpeed * Time.deltaTime);
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, _angelSpeed * Time.fixedDeltaTime);
         _rigidbody.MovePosition(newPosition);
     }
 
