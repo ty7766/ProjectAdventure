@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class WeepingAngel : MonoBehaviour
 {
     [Header("Angel 속성")]
@@ -25,6 +26,7 @@ public class WeepingAngel : MonoBehaviour
     private Vector3 _initialPosition;
     private Quaternion _initialRotation;
     private Transform _playerTransform;
+    private Rigidbody _rigidbody;
 
     private float _sqrActiveRange;
     private float _cosViewAngle;
@@ -33,8 +35,8 @@ public class WeepingAngel : MonoBehaviour
     {
         _initialPosition = transform.position;
         _initialRotation = transform.rotation;
+        _rigidbody = GetComponent<Rigidbody>();
 
-        //미리 계산하여 캐싱
         _sqrActiveRange = _activeRange * _activeRange;
         _cosViewAngle = Mathf.Cos(_playerViewAngle * 0.5f * Mathf.Deg2Rad);
     }
@@ -116,8 +118,8 @@ public class WeepingAngel : MonoBehaviour
 
     private void ChasePlayer()
     {
-        Vector3 targetPos = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
-        Vector3 direction = (targetPos - transform.position).normalized;
+        Vector3 targetPosition = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
+        Vector3 direction = (targetPosition - transform.position).normalized;
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
@@ -125,7 +127,8 @@ public class WeepingAngel : MonoBehaviour
         }
 
         // 이동
-        transform.position = Vector3.MoveTowards(transform.position, targetPos, _angelSpeed * Time.deltaTime);
+        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPosition, _angelSpeed * Time.deltaTime);
+        _rigidbody.MovePosition(newPosition);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -138,24 +141,4 @@ public class WeepingAngel : MonoBehaviour
             }
         }
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmos()
-    {
-        if (_mapCenterTransform != null)
-        {
-            Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(_mapCenterTransform.position, new Vector3(_mapSize.x, 1, _mapSize.y));
-        }
-
-        if (_playerTransform != null)
-        {
-            Gizmos.color = Color.yellow;
-            Vector3 leftRay = Quaternion.Euler(0, -_playerViewAngle / 2f, 0) * _playerTransform.forward;
-            Vector3 rightRay = Quaternion.Euler(0, _playerViewAngle / 2f, 0) * _playerTransform.forward;
-            Gizmos.DrawRay(_playerTransform.position, leftRay * 5f);
-            Gizmos.DrawRay(_playerTransform.position, rightRay * 5f);
-        }
-    }
-#endif
 }
