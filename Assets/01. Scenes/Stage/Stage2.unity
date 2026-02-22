@@ -566,8 +566,8 @@ MonoBehaviour:
   _playerController: {fileID: 1435260843}
   _requiredGemsToClear: 3
   _stageObjects:
-  - stageObjectType: 1
-    value: 0
+  - stageObjectType: 4
+    value: 2
     isCleared: 0
   - stageObjectType: 2
     value: 60
