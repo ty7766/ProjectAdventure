@@ -67,10 +67,10 @@ public class Teleporter : MonoBehaviour
 
     private void TeleportPlayer(Transform player)
     {
-        Vector3 targetPos = _destination.transform.position;
-        targetPos.y += _yOffset; // 바닥에 묻히지 않게 살짝 띄움
+        Vector3 targetPosition = _destination.transform.position;
+        targetPosition.y += _yOffset; // 바닥에 묻히지 않게 살짝 띄움
 
-        player.position = targetPos;
+        player.position = targetPosition;
 
         if (_destination != null)
         {
