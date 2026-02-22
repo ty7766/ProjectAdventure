@@ -90,7 +90,7 @@ public class NotificationPresenter : MonoBehaviour
         yield return StartCoroutine(_view.MovePopup(_hiddenPosition, _shownPosition, _animDuration));
 
         // 2단계: 대기
-        yield return new WaitForSeconds(_showDuration);
+        yield return new WaitForSecondsRealtime(_showDuration);
 
         // 3단계: 퇴장 (Slide Up)
         yield return StartCoroutine(_view.MovePopup(_shownPosition, _hiddenPosition, _animDuration));

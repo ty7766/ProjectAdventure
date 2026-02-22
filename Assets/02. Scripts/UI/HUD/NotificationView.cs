@@ -30,7 +30,7 @@ public class NotificationView : MonoBehaviour
             {
                 yield break;
             }
-            elapsedTime += Time.deltaTime;
+            elapsedTime += Time.unscaledDeltaTime;
             float t = Mathf.Clamp01(elapsedTime / animDuration);
             float curveT = t < 0.5f
             ? 4f * t * t * t

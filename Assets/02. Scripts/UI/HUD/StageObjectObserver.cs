@@ -28,6 +28,12 @@ public class StageObjectObserver : MonoBehaviour
 
     private void Start()
     {
+        if (!_stageManager || !_stageManager.PlayerController)
+        {
+            CustomDebug.LogError("[Stage Object Observer] Stage Manager or Player Controller is missing!", this);
+            return;
+        }
+
         var uniqueTypes = _stageManager.StageObjects.Select(obj => obj.stageObjectType).Distinct();
 
         foreach (var type in uniqueTypes)
@@ -74,12 +80,23 @@ public class StageObjectObserver : MonoBehaviour
 
     private void Update()
     {
+        if (_timeLimits.Count <= 0 || !_stageManager)
+        {
+            return;
+        }
+
         for (int i = _timeLimits.Count - 1; i >= 0; i--)
         {
             if (_stageManager.StageTimer > _timeLimits[i])
             {
                 var ts = TimeSpan.FromSeconds(_timeLimits[i]);
-                string content = string.Format(HUDFlowPresenter.MissionTextDict[StageObjectType.TimeLimitClear], ts.Minutes, ts.Seconds);
+                if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.TimeLimitClear, out string format))
+                {
+                    CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'TimeLimitClear' Key !!!", this);
+                    _timeLimits.RemoveAt(i);
+                    continue;
+                }
+                string content = string.Format(format, ts.Minutes, ts.Seconds);
                 content += _failedString;
                 NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
 
@@ -113,7 +130,12 @@ public class StageObjectObserver : MonoBehaviour
             if(collectedNumberOfGems >= target.value && !target.isCleared)
             {
                 target.isCleared = true;
-                string content = string.Format(HUDFlowPresenter.MissionTextDict[StageObjectType.CollectGemsClear], target.value);
+                if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.CollectGemsClear, out var format))
+                {
+                    CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'CollectGemsClear' Key !!!", this);
+                    return;
+                }
+                string content = string.Format(format, target.value);
                 content += _successString;
                 NotificationPresenter.AddPopup(new PopupContext(content, _filledStar, _successColor));
             }
@@ -129,7 +151,12 @@ public class StageObjectObserver : MonoBehaviour
     {
         //한 번만 알림을 표시하고 이벤트 구독 해제
         _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
-        string content = HUDFlowPresenter.MissionTextDict[StageObjectType.NoFallClear];
+        if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.NoFallClear, out var format))
+        {
+            CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'NoFallClear' Key !!!", this);
+            return;
+        }
+        string content = format;
         content += _failedString;
         NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
     }
@@ -138,7 +165,13 @@ public class StageObjectObserver : MonoBehaviour
     {
         //한 번만 알림을 표시하고 이벤트 구독 해제
         _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
-        string content = HUDFlowPresenter.MissionTextDict[StageObjectType.NoDamageClear];
+        if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.NoDamageClear, out var format))
+        {
+            CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'NoDamageClear' key !!!", this);
+            return;
+        }
+
+        string content = format;
         content += _failedString;
         NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
     }
@@ -153,7 +186,12 @@ public class StageObjectObserver : MonoBehaviour
             if(_stageManager.PlayerController.Health < healthObject.value && healthObject.isCleared)
             {
                 healthObject.isCleared = false;
-                string content = string.Format(HUDFlowPresenter.MissionTextDict[StageObjectType.RemainHealthClear], healthObject.value);
+                if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.RemainHealthClear, out var format))
+                {
+                    CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'RemainHealthClear' key !!!", this);
+                    return;
+                }
+                string content = string.Format(format, healthObject.value);
                 content += _failedString;
                 NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
             }
