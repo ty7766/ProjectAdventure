@@ -44,8 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9805a6edc7ad42a46810f98baeec31a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _tileType: 2
   _minInterval: 3
   _maxInterval: 3.5
   _moveDistance: 9
@@ -95,13 +95,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9805a6edc7ad42a46810f98baeec31a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _tileType: 2
-  _minInterval: 1.5
-  _maxInterval: 2
+  _minInterval: 4
+  _maxInterval: 5
   _moveDistance: 9
   _direction: 0
-  _tileSpeed: 2.5
+  _tileSpeed: 2
 --- !u!1 &5784080366206049439
 GameObject:
   m_ObjectHideFlags: 0
@@ -276,8 +276,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9805a6edc7ad42a46810f98baeec31a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _tileType: 2
   _minInterval: 1.5
   _maxInterval: 2
   _moveDistance: 9
@@ -327,13 +327,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9805a6edc7ad42a46810f98baeec31a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _tileType: 2
   _minInterval: 2
   _maxInterval: 3
   _moveDistance: 9
   _direction: 0
-  _tileSpeed: 2
+  _tileSpeed: 1.5
 --- !u!1001 &845256376042186422
 PrefabInstance:
   m_ObjectHideFlags: 0
