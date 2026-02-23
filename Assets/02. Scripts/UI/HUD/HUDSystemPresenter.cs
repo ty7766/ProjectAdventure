@@ -57,7 +57,7 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenu()
     {
-        // TODO: 메인메뉴 씬 로드
+        SceneManager.LoadScene("dev-title");
     }
 
     private void HandleQuitGame()

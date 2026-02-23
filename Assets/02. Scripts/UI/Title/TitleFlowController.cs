@@ -14,8 +14,15 @@ public class TitleFlowController : MonoBehaviour
     [Header("Settings")]
     [SerializeField, Range(0.1f, 3f)]
     private float _fadeDuration = 0.5f;
+    [SerializeField, Range(0.1f, 3f)]
+    private float _introDuration = 0.5f;
 
     private Coroutine _fadeCoroutine;
+
+    private void Start()
+    {
+       InitializeTitleView();
+    }
 
     public void GoToTitle()
     {
@@ -29,6 +36,16 @@ public class TitleFlowController : MonoBehaviour
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("StageSelect");
         _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _stageSelectCanvas));
+    }
+
+    private void InitializeTitleView()
+    {
+        _stageSelectCanvas.blocksRaycasts = false;
+        _stageSelectCanvas.interactable = false;
+        _titleCanvas.blocksRaycasts = true;
+        _titleCanvas.interactable = true;
+        _titleCanvas.alpha = 0.0f;
+        StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
     private IEnumerator SequentialFade(CanvasGroup fadeOut, CanvasGroup fadeIn)
@@ -62,7 +79,17 @@ public class TitleFlowController : MonoBehaviour
             yield return null;
         }
         fadeIn.alpha = 1f;
+    }
 
-
+    private IEnumerator FadeIn(CanvasGroup target, float duration)
+    {
+        float timer = 0f;
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            target.alpha = Mathf.Lerp(0f, 1f, timer / duration);
+            yield return null;
+        }
+        target.alpha = 1f;
     }
 }

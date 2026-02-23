@@ -439,6 +439,7 @@ MonoBehaviour:
   _playButton: {fileID: 6379769993427326555}
   _optionsButton: {fileID: 5492453814654357956}
   _exitButton: {fileID: 7795351460375721039}
+  _flowController: {fileID: 0}
 --- !u!225 &1227327686993939685
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -447,7 +448,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2017753771538064437}
   m_Enabled: 1
-  m_Alpha: 0
+  m_Alpha: 0.49
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
