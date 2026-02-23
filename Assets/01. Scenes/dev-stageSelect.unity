@@ -6548,26 +6548,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _stageDataBase:
-  - {fileID: 11400000, guid: 36c011548f834884bba8436a6646fb2c, type: 2}
-  - {fileID: 11400000, guid: 46126cb3d8a46974c980f1edd012b96f, type: 2}
-  - {fileID: 11400000, guid: 99314b4e1f2f11344ac9a14b18d75865, type: 2}
-  - {fileID: 11400000, guid: 10fefccb557f4694ea98bdce8ea12041, type: 2}
-  - {fileID: 11400000, guid: 9fe8d0223e0fde84997412c98e9055f7, type: 2}
-  - {fileID: 11400000, guid: 1a4f87719b3a0bb4aade095f12478507, type: 2}
-  - {fileID: 11400000, guid: 740e7c7795e490241ba872bdd73deaf2, type: 2}
-  - {fileID: 11400000, guid: b515fa1a25b6f294fbc7f0c6f8036a13, type: 2}
-  - {fileID: 11400000, guid: 67f3034591226734dbae4369e1953ae0, type: 2}
-  - {fileID: 11400000, guid: cfa22cc9fe93b784884d780ebc7eb7f1, type: 2}
-  - {fileID: 11400000, guid: fbaf078f5ef424f448d664c6585b766b, type: 2}
-  - {fileID: 11400000, guid: eb3c4f6a12b978747b55024bb81e5fc6, type: 2}
-  - {fileID: 11400000, guid: 7e79fbf5679d6e749877e1992177587d, type: 2}
-  - {fileID: 11400000, guid: 0e4e63aa33bd14c4f81bf26cef0e4a76, type: 2}
-  - {fileID: 11400000, guid: 49b15207c8652f04992f9470b20ef203, type: 2}
-  - {fileID: 11400000, guid: d29f1f2b451a05f4a88395507966e9a9, type: 2}
-  - {fileID: 11400000, guid: 9af060a0540011e41a7328ce7a21565f, type: 2}
-  - {fileID: 11400000, guid: 1867242e5d5d96041800d49d79b33be8, type: 2}
-  - {fileID: 11400000, guid: 46c44ef24e2f4d6429562adf2fe14234, type: 2}
+  - {fileID: 11400000, guid: ff255d3fced26564d94e64756e37ef7e, type: 2}
+  - {fileID: 11400000, guid: ba502f4498408764690f991310aebc21, type: 2}
+  - {fileID: 11400000, guid: f5a490fa4f7cac2468f360f4210c6d4b, type: 2}
+  - {fileID: 11400000, guid: 651f4f3cbee461943a21eb4a94306ac6, type: 2}
+  - {fileID: 11400000, guid: 84c745571f81dda469f655bf9dec3bb4, type: 2}
+  - {fileID: 11400000, guid: 143088466dc7e3a4da541d13c1597952, type: 2}
+  - {fileID: 11400000, guid: 1e3e7a284980cc04d8696f3960dc5482, type: 2}
+  - {fileID: 11400000, guid: 4f10c63bb069a7141ade0177e532c45e, type: 2}
   _saveData: []
+  _currentStage: 0
 --- !u!4 &2023815836
 Transform:
   m_ObjectHideFlags: 0

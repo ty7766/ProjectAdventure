@@ -4,12 +4,17 @@ using UnityEngine.SceneManagement;
 [RequireComponent(typeof(Collider))]
 public class GemObject : SpecialObject
 {
+    [Header("식별자")]
+    [SerializeField, Tooltip("\"스테이지 이름\"_Gem 형식으로 작성")]
+    private string _gemID;
+
     [Header("Components")]
     [SerializeField] private StageManager _stageManager;
 
     private void Start()
     {
         FindStageManagerWhenIsNull();
+        CheckCollectedGemInMap();
     }
 
     protected override void ApplyEffect(GameObject player)
@@ -27,11 +32,21 @@ public class GemObject : SpecialObject
 
         if (_stageManager != null)
         {
-            _stageManager.CollectGem();
+            _stageManager.CollectGem(_gemID);
+            gameObject.SetActive(false);
         }
         else
         {
             CustomDebug.LogWarning("StageManager reference is missing in GemObject.");
+        }
+    }
+
+    private void CheckCollectedGemInMap()
+    {
+        if (_stageManager != null && _stageManager.IsGemCollected(_gemID))
+        {
+            gameObject.SetActive(false);
+            return;
         }
     }
 

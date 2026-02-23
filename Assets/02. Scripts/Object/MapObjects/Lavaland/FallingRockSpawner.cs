@@ -103,7 +103,10 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        if (_firePoint == null) return;
+        if (_firePoint == null)
+        {
+            return;
+        }
 
         // 기즈모 그릴 때도 계산기(Calculator) 사용
         Vector3 startPos = _firePoint.position;

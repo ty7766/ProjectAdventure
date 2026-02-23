@@ -47,7 +47,12 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private Vector3 _startOffset = Vector3.zero;  //시작위치 보정
 
+    [Header("맵 교체 쿨타임")]
+    [SerializeField]
+    private float _mapChangeCooldownTime = 1.0f;
+
     private int _selectedSlotIndex = 0;
+    private float _nextAllowedMapChangeTime;
     private FloatingCursor _cursorScript;
     private MapPlayerChecker _playerCheckerScript;
     private GameControls _controls;
@@ -163,10 +168,10 @@ public class MapManager : MonoBehaviour
 
         Vector3 finalPos = currentGroup.SpawnPoint.position;
         Vector3 targetBasePos = finalPos + _cursorOffset;
-        // 커서 스크립트 캐싱된 것 사용 (없으면 Transform 직접 이동)
+
         if (_cursorScript != null)
         {
-            _cursorScript.SetBasePositionCursor(targetBasePos); // 함수명 변경 반영
+            _cursorScript.SetBasePositionCursor(targetBasePos);
         }
         else
         {
@@ -176,11 +181,17 @@ public class MapManager : MonoBehaviour
 
     private void TryChangeMap(int direction)
     {
+        if (Time.time < _nextAllowedMapChangeTime)
+        {
+            CustomDebug.LogWarning("맵 교체 쿨타임 중...");
+            return;
+        }
+
         PathGroup targetGroup = _pathGroups[_selectedSlotIndex];
 
         if (targetGroup.Maps == null || targetGroup.Maps.Length == 0)
         {
-            Debug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 정보가 없습니다.");
+            CustomDebug.LogWarning($"[MapManager] '{targetGroup.GroupName}'에 교체할 맵 정보가 없습니다.");
             return;
         }
 
@@ -198,6 +209,8 @@ public class MapManager : MonoBehaviour
         SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
 
         UpdateCursorPosition();
+
+        _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
     }
 
     private void SpawnPath(PathGroup group, int index)
@@ -215,7 +228,7 @@ public class MapManager : MonoBehaviour
         }
         Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
 
-        // [핵심] 스폰 포인트 회전 * 개별 맵의 회전
+        //스폰 포인트 회전 * 개별 맵의 회전
         Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
