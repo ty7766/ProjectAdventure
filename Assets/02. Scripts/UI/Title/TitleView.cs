@@ -18,7 +18,7 @@ public class TitleView : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        if(IsCheckFailed())
+        if (IsCheckFailed())
         {
             this.enabled = false;
             return;
@@ -33,19 +33,19 @@ public class TitleView : MonoBehaviour
     }
 
     //--- Private Methods ---// 
-    bool IsCheckFailed()
+    private bool IsCheckFailed()
     {
-        if(_playButton == null)
+        if (_playButton == null)
         {
             CustomDebug.LogError("Play Button is not assigned in the inspector.");
             return true;
         }
-        if(_optionsButton == null)
+        if (_optionsButton == null)
         {
             CustomDebug.LogError("Options Button is not assigned in the inspector.");
             return true;
         }
-        if(_exitButton == null)
+        if (_exitButton == null)
         {
             CustomDebug.LogError("Exit Button is not assigned in the inspector.");
             return true;
@@ -53,7 +53,7 @@ public class TitleView : MonoBehaviour
         return false;
     }
 
-    void InitializeView()
+    private void InitializeView()
     {
         _titlePresenter = new TitlePresenter(this);
         _onExitButtonClicked = _titlePresenter.OnExitButtonClicked;
@@ -62,17 +62,19 @@ public class TitleView : MonoBehaviour
 
     private void DisposeButtonHandlers()
     {
-        if (_playButton != null && _onPlayButtonClicked != null)
+        if (_playButton)
         {
-            _playButton.onClick.RemoveListener(_onPlayButtonClicked);
+            _playButton.onClick.RemoveAllListeners();
         }
-        if (_optionsButton != null && _onOptionsButtonClicked != null)
+
+        if (_optionsButton)
         {
-            _optionsButton.onClick.RemoveListener(_onOptionsButtonClicked);
+            _optionsButton.onClick.RemoveAllListeners();
         }
-        if (_exitButton != null && _onExitButtonClicked != null)
+
+        if (_exitButton)
         {
-            _exitButton.onClick.RemoveListener(_onExitButtonClicked);
+            _exitButton.onClick.RemoveAllListeners();
         }
     }
 }
