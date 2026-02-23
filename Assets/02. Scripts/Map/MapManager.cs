@@ -50,6 +50,9 @@ public class MapManager : MonoBehaviour
     private int _selectedSlotIndex = 0;
     private FloatingCursor _cursorScript;
     private MapPlayerChecker _playerCheckerScript;
+    private GameControls _controls;
+    private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onSelectMap;
+    private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onChangeMap;
 
     private void Awake()
     {
@@ -63,17 +66,41 @@ public class MapManager : MonoBehaviour
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
+
+        _controls = new GameControls();
+        _onSelectMap = ctx => ChangeSelection(Mathf.RoundToInt(ctx.ReadValue<float>()));
+        _onChangeMap = ctx => TryChangeMap(Mathf.RoundToInt(ctx.ReadValue<float>()));
     }
+
     private void Start()
     {
         MapGeneration();
         UpdateCursorPosition();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        HandleSelectionInput();
-        HandleMapChangeInput();
+        if(_controls != null)
+        {
+            _controls?.Map.Enable();
+            _controls.Map.SelectMap.started += _onSelectMap;
+            _controls.Map.ChangeMap.started += _onChangeMap;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if(_controls != null)
+        {
+            _controls?.Map.Disable();
+            _controls.Map.SelectMap.started -= _onSelectMap;
+            _controls.Map.ChangeMap.started -= _onChangeMap;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        _controls?.Dispose();
     }
 
     /// <summary>
@@ -100,18 +127,6 @@ public class MapManager : MonoBehaviour
             {
                 SpawnPath(group, group.CurrentPathIndex);
             }
-        }
-    }
-
-    private void HandleSelectionInput()
-    {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
-        {
-            ChangeSelection(-1);
-        }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
-        {
-            ChangeSelection(1);
         }
     }
 
@@ -156,18 +171,6 @@ public class MapManager : MonoBehaviour
         else
         {
             _selectionCursor.position = targetBasePos;
-        }
-    }
-
-    private void HandleMapChangeInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            TryChangeMap(-1);
-        }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            TryChangeMap(1);
         }
     }
 
