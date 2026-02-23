@@ -42,8 +42,8 @@ public class TitleFlowController : MonoBehaviour
     {
         _stageSelectCanvas.blocksRaycasts = false;
         _stageSelectCanvas.interactable = false;
-        _titleCanvas.blocksRaycasts = true;
-        _titleCanvas.interactable = true;
+        _titleCanvas.blocksRaycasts = false;
+        _titleCanvas.interactable = false;
         _titleCanvas.alpha = 0.0f;
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
@@ -83,6 +83,7 @@ public class TitleFlowController : MonoBehaviour
 
     private IEnumerator FadeIn(CanvasGroup target, float duration)
     {
+        target.interactable = true;
         float timer = 0f;
         while (timer < duration)
         {
@@ -91,5 +92,6 @@ public class TitleFlowController : MonoBehaviour
             yield return null;
         }
         target.alpha = 1f;
+        target.blocksRaycasts = true;
     }
 }

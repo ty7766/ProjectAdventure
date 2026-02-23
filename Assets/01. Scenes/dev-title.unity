@@ -867,6 +867,7 @@ MonoBehaviour:
   _titleCanvas: {fileID: 29121225408815738}
   _stageSelectCanvas: {fileID: 1841687174}
   _fadeDuration: 1.25
+  _introDuration: 1.25
 --- !u!1001 &1779978124
 PrefabInstance:
   m_ObjectHideFlags: 0

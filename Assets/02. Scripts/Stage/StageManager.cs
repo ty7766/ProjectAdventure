@@ -70,6 +70,7 @@ public class StageManager : MonoBehaviour
             _playerController.OnPlayerDamageTaken -= HandlePlayerDamageTakenEvent;
             _playerController.OnPlayerFallenDown -= HandlePlayerFallenDownEvent;
         }
+        ResumeGameImmediately(); //스테이지 매니저 파괴 시 타임 스케일 복구
     }
 
     private void Start()
@@ -127,6 +128,11 @@ public class StageManager : MonoBehaviour
     /// </summary>
     /// <param name="duration"></param>
     public void ResumeGameSmoothly(float duration = 0.5f) => SmoothTimeScale(1f, duration);
+
+    public void ResumeGameImmediately()
+    {
+        Time.timeScale = 1f;
+    }
 
     /// <summary>
     /// 타임스케일을 부드럽게 변경합니다.
