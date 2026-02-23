@@ -1421,7 +1421,7 @@ MonoBehaviour:
       OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     - Prefab: {fileID: 5695258571126021032, guid: 11ee77c960f180a4ca33233b315b30fa, type: 3}
-      OffsetPosition: {x: 0, y: -1, z: -1}
+      OffsetPosition: {x: 0, y: 0, z: 0}
       OffsetRotation: {x: 0, y: 0, z: 0}
     - Prefab: {fileID: 6405714472980178338, guid: e36d7f9bb4d0a0047abd0ecf316d50f4, type: 3}
       OffsetPosition: {x: -1, y: 0, z: 0}
