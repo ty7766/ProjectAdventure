@@ -4,15 +4,17 @@ public class TitlePresenter
 {
     //--- Fields ---//
     private TitleView _titleView;
+    private TitleFlowController _flowController;
 
-    public TitlePresenter(TitleView titleView)
+    public TitlePresenter(TitleView titleView, TitleFlowController flowController)
     {
         _titleView = titleView;
+        _flowController = flowController;
     }
 
     public void OnPlayButtonClicked()
     {
-        // Handle play button click logic here
+        _flowController.GoToStageSelect();
     }
 
     public void OnOptionsButtonClicked()

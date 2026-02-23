@@ -8,6 +8,9 @@ public class TitleView : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
     [SerializeField] private UnityEngine.UI.Button _exitButton;
 
+    //--- Dependency Injection ---//
+    [SerializeField] private TitleFlowController _flowController;
+
     //--- Fields ---//
     private TitlePresenter _titlePresenter;
     private UnityAction _onPlayButtonClicked;
@@ -50,14 +53,19 @@ public class TitleView : MonoBehaviour
             CustomDebug.LogError("Exit Button is not assigned in the inspector.");
             return true;
         }
+        if (_flowController == null)
+        {
+            CustomDebug.LogError("TitleFlowController is not assigned in the inspector.");
+            return true;
+        }
         return false;
     }
 
     private void InitializeView()
     {
-        _titlePresenter = new TitlePresenter(this);
-        _onExitButtonClicked = _titlePresenter.OnExitButtonClicked;
-        _exitButton.onClick.AddListener(_onExitButtonClicked);
+        _titlePresenter = new TitlePresenter(this, _flowController);
+        _exitButton.onClick.AddListener(_titlePresenter.OnExitButtonClicked);
+        _playButton.onClick.AddListener(_titlePresenter.OnPlayButtonClicked);
     }
 
     private void DisposeButtonHandlers()

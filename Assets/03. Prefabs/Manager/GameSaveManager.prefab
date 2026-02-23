@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &6222324454460586025
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3079225010923545848}
+  - component: {fileID: 4097495897553737165}
+  m_Layer: 0
+  m_Name: GameSaveManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3079225010923545848
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6222324454460586025}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 976.76917, y: 469.58932, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4097495897553737165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6222324454460586025}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 49bee350819a0b646846a9ff7bb34574, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _stageDataBase:
+  - {fileID: 11400000, guid: ff255d3fced26564d94e64756e37ef7e, type: 2}
+  - {fileID: 11400000, guid: ba502f4498408764690f991310aebc21, type: 2}
+  - {fileID: 11400000, guid: f5a490fa4f7cac2468f360f4210c6d4b, type: 2}
+  - {fileID: 11400000, guid: 651f4f3cbee461943a21eb4a94306ac6, type: 2}
+  - {fileID: 11400000, guid: 84c745571f81dda469f655bf9dec3bb4, type: 2}
+  - {fileID: 11400000, guid: 143088466dc7e3a4da541d13c1597952, type: 2}
+  - {fileID: 11400000, guid: 1e3e7a284980cc04d8696f3960dc5482, type: 2}
+  - {fileID: 11400000, guid: 4f10c63bb069a7141ade0177e532c45e, type: 2}
+  _saveData: []
+  _currentStage: 0
