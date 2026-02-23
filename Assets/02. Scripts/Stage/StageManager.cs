@@ -1,6 +1,7 @@
 ﻿using GameManager.Singleton;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public enum  StageObjectType
@@ -30,7 +31,7 @@ public class StageManager : MonoBehaviour
     [SerializeField] private int _requiredGemsToClear = 1;
 
     [Header("Stage Objects")]
-    [SerializeField] private StageObject[] _stageObjects;
+    [SerializeField] private List<StageObject> _stageObjects;
 
     //--- Fields ---//
     private int _collectedGems = 0;
@@ -50,7 +51,8 @@ public class StageManager : MonoBehaviour
     //--- Properties ---// 
     public float StageTimer => _stageTimer;
     public bool IsTimerRunning => _isTimerRunning;
-    public StageObject[] StageObjects => _stageObjects;
+    public List<StageObject> StageObjects => _stageObjects;
+    public PlayerController PlayerController => _playerController;
 
     //--- Unity Methods ---//
     private void Awake()
@@ -102,6 +104,7 @@ public class StageManager : MonoBehaviour
         _stageTimer = 0f;
         ResumeGameSmoothly();
         EnablePlayerControl();
+        CheckStageObject();
     }
 
     /// <summary>
@@ -183,31 +186,18 @@ public class StageManager : MonoBehaviour
     {
         foreach (var obj in _stageObjects)
         {
-            if (obj.isCleared)
-            {
-                continue; //이미 클리어된 도전과제는 건너뜀
-            }
             switch (obj.stageObjectType)
             {
                 case StageObjectType.NoDamageClear:
-                    if (!_isPlayerDamageTaken)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = !_isPlayerDamageTaken;
                     break;
 
                 case StageObjectType.NoFallClear:
-                    if (!_isPlayerFallenDown)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = !_isPlayerFallenDown;
                     break;
 
                 case StageObjectType.TimeLimitClear:
-                    if (_stageTimer <= obj.value)
-                    {
-                        obj.isCleared = true;
-                    }
+                    obj.isCleared = (_stageTimer <= obj.value);
                     break;
 
                 case StageObjectType.RemainHealthClear:
@@ -215,12 +205,20 @@ public class StageManager : MonoBehaviour
                     {
                         obj.isCleared = true;
                     }
+                    else
+                    {
+                        obj.isCleared = false;
+                    }
                     break;
 
                 case StageObjectType.CollectGemsClear:
                     if(_collectedGems >= obj.value)
                     {
                         obj.isCleared = true;
+                    }
+                    else
+                    {
+                        obj.isCleared = false;
                     }
                     break;
             }

@@ -418,7 +418,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cameraAngleOffset: -75
   _fallThresholdY: -10
-  _respawnDelay: 2
+  _respawnDelay: 1.5
   _invincibleTime: 2
   _stunTime: 0.39
 --- !u!114 &1355756777541619086

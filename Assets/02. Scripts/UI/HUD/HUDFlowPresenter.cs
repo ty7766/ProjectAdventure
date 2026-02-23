@@ -1,5 +1,4 @@
-﻿using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
@@ -29,18 +28,17 @@ public class HUDFlowPresenter : MonoBehaviour
     [SerializeField]
     private string _stageGoString = "GO!";
 
-    private Dictionary<StageObjectType, string> _missionTextDict;
+    public static Dictionary<StageObjectType, string> MissionTextDict = new Dictionary<StageObjectType, string>();
     
 
 
     private void Awake()
     {
-        _missionTextDict = new Dictionary<StageObjectType, string>();
         foreach(var data in _missionDataList)
         {
-            if (!_missionTextDict.ContainsKey(data.Type))
+            if (!MissionTextDict.ContainsKey(data.Type))
             {
-                _missionTextDict.Add(data.Type, data.FormatText);
+                MissionTextDict.Add(data.Type, data.FormatText);
             }
         }
 
@@ -67,6 +65,7 @@ public class HUDFlowPresenter : MonoBehaviour
         _hudView.HideHUD();
         _hudView.HidePauseMenu();
         _hudView.HideStageClearPanel();
+        _hudView.IsPauseMenuActive = false;
 
         UpdateStageObjectText();
         _hudView.ShowStageStartPanel();
@@ -147,7 +146,7 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private string GetObjectDescription(StageObject obj)
     {
-        if (!_missionTextDict.TryGetValue(obj.stageObjectType, out string format))
+        if (!MissionTextDict.TryGetValue(obj.stageObjectType, out string format))
         {
             CustomDebug.LogWarning($"알 수 없는 도전과제! : {obj.stageObjectType}");
             return "알 수 없는 도전과제";
