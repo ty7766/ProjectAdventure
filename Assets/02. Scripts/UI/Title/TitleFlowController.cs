@@ -21,45 +21,48 @@ public class TitleFlowController : MonoBehaviour
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("Title");
-        _fadeCoroutine = StartCoroutine(Crossfade(_stageSelectCanvas, _titleCanvas));
-
+        _fadeCoroutine = StartCoroutine(SequentialFade(_stageSelectCanvas, _titleCanvas));
     }
 
     public void GoToStageSelect()
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("StageSelect");
-        _fadeCoroutine = StartCoroutine(Crossfade(_titleCanvas, _stageSelectCanvas));
+        _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _stageSelectCanvas));
     }
 
-    private IEnumerator Crossfade(CanvasGroup fadeOut, CanvasGroup fadeIn)
+    private IEnumerator SequentialFade(CanvasGroup fadeOut, CanvasGroup fadeIn)
     {
-        // 페이드 시작할 때 터치 컷
+        // 터치 컷
         fadeOut.interactable = false;
         fadeOut.blocksRaycasts = false;
-
-        // 켜질 캔버스도 완전히 켜지기 전까진 터치 막아두기
-        fadeIn.interactable = false;
-        fadeIn.blocksRaycasts = false;
-
-        float timer = 0f;
-        while (timer < _fadeDuration)
-        {
-            timer += Time.deltaTime;
-            float progress = timer / _fadeDuration;
-
-            fadeOut.alpha = Mathf.Lerp(1f, 0f, progress);
-            fadeIn.alpha = Mathf.Lerp(0f, 1f, progress);
-
-            yield return null;
-        }
-
-        // 오차 없이 확실하게 마무리
-        fadeOut.alpha = 0f;
-        fadeIn.alpha = 1f;
-
         // 다 켜진 캔버스만 터치 온
         fadeIn.interactable = true;
         fadeIn.blocksRaycasts = true;
+
+        // 전체 시간을 반으로 나눠서 페이드아웃, 페이드인에 각각 사용!
+        float halfDuration = _fadeDuration / 2f;
+        float timer = 0f;
+
+        // 1. 먼저 깔끔하게 페이드아웃 싹싹
+        while (timer < halfDuration)
+        {
+            timer += Time.deltaTime;
+            fadeOut.alpha = Mathf.Lerp(1f, 0f, timer / halfDuration);
+            yield return null;
+        }
+        fadeOut.alpha = 0f;
+
+        // 2. 끝나면 바로 페이드인 시작
+        timer = 0f;
+        while (timer < halfDuration)
+        {
+            timer += Time.deltaTime;
+            fadeIn.alpha = Mathf.Lerp(0f, 1f, timer / halfDuration);
+            yield return null;
+        }
+        fadeIn.alpha = 1f;
+
+
     }
 }

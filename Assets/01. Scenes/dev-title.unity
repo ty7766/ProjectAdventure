@@ -866,7 +866,7 @@ MonoBehaviour:
   _titleCameraController: {fileID: 1943680297}
   _titleCanvas: {fileID: 29121225408815738}
   _stageSelectCanvas: {fileID: 1841687174}
-  _fadeDuration: 0.8
+  _fadeDuration: 1.25
 --- !u!1001 &1779978124
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1502,7 +1502,7 @@ MonoBehaviour:
     focusDistance: 9.76
   postProcessVolume: {fileID: 1943680296}
   currentFocusDistance: 4.1
-  transitionDuration: 1
+  transitionDuration: 1.25
 --- !u!1 &2011010690
 GameObject:
   m_ObjectHideFlags: 0
