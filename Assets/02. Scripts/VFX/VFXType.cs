@@ -9,4 +9,5 @@ public enum VFXType
     SnowBallHit,
     RuneChange,
     FallingRockHit,
+    CollectGem,
 }
