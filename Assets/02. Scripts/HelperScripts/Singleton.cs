@@ -14,7 +14,7 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
                 _instance = FindAnyObjectByType<T>();
                 if (_instance == null)
                 {
-                    CustomDebug.LogError($"씬에 {typeof(T).Name} 이 없습니다. 하이어라키 창에 올려주세요.");
+                    Debug.LogError($"씬에 {typeof(T).Name} 이 없습니다. 하이어라키 창에 올려주세요.");
                     _isMissing = true;
                 }
             }
