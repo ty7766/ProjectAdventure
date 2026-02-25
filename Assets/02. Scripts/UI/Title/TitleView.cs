@@ -8,6 +8,9 @@ public class TitleView : MonoBehaviour
     [SerializeField] private UnityEngine.UI.Button _optionsButton;
     [SerializeField] private UnityEngine.UI.Button _exitButton;
 
+    //--- Dependency Injection ---//
+    [SerializeField] private TitleFlowController _flowController;
+
     //--- Fields ---//
     private TitlePresenter _titlePresenter;
     private UnityAction _onPlayButtonClicked;
@@ -18,7 +21,7 @@ public class TitleView : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
-        if(IsCheckFailed())
+        if (IsCheckFailed())
         {
             this.enabled = false;
             return;
@@ -33,46 +36,53 @@ public class TitleView : MonoBehaviour
     }
 
     //--- Private Methods ---// 
-    bool IsCheckFailed()
+    private bool IsCheckFailed()
     {
-        if(_playButton == null)
+        if (_playButton == null)
         {
             CustomDebug.LogError("Play Button is not assigned in the inspector.");
             return true;
         }
-        if(_optionsButton == null)
+        if (_optionsButton == null)
         {
             CustomDebug.LogError("Options Button is not assigned in the inspector.");
             return true;
         }
-        if(_exitButton == null)
+        if (_exitButton == null)
         {
             CustomDebug.LogError("Exit Button is not assigned in the inspector.");
+            return true;
+        }
+        if (_flowController == null)
+        {
+            CustomDebug.LogError("TitleFlowController is not assigned in the inspector.");
             return true;
         }
         return false;
     }
 
-    void InitializeView()
+    private void InitializeView()
     {
-        _titlePresenter = new TitlePresenter(this);
-        _onExitButtonClicked = _titlePresenter.OnExitButtonClicked;
-        _exitButton.onClick.AddListener(_onExitButtonClicked);
+        _titlePresenter = new TitlePresenter(this, _flowController);
+        _exitButton.onClick.AddListener(_titlePresenter.OnExitButtonClicked);
+        _playButton.onClick.AddListener(_titlePresenter.OnPlayButtonClicked);
     }
 
     private void DisposeButtonHandlers()
     {
-        if (_playButton != null && _onPlayButtonClicked != null)
+        if (_playButton)
         {
-            _playButton.onClick.RemoveListener(_onPlayButtonClicked);
+            _playButton.onClick.RemoveAllListeners();
         }
-        if (_optionsButton != null && _onOptionsButtonClicked != null)
+
+        if (_optionsButton)
         {
-            _optionsButton.onClick.RemoveListener(_onOptionsButtonClicked);
+            _optionsButton.onClick.RemoveAllListeners();
         }
-        if (_exitButton != null && _onExitButtonClicked != null)
+
+        if (_exitButton)
         {
-            _exitButton.onClick.RemoveListener(_onExitButtonClicked);
+            _exitButton.onClick.RemoveAllListeners();
         }
     }
 }
