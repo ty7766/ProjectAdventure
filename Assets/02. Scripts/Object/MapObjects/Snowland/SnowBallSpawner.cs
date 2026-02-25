@@ -43,6 +43,11 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 
     private void SpawnSnowBallRandomArea()
     {
+        if(_spawnArea == null)
+        {
+            return;
+        }
+
         Vector3 randomPos = CalculateRandomSpawnPoint();
         GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
 
