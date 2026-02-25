@@ -46,11 +46,6 @@ public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
 
     private void SpawnRing()
     {
-        if (ObjectPoolManager.Instance == null)
-        {
-            return;
-        }
-
         // 위치와 회전값은 스포너 기준
         GameObject ringObject = ObjectPoolManager.Instance.SpawnObject(_objectType, transform.position, transform.rotation);
 

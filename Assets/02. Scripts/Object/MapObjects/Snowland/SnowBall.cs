@@ -40,15 +40,7 @@ public class SnowBall : MonoBehaviour
     public void ReturnToPool()
     {
         StopAllCoroutines();
-
-        if (ObjectPoolManager.Instance != null)
-        {
-            ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
     }
 
     private void InitializeSnowBallRigidBody()

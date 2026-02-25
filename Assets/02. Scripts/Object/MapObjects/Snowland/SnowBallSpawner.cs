@@ -43,22 +43,19 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 
     private void SpawnSnowBallRandomArea()
     {
-        if (ObjectPoolManager.Instance == null || _spawnArea == null)
+        Vector3 randomPos = CalculateRandomSpawnPoint();
+        GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
+
+        if (snowBall == null)
         {
             return;
         }
 
-        Vector3 randomPos = CalculateRandomSpawnPoint();
-        GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
+        ApplyForceForSnowBall(snowBall);
 
-        if (snowBall != null)
+        if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
         {
-            ApplyForceForSnowBall(snowBall);
-
-            if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
-            {
-                RegisterObject(ballScript);
-            }
+            RegisterObject(ballScript);
         }
     }
 

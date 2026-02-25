@@ -67,7 +67,7 @@ public class Sphinx : SpawnedObjectManager<Transform>
     protected override void ReturnObjectToPool(Transform rock)
     {
         UnregisterObject(rock);
-        if (ObjectPoolManager.Instance != null && rock != null)
+        if (rock != null)
         {
             ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
         }
@@ -129,14 +129,11 @@ public class Sphinx : SpawnedObjectManager<Transform>
 
         Vector3 spawnPosition = targetPosition + Vector3.up * _dropHeight;
 
-        if (ObjectPoolManager.Instance != null)
-        {
-            GameObject rockObject = ObjectPoolManager.Instance.SpawnObject(_objectType, spawnPosition, Random.rotation);
+        GameObject rockObject = ObjectPoolManager.Instance.SpawnObject(_objectType, spawnPosition, Random.rotation);
 
-            if (rockObject != null)
-            {
-                RegisterObject(rockObject.transform);
-            }
+        if (rockObject != null)
+        {
+            RegisterObject(rockObject.transform);
         }
     }
     private Vector3 GetRandomPosition()
