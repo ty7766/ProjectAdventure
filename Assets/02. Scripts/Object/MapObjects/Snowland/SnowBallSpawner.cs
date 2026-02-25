@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 {
@@ -22,6 +23,7 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 
     private void Awake()
     {
+        Assert.IsNotNull(_spawnArea, $"[{gameObject.name}] 스포너에 _spawnArea가 할당되지 않았습니다! 인스펙터를 확인하세요.");
         _snowBallspawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
@@ -43,11 +45,6 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
 
     private void SpawnSnowBallRandomArea()
     {
-        if(_spawnArea == null)
-        {
-            return;
-        }
-
         Vector3 randomPos = CalculateRandomSpawnPoint();
         GameObject snowBall = ObjectPoolManager.Instance.SpawnObject(_snowBallType, randomPos, Quaternion.identity);
 
