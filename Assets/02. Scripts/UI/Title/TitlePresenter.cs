@@ -14,6 +14,11 @@ public class TitlePresenter
 
     public void OnPlayButtonClicked()
     {
+        if(!_flowController)
+        {
+            CustomDebug.LogWarning("[TitlePresenter.cs] flowController was null!!");
+            return;
+        }
         _flowController.GoToStageSelect();
     }
 

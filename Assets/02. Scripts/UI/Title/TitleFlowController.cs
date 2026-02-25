@@ -45,6 +45,7 @@ public class TitleFlowController : MonoBehaviour
         _titleCanvas.blocksRaycasts = false;
         _titleCanvas.interactable = false;
         _titleCanvas.alpha = 0.0f;
+        _stageSelectCanvas.alpha = 0.0f;
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
@@ -53,9 +54,6 @@ public class TitleFlowController : MonoBehaviour
         // 터치 컷
         fadeOut.interactable = false;
         fadeOut.blocksRaycasts = false;
-        // 다 켜진 캔버스만 터치 온
-        fadeIn.interactable = true;
-        fadeIn.blocksRaycasts = true;
 
         // 전체 시간을 반으로 나눠서 페이드아웃, 페이드인에 각각 사용!
         float halfDuration = _fadeDuration / 2f;
@@ -79,6 +77,11 @@ public class TitleFlowController : MonoBehaviour
             yield return null;
         }
         fadeIn.alpha = 1f;
+
+        yield return new WaitForSecondsRealtime(0.5f); // 잠깐 멈춤
+        // 다 켜진 캔버스만 터치 온
+        fadeIn.interactable = true;
+        fadeIn.blocksRaycasts = true;
     }
 
     private IEnumerator FadeIn(CanvasGroup target, float duration)
