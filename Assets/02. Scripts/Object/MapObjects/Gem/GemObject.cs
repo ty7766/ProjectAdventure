@@ -34,6 +34,7 @@ public class GemObject : SpecialObject
         {
             _stageManager.CollectGem(_gemID);
             gameObject.SetActive(false);
+            VFXManager.Instance.PlayVFX(VFXType.CollectGem, transform.position, Quaternion.identity);
         }
         else
         {
