@@ -38,9 +38,9 @@ public class StageSelectPresenter
     {
         int stageNumber = (_pageIndex * STAGES_PER_PAGE) + slotIndex + 1;
 
-        if (stageNumber <= GameSaveManager.Instance?.GetTotalStageNumber())
+        if (stageNumber <= GameSaveManager.Instance.GetTotalStageNumber())
         {
-            GameSaveManager.Instance?.LoadStage(stageNumber);
+            GameSaveManager.Instance.LoadStage(stageNumber);
         }
     }
 
