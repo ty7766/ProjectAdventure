@@ -51,10 +51,7 @@ public class LavaEffectSpawner : MonoBehaviour
     private void SpawnLavaEffect()
     {
         Vector3 effectSpawnPosition = GetLavaEffectPosition();
-        if (VFXManager.Instance != null)
-        {
-            VFXManager.Instance.PlayVFX(_lavaVFXType, effectSpawnPosition, Quaternion.identity);
-        }
+        VFXManager.Instance.PlayVFX(_lavaVFXType, effectSpawnPosition, Quaternion.identity);
     }
 
     private Vector3 GetLavaEffectPosition()

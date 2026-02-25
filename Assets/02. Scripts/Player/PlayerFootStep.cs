@@ -31,11 +31,7 @@ public class PlayerFootstep : MonoBehaviour
         {
             if (System.Enum.TryParse(hit.collider.tag, out VFXType groundType))
             {
-                //눈 이펙트 발생 실행
-                if(VFXManager.Instance != null)
-                {
-                    VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
-                }
+                VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
             }
         }
     }

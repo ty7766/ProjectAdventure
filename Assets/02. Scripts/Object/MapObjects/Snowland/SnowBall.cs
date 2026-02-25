@@ -79,11 +79,8 @@ public class SnowBall : MonoBehaviour
         }
 
         //VFX 재생
-        if(VFXManager.Instance != null)
-        {
-            ContactPoint contact = collision.GetContact(0);
-            VFXManager.Instance.PlayVFX(_destroyVFXType, contact.point, Quaternion.LookRotation(contact.normal));
-        }
+        ContactPoint contact = collision.GetContact(0);
+        VFXManager.Instance.PlayVFX(_destroyVFXType, contact.point, Quaternion.LookRotation(contact.normal));
 
         ReturnToPool();
     }
