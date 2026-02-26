@@ -82,12 +82,16 @@ public class HUDFlowPresenter : MonoBehaviour
 
         for (int i = 3; i >= 1; i--)
         {
+            SoundManager.Instance.PlaySFX(SoundType.SFX_GameStartCountdown);
+
             _hudView.ApplyStageCountDownAnimation(128f, 0.5f);
             _hudView.UpdateStageCountDownContent(i.ToString());
             yield return new WaitForSecondsRealtime(0.5f);
             _hudView.ApplyStageCountDownAnimation(100f, 0.5f);
             yield return new WaitForSecondsRealtime(0.5f);
         }
+
+        SoundManager.Instance.PlaySFX(SoundType.SFX_GameStart);
 
         _hudView.UpdateStageCountDownContent(_stageGoString);
         _hudView.ApplyStageCountDownAnimation(120f, 0.2f);
