@@ -134,6 +134,10 @@ public class StageManager : MonoBehaviour
     public void ResumeGameImmediately()
     {
         Time.timeScale = 1f;
+        if(_initialFixedDeltaTime > 0)
+        {
+            Time.fixedDeltaTime = _initialFixedDeltaTime;
+        }
     }
 
     /// <summary>

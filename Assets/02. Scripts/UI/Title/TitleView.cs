@@ -66,6 +66,7 @@ public class TitleView : MonoBehaviour
         _titlePresenter = new TitlePresenter(this, _flowController);
         _exitButton.onClick.AddListener(_titlePresenter.OnExitButtonClicked);
         _playButton.onClick.AddListener(_titlePresenter.OnPlayButtonClicked);
+        _optionsButton.onClick.AddListener(_titlePresenter.OnOptionsButtonClicked);
     }
 
     private void DisposeButtonHandlers()

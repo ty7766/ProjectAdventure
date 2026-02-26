@@ -41,21 +41,18 @@ public class TitleFlowController : MonoBehaviour
     private void InitializeTitleView()
     {
         _stageSelectCanvas.blocksRaycasts = false;
-        _stageSelectCanvas.interactable = false;
+        _stageSelectCanvas.interactable = true;
         _titleCanvas.blocksRaycasts = false;
-        _titleCanvas.interactable = false;
+        _titleCanvas.interactable = true;
         _titleCanvas.alpha = 0.0f;
+        _stageSelectCanvas.alpha = 0.0f;
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
     private IEnumerator SequentialFade(CanvasGroup fadeOut, CanvasGroup fadeIn)
     {
         // 터치 컷
-        fadeOut.interactable = false;
         fadeOut.blocksRaycasts = false;
-        // 다 켜진 캔버스만 터치 온
-        fadeIn.interactable = true;
-        fadeIn.blocksRaycasts = true;
 
         // 전체 시간을 반으로 나눠서 페이드아웃, 페이드인에 각각 사용!
         float halfDuration = _fadeDuration / 2f;
@@ -79,6 +76,7 @@ public class TitleFlowController : MonoBehaviour
             yield return null;
         }
         fadeIn.alpha = 1f;
+        fadeIn.blocksRaycasts = true;
     }
 
     private IEnumerator FadeIn(CanvasGroup target, float duration)
