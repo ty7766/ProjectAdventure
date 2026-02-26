@@ -76,9 +76,6 @@ public class TitleFlowController : MonoBehaviour
             yield return null;
         }
         fadeIn.alpha = 1f;
-
-        yield return new WaitForSecondsRealtime(0.5f); // 잠깐 멈춤
-        // 다 켜진 캔버스만 터치 온
         fadeIn.blocksRaycasts = true;
     }
 
