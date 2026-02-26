@@ -30,6 +30,11 @@ public class TitleView : MonoBehaviour
         InitializeView();
     }
 
+    private void Start()
+    {
+        SoundManager.Instance.PlayBGM(SoundType.BGM_TitleSceneMusic);
+    }
+
     private void OnDestroy()
     {
         DisposeButtonHandlers();
