@@ -36,11 +36,6 @@ public class GroundWarning : MonoBehaviour
     /// <param name="duration">지속 시간</param>
     public static void CreateGroundWarningEffects(VFXType vfxType, Vector3 position, float duration)
     {
-        if (VFXManager.Instance == null)
-        {
-            return;
-        }
-
         GameObject vfxObject = VFXManager.Instance.PlayVFX(vfxType, position, Quaternion.identity);
 
         if (vfxObject != null && vfxObject.TryGetComponent(out GroundWarning warning))
@@ -88,9 +83,6 @@ public class GroundWarning : MonoBehaviour
             yield return null;
         }
 
-        if (VFXManager.Instance != null)
-        {
-            VFXManager.Instance.ReturnToPool(_vfxType, gameObject);
-        }
+        VFXManager.Instance.ReturnToPool(_vfxType, gameObject);
     }
 }

@@ -75,15 +75,10 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleGoToNextStage()
     {
-        if(GameSaveManager.Instance == null)
-        {
-            return;
-        }
-
         int nextStageNumber = GameSaveManager.Instance.CurrentStageNumber + 1;
-        if (GameSaveManager.Instance?.CheckStageUnlockRequirement(nextStageNumber) == true)
+        if (GameSaveManager.Instance.CheckStageUnlockRequirement(nextStageNumber) == true)
         {
-            GameSaveManager.Instance?.LoadStage(nextStageNumber);
+            GameSaveManager.Instance.LoadStage(nextStageNumber);
         }
     }
 }

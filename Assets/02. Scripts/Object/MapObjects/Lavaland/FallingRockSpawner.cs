@@ -92,12 +92,9 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
 
     private void PlayLaunchEffect()
     {
-        if (VFXManager.Instance != null)
-        {
-            Vector3 effectPos = _firePoint.position;
-            effectPos.y -= _effectOffsetY; // 오프셋 적용
-            VFXManager.Instance.PlayVFX(VFXType.VolcanoFire, effectPos, _firePoint.rotation);
-        }
+        Vector3 effectPos = _firePoint.position;
+        effectPos.y -= _effectOffsetY; // 오프셋 적용
+        VFXManager.Instance.PlayVFX(VFXType.VolcanoFire, effectPos, _firePoint.rotation);
     }
 
 #if UNITY_EDITOR
