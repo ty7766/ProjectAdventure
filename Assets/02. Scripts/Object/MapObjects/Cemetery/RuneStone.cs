@@ -109,7 +109,7 @@ public class RuneStone : MonoBehaviour
 
             //룬 생성 및 이벤트 발생
             SpawnRuneObject(currentRune);
-            PlayRuneVFX();
+            PlayRuneEffect();
             OnRuneChanged?.Invoke(currentRune);
 
             //대기
@@ -144,9 +144,9 @@ public class RuneStone : MonoBehaviour
         }
     }
 
-    private void PlayRuneVFX()
+    private void PlayRuneEffect()
     {
-
         VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.identity);
+        SoundManager.Instance.PlaySFX_3D(SoundType.SFX_Rune, transform.position, 2f, 10f);
     }
 }

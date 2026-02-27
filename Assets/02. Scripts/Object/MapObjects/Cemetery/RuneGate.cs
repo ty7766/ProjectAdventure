@@ -73,6 +73,7 @@ public class RuneGate : MonoBehaviour
         _isOpen = true;
         if (_doorRoutine != null) StopCoroutine(_doorRoutine);
         _doorRoutine = StartCoroutine(MoveDoorRoutine(_leftOpenRot, _rightOpenRot));
+        SoundManager.Instance.PlaySFX_3D(SoundType.SFX_RuneDoor, transform.position, 20f, 60f);
     }
 
     private void CloseDoor()

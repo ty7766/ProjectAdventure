@@ -83,16 +83,25 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     /// <param name="soundType">재생할 사운드 enum 타입</param>
     /// <param name="position">사운드를 실행할 위치</param>
-    public void PlaySFX_3D(SoundType soundType, Vector3 position)
+    public void PlaySFX_3D(SoundType soundType, Vector3 position, float minDistance = 15f, float maxDistance = 50f)
     {
-        if (soundType == SoundType.None)
-        {
-            return;
-        }
+        if (soundType == SoundType.None) return;
 
         if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
-            AudioSource.PlayClipAtPoint(audioClip, position);
+            GameObject tempAudioHost = new GameObject("Temp3DAudio_" + soundType.ToString());
+            tempAudioHost.transform.position = position;
+
+            AudioSource audioSource = tempAudioHost.AddComponent<AudioSource>();
+            audioSource.clip = audioClip;
+            audioSource.spatialBlend = 1.0f;
+
+            audioSource.minDistance = minDistance;
+            audioSource.maxDistance = maxDistance;
+            audioSource.rolloffMode = AudioRolloffMode.Linear;
+
+            audioSource.Play();
+            Destroy(tempAudioHost, audioClip.length);
         }
         else
         {
