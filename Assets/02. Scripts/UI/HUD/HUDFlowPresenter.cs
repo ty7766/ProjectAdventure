@@ -92,6 +92,7 @@ public class HUDFlowPresenter : MonoBehaviour
         }
 
         SoundManager.Instance.PlaySFX(SoundType.SFX_GameStart);
+        SoundManager.Instance.PlayBGM(SoundType.BGM_BackGroundMusic);
 
         _hudView.UpdateStageCountDownContent(_stageGoString);
         _hudView.ApplyStageCountDownAnimation(120f, 0.2f);

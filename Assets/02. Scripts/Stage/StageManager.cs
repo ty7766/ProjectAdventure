@@ -79,8 +79,6 @@ public class StageManager : MonoBehaviour
         _initialFixedDeltaTime = Time.fixedDeltaTime;
         PauseGameSmoothly();
         DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
-
-        SoundManager.Instance.PlayBGM(SoundType.BGM_BackGroundMusic);
     }
 
     private void Update()
