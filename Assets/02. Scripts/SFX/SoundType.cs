@@ -25,12 +25,11 @@ public enum SoundType
     SFX_PlayerWalk = 403,
 
     //Map SFX
-    SFX_VolcanoRock = 500,
+    SFX_VolcanoExplosion = 500,
     SFX_SphinxEye = 501,
     SFX_SphinxFallingRock = 502,
     SFX_Teleport = 503,
     SFX_Rune = 504,
     SFX_RuneDoor = 505,
-    SFX_SnowBall = 506,
 
 }
