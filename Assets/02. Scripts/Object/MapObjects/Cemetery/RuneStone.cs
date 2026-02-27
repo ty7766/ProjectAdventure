@@ -147,6 +147,6 @@ public class RuneStone : MonoBehaviour
     private void PlayRuneEffect()
     {
         VFXManager.Instance.PlayVFX(_runeChangeVFX, transform.position + _runeChangeVFXPosition, Quaternion.identity);
-        SoundManager.Instance.PlaySFX_3D(SoundType.SFX_Rune, transform.position, 2f, 10f);
+        SoundManager.Instance.PlaySFX_3D(SoundType.SFX_Rune, transform.position, 1f, 10f);
     }
 }
