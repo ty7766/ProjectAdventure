@@ -417,15 +417,15 @@ public class HUDView : MonoBehaviour
 
     private void AddButtonListeners()
     {
-        _resumeButton?.onClick.AddListener(() => OnResumeButtonClicked?.Invoke());
-        _pauseButton?.onClick.AddListener(() => OnPauseButtonClicked?.Invoke());
-        _returnToMainMenuButton?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
-        _quitGameButton?.onClick.AddListener(() => OnQuitGameButtonClicked?.Invoke());
-        _retryButton?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
-        _goToNextStageButton?.onClick.AddListener(() => OnGoToNextStageButtonClicked?.Invoke());
-        _retryButtonPauseMenu?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
-        _retryButtonStageFail?.onClick.AddListener(() => OnRetryButtonClicked?.Invoke());
-        _returnToMainMenuButtonStageFail?.onClick.AddListener(() => OnReturnToMainMenuButtonClicked?.Invoke());
+        _resumeButton?.onClick.AddListener(() => { PlayClickSound(); OnResumeButtonClicked?.Invoke(); });
+        _pauseButton?.onClick.AddListener(() => { PlayClickSound(); OnPauseButtonClicked?.Invoke(); });
+        _returnToMainMenuButton?.onClick.AddListener(() => { PlayClickSound(); OnReturnToMainMenuButtonClicked?.Invoke(); });
+        _quitGameButton?.onClick.AddListener(() => { PlayClickSound(); OnQuitGameButtonClicked?.Invoke(); });
+        _retryButton?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
+        _goToNextStageButton?.onClick.AddListener(() => { PlayClickSound(); OnGoToNextStageButtonClicked?.Invoke(); });
+        _retryButtonPauseMenu?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
+        _retryButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
+        _returnToMainMenuButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnReturnToMainMenuButtonClicked?.Invoke(); });
     }
 
     private void RemoveAllButtonListeners()
@@ -489,5 +489,10 @@ public class HUDView : MonoBehaviour
         {
             _gemImages[i].color = _emptyGemColor;
         }
+    }
+
+    private void PlayClickSound()
+    {
+        SoundManager.Instance.PlaySFX(SoundType.SFX_ButtonClick);
     }
 }
