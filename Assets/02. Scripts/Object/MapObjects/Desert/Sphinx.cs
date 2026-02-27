@@ -54,6 +54,8 @@ public class Sphinx : SpawnedObjectManager<Transform>
         {
             yield return _waitPatternInterval;
 
+            SoundManager.Instance.PlaySFX_3D(SoundType.SFX_SphinxEye, transform.position);
+
             // 눈 이펙트 활성
             SetEyeEffectActive(true);
             yield return _waitEyeGlow;
