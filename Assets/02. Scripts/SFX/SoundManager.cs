@@ -39,7 +39,13 @@ public class SoundManager : Singleton<SoundManager>
     /// <param name="soundType">재생할 사운드 enum 타입</param>
     public void PlayBGM(SoundType soundType)
     {
-        if(_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
+        if (soundType == SoundType.None)
+        {
+            _bgmSource.Stop();
+            return;
+        }
+
+        if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
             if(_bgmSource.clip == audioClip && _bgmSource.isPlaying == true)
             {

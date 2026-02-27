@@ -10,7 +10,6 @@ public enum SoundType
     //UI SFX
     SFX_ButtonClick = 200,
     SFX_ClearUI = 201,
-    SFX_GameOverUI = 202,
     SFX_GameStartCountdown = 203,
     SFX_GameStart = 204,
 

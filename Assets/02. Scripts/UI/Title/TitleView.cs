@@ -69,9 +69,9 @@ public class TitleView : MonoBehaviour
     private void InitializeView()
     {
         _titlePresenter = new TitlePresenter(this, _flowController);
-        _exitButton.onClick.AddListener(_titlePresenter.OnExitButtonClicked);
-        _playButton.onClick.AddListener(_titlePresenter.OnPlayButtonClicked);
-        _optionsButton.onClick.AddListener(_titlePresenter.OnOptionsButtonClicked);
+        _exitButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnExitButtonClicked(); });
+        _playButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnPlayButtonClicked(); });
+        _optionsButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnOptionsButtonClicked(); });
     }
 
     private void DisposeButtonHandlers()
@@ -90,5 +90,9 @@ public class TitleView : MonoBehaviour
         {
             _exitButton.onClick.RemoveAllListeners();
         }
+    }
+    private void PlayClickSound()
+    {
+        SoundManager.Instance.PlaySFX(SoundType.SFX_ButtonClick);
     }
 }

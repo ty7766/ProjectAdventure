@@ -61,6 +61,8 @@ public class HUDFlowPresenter : MonoBehaviour
     // --- Start Sequence ---
     private void HandleStageStart()
     {
+        SoundManager.Instance.PlayBGM(SoundType.None);
+
         _hudView.HideStageFailPanel();
         _hudView.HideHUD();
         _hudView.HidePauseMenu();
