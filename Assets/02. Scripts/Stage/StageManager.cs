@@ -80,7 +80,7 @@ public class StageManager : MonoBehaviour
         PauseGameSmoothly();
         DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
 
-        SoundManager.Instance.PlayBGM(SoundType.BackgroundMusic);
+        SoundManager.Instance.PlayBGM(SoundType.BGM_BackGroundMusic);
     }
 
     private void Update()
@@ -211,7 +211,7 @@ public class StageManager : MonoBehaviour
 
         CheckStageObject();
         OnStageCleared?.Invoke();
-        SoundManager.Instance.PlaySFX(SoundType.ClearSound);
+        SoundManager.Instance.PlaySFX(SoundType.SFX_ClearUI);
 
         SaveStageClearData();
     }

@@ -19,9 +19,11 @@ public enum SoundType
     SFX_MapChange = 301,
     SFX_GemCollect = 302,
     SFX_FlagCollect = 303,
+    SFX_MapChangeAlert = 304,
 
     //Player SFX
     SFX_PlayerDamaged = 401,
     SFX_PlayerDead = 402,
+    SFX_PlayerWalk = 403,
 
 }
