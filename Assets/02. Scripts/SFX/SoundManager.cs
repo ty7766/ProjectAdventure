@@ -78,6 +78,28 @@ public class SoundManager : Singleton<SoundManager>
         }
     }
 
+    /// <summary>
+    /// 특정 3D 좌표에서 사운드를 내는 함수
+    /// </summary>
+    /// <param name="soundType">재생할 사운드 enum 타입</param>
+    /// <param name="position">사운드를 실행할 위치</param>
+    public void PlaySFX_3D(SoundType soundType, Vector3 position)
+    {
+        if (soundType == SoundType.None)
+        {
+            return;
+        }
+
+        if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
+        {
+            AudioSource.PlayClipAtPoint(audioClip, position);
+        }
+        else
+        {
+            CustomDebug.LogWarning("해당 사운드 타입이 없습니다.");
+        }
+    }
+
     //구현부
     private void InitializeAudioDictionary()
     {

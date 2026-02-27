@@ -17,12 +17,20 @@ public enum SoundType
     SFX_MapSwitch = 300,
     SFX_MapChange = 301,
     SFX_GemCollect = 302,
-    SFX_FlagCollect = 303,
     SFX_MapChangeAlert = 304,
 
     //Player SFX
     SFX_PlayerDamaged = 401,
     SFX_PlayerDead = 402,
     SFX_PlayerWalk = 403,
+
+    //Map SFX
+    SFX_VolcanoRock = 500,
+    SFX_SphinxEye = 501,
+    SFX_SphinxFallingRock = 502,
+    SFX_Teleport = 503,
+    SFX_Rune = 504,
+    SFX_RuneDoor = 505,
+    SFX_SnowBall = 506,
 
 }
