@@ -41,41 +41,17 @@ public class VFXManager : Singleton<VFXManager>
             return null;
         }
 
-        //대기열 비었으면 추가 생성
-        if (_poolDictionary[type].Count == 0)
-        {
-            if(_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
-            {
-                CreateNewVFXObject(type, vfxPrefab);
-            }
-            else
-            {
-                CustomDebug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다.");
-                return null;
-            }
-        }
+        GameObject vfxObject =  GetOrCreateVFX(type);
 
-        GameObject vfxObject = _poolDictionary[type].Dequeue();
         if (vfxObject == null)
         {
-            return PlayVFX(type, position, rotation);
+            return null;
         }
-        vfxObject.transform.position = position;
-        vfxObject.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
+
+        vfxObject.transform.SetPositionAndRotation(position, rotation == default ? Quaternion.identity : rotation);
         vfxObject.SetActive(true);
 
         return vfxObject;
-    }
-
-    /// <summary>
-    /// 기존 호환성을 위한 오버로딩
-    /// </summary>
-    /// <param name="type">VFX 타입</param>
-    /// <param name="position">VFX가 생성될 위치</param>
-    /// <returns></returns>
-    public GameObject PlayVFX(VFXType type, Vector3 position)
-    {
-        return PlayVFX(type, position, Quaternion.identity);
     }
 
     /// <summary>
@@ -93,6 +69,28 @@ public class VFXManager : Singleton<VFXManager>
 
         vfxObject.SetActive(false);
         _poolDictionary[type].Enqueue(vfxObject);
+    }
+
+    private GameObject GetOrCreateVFX(VFXType type)
+    {
+        if (_poolDictionary[type].Count == 0)
+        {
+            if (_vfxPrefabDictionary.TryGetValue(type, out GameObject prefab))
+            {
+                return CreateNewVFXObject(type, prefab);
+            }
+
+            CustomDebug.LogWarning($"VFXManager: {type}의 Prefab을 찾을 수 없습니다.");
+            return null;
+        }
+
+        GameObject vfxObject = _poolDictionary[type].Dequeue();
+        if(vfxObject == null)
+        {
+            return GetOrCreateVFX(type);
+        }
+
+        return vfxObject;
     }
 
     //설정된 개수만큼 미리 생성
@@ -132,7 +130,7 @@ public class VFXManager : Singleton<VFXManager>
     private void InitializeVFXType(VFXData data)
     {
         //Dictionary Init
-        _poolDictionary.Add(data.Type, new Queue<GameObject>());
+        _poolDictionary[data.Type] = new Queue<GameObject>();
         _vfxPrefabDictionary[data.Type] = data.Prefab;
 
             for (int i = 0; i < data.PoolSize; i++)
