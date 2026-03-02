@@ -7,6 +7,7 @@ public class VFXReturnToPool : MonoBehaviour
 
     private VFXType _myType;
     private ParticleSystem _particleSystem;
+    private Coroutine _returnCoroutine;
 
     private void Awake()
     {
@@ -24,10 +25,23 @@ public class VFXReturnToPool : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(CheckIfAlive());
+        if (_returnCoroutine != null)
+        {
+            StopCoroutine(_returnCoroutine);
+        }
+
+        _returnCoroutine = StartCoroutine(ReturnWhenFinished());
+    }
+    private void OnDisable()
+    {
+        if(_returnCoroutine != null)
+        {
+            StopCoroutine(_returnCoroutine);
+            _returnCoroutine = null;
+        }
     }
 
-    private IEnumerator CheckIfAlive()
+    private IEnumerator ReturnWhenFinished()
     {
         //파티클이 재생중이면 대기
         if (_particleSystem != null)
@@ -40,6 +54,7 @@ public class VFXReturnToPool : MonoBehaviour
         }
 
         //파티클 끝나면 반납
-        VFXManager.Instance.ReturnToPool(_myType, this.gameObject);
+        VFXManager.Instance.ReturnToPool(_myType, gameObject);
+        _returnCoroutine = null;
     }
 }
