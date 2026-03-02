@@ -133,10 +133,11 @@ public class VFXManager : Singleton<VFXManager>
         _poolDictionary[data.Type] = new Queue<GameObject>();
         _vfxPrefabDictionary[data.Type] = data.Prefab;
 
-            for (int i = 0; i < data.PoolSize; i++)
-            {
-                CreateNewVFXObject(data.Type, data.Prefab);
-            }
+        for (int i = 0; i < data.PoolSize; i++)
+        {
+            GameObject newVfx = CreateNewVFXObject(data.Type, data.Prefab);
+            _poolDictionary[data.Type].Enqueue(newVfx);
+        }
     }
 
     private GameObject CreateNewVFXObject(VFXType type, GameObject prefab)
@@ -146,7 +147,6 @@ public class VFXManager : Singleton<VFXManager>
         SetupVFXReturnToScript(vfxObject, type);
 
         vfxObject.SetActive(false);
-        _poolDictionary[type].Enqueue(vfxObject);
 
         return vfxObject;
     }
