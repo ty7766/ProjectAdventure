@@ -3,6 +3,8 @@ using System.Collections;
 
 public class VFXReturnToPool : MonoBehaviour
 {
+    private const float DEFAULT_RETURN_TIME = 2.0f;
+
     private VFXType _myType;
     private ParticleSystem _particleSystem;
 
@@ -34,7 +36,7 @@ public class VFXReturnToPool : MonoBehaviour
         }
         else
         {
-            yield return new WaitForSeconds(2.0f);
+            yield return new WaitForSeconds(DEFAULT_RETURN_TIME);
         }
 
         //파티클 끝나면 반납
