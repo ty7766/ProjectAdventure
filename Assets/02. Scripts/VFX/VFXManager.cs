@@ -143,7 +143,7 @@ public class VFXManager : Singleton<VFXManager>
     {
         GameObject vfxObject = Instantiate(prefab, transform);
 
-        SetupVFXReturnToPool(vfxObject, type);
+        SetupVFXReturnToScript(vfxObject, type);
 
         vfxObject.SetActive(false);
         _poolDictionary[type].Enqueue(vfxObject);
@@ -151,10 +151,9 @@ public class VFXManager : Singleton<VFXManager>
         return vfxObject;
     }
 
-    private void SetupVFXReturnToPool(GameObject vfxObject, VFXType type)
+    private void SetupVFXReturnToScript(GameObject vfxObject, VFXType type)
     {
-        var returnScript = vfxObject.GetComponent<VFXReturnToPool>();
-        if(returnScript == null)
+        if(vfxObject.TryGetComponent<VFXReturnToPool>(out var returnScript) == false)
         {
             returnScript = vfxObject.AddComponent<VFXReturnToPool>();
         }
