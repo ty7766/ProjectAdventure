@@ -46,7 +46,7 @@ public class VFXManager : Singleton<VFXManager>
         {
             if(_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
             {
-                CreateNewObject(type, vfxPrefab);
+                CreateNewVFXObject(type, vfxPrefab);
             }
             else
             {
@@ -100,36 +100,48 @@ public class VFXManager : Singleton<VFXManager>
     {
         _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
         _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
-        FillEveryVFXTypePool();
-    }
 
-
-    private void FillEveryVFXTypePool()
-    {
-        foreach (var vfxType in _vfxList)
+        foreach (var vfxData in _vfxList)
         {
-            if (_poolDictionary.ContainsKey(vfxType.Type))
+            if (!ValidateVFXData(vfxData))
             {
                 continue;
             }
 
-            if (vfxType.Prefab == null)
-            {
-                continue;
-            }
-
-            //Dictionary Init
-            _poolDictionary.Add(vfxType.Type, new Queue<GameObject>());
-            _vfxPrefabDictionary.Add(vfxType.Type, vfxType.Prefab);
-
-            for (int i = 0; i < vfxType.PoolSize; i++)
-            {
-                CreateNewObject(vfxType.Type, vfxType.Prefab);
-            }
+            InitializeVFXType(vfxData);
         }
     }
 
-    private GameObject CreateNewObject(VFXType type, GameObject prefab)
+    private bool ValidateVFXData(VFXData data)
+    {
+        if(_poolDictionary.ContainsKey(data.Type))
+        {
+            CustomDebug.LogWarning($"VFXManager: {data.Type}이 중복 등록되었습니다.");
+            return false;
+        }
+
+        if(data.Prefab == null)
+        {
+            CustomDebug.LogWarning($"VFXManager: {data.Type}의 Prefab이 null입니다.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void InitializeVFXType(VFXData data)
+    {
+        //Dictionary Init
+        _poolDictionary.Add(data.Type, new Queue<GameObject>());
+        _vfxPrefabDictionary[data.Type] = data.Prefab;
+
+            for (int i = 0; i < data.PoolSize; i++)
+            {
+                CreateNewVFXObject(data.Type, data.Prefab);
+            }
+    }
+
+    private GameObject CreateNewVFXObject(VFXType type, GameObject prefab)
     {
         GameObject vfxObject = Instantiate(prefab, transform);
 
