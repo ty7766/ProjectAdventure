@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 public class VFXManager : Singleton<VFXManager>
 {
@@ -16,12 +15,12 @@ public class VFXManager : Singleton<VFXManager>
     [SerializeField]
     private List<VFXData> _vfxList;
 
-    private Dictionary<VFXType, Queue<GameObject>> _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
-    private Dictionary<VFXType, GameObject> _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
+    private Dictionary<VFXType, Queue<GameObject>> _poolDictionary;
+    private Dictionary<VFXType, GameObject> _vfxPrefabDictionary;
 
     protected override void Awake()
     {
-        base.Awake();   //싱글톤 Awake 실행
+        base.Awake();
         if (Instance != this)
         {
             return;
@@ -99,15 +98,11 @@ public class VFXManager : Singleton<VFXManager>
     //설정된 개수만큼 미리 생성
     private void InitializePool()
     {
-        VFXDictionaryClear();       //중복 방지
+        _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
+        _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
         FillEveryVFXTypePool();
     }
 
-    private void VFXDictionaryClear()
-    {
-        _poolDictionary.Clear();
-        _vfxPrefabDictionary.Clear();
-    }
 
     private void FillEveryVFXTypePool()
     {
