@@ -142,6 +142,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerDamaged);
             _animator.SetTrigger("Damage");
             if(applyStun)
             {
@@ -201,6 +202,8 @@ public class PlayerController : MonoBehaviour
 
     private void Dead()
     {
+        SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerDead);
+
         // Handle player death logic
         _isAlive = false;
         _isMovable = false;

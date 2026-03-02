@@ -34,5 +34,7 @@ public class PlayerFootstep : MonoBehaviour
                 VFXManager.Instance.PlayVFX(groundType, hit.point + Vector3.up * 0.02f);
             }
         }
+
+        SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerWalk);
     }
 }

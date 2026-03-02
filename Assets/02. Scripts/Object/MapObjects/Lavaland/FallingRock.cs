@@ -41,6 +41,7 @@ public class FallingRock : SpecialObject
     protected override void ApplyEffect(GameObject player)
     {
         VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+        SoundManager.Instance.PlaySFX_3D(SoundType.SFX_FallingRock, transform.position);
         ApplyPlayerDamage(player);
     }
 
@@ -71,6 +72,7 @@ public class FallingRock : SpecialObject
         if (!other.CompareTag("Player"))
         {
             VFXManager.Instance.PlayVFX(_vfxType, transform.position, Quaternion.identity);
+            SoundManager.Instance.PlaySFX_3D(SoundType.SFX_FallingRock, transform.position);
             Destroy(gameObject);
         }
     }

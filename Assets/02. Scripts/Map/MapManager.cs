@@ -150,6 +150,7 @@ public class MapManager : MonoBehaviour
             _selectedSlotIndex = 0;
         }
 
+        SoundManager.Instance.PlaySFX(SoundType.SFX_MapSwitch);
         UpdateCursorPosition();
     }
 
@@ -183,7 +184,7 @@ public class MapManager : MonoBehaviour
     {
         if (Time.time < _nextAllowedMapChangeTime)
         {
-            CustomDebug.LogWarning("맵 교체 쿨타임 중...");
+            SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
             return;
         }
 
@@ -198,7 +199,7 @@ public class MapManager : MonoBehaviour
         //플레이어가 해당 맵 위에 있을 경우
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
-            CustomDebug.Log("플레이어가 해당 맵 위에 있어 교체할 수 없습니다!");
+            SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
             return;
         }
 
@@ -209,6 +210,7 @@ public class MapManager : MonoBehaviour
         SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
 
         UpdateCursorPosition();
+        SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
 
         _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
     }

@@ -2,6 +2,34 @@
 public enum SoundType
 {
     None = 0,
-    BackgroundMusic,
-    ClearSound,
+    
+    //BackGroundMusic
+    BGM_TitleSceneMusic = 100,
+    BGM_BackGroundMusic = 101,
+
+    //UI SFX
+    SFX_ButtonClick = 200,
+    SFX_ClearUI = 201,
+    SFX_GameStartCountdown = 203,
+    SFX_GameStart = 204,
+
+    //InGame SFX
+    SFX_MapSwitch = 300,
+    SFX_MapChange = 301,
+    SFX_GemCollect = 302,
+    SFX_MapChangeAlert = 304,
+
+    //Player SFX
+    SFX_PlayerDamaged = 401,
+    SFX_PlayerDead = 402,
+    SFX_PlayerWalk = 403,
+
+    //Map SFX
+    SFX_VolcanoExplosion = 500,
+    SFX_SphinxEye = 501,
+    SFX_FallingRock = 502,
+    SFX_Teleport = 503,
+    SFX_Rune = 504,
+    SFX_RuneDoor = 505,
+
 }

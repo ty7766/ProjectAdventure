@@ -39,7 +39,13 @@ public class SoundManager : Singleton<SoundManager>
     /// <param name="soundType">재생할 사운드 enum 타입</param>
     public void PlayBGM(SoundType soundType)
     {
-        if(_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
+        if (soundType == SoundType.None)
+        {
+            _bgmSource.Stop();
+            return;
+        }
+
+        if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
             if(_bgmSource.clip == audioClip && _bgmSource.isPlaying == true)
             {
@@ -65,6 +71,37 @@ public class SoundManager : Singleton<SoundManager>
         if(_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
             _sfxSource.PlayOneShot(audioClip);
+        }
+        else
+        {
+            CustomDebug.LogWarning("해당 사운드 타입이 없습니다.");
+        }
+    }
+
+    /// <summary>
+    /// 특정 3D 좌표에서 사운드를 내는 함수
+    /// </summary>
+    /// <param name="soundType">재생할 사운드 enum 타입</param>
+    /// <param name="position">사운드를 실행할 위치</param>
+    public void PlaySFX_3D(SoundType soundType, Vector3 position, float minDistance = 15f, float maxDistance = 50f)
+    {
+        if (soundType == SoundType.None) return;
+
+        if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
+        {
+            GameObject tempAudioHost = new GameObject("Temp3DAudio_" + soundType.ToString());
+            tempAudioHost.transform.position = position;
+
+            AudioSource audioSource = tempAudioHost.AddComponent<AudioSource>();
+            audioSource.clip = audioClip;
+            audioSource.spatialBlend = 1.0f;
+
+            audioSource.minDistance = minDistance;
+            audioSource.maxDistance = maxDistance;
+            audioSource.rolloffMode = AudioRolloffMode.Linear;
+
+            audioSource.Play();
+            Destroy(tempAudioHost, audioClip.length);
         }
         else
         {
