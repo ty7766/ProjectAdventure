@@ -21,9 +21,7 @@ public class CameraFollow : MonoBehaviour
             return;
         }
 
-        Vector3 desiredPosition = _target.position + _playerOffset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, _smoothSpeed);
-        transform.position = smoothedPosition;
+        transform.position = Vector3.Lerp(transform.position, _target.position + _playerOffset, _smoothSpeed * Time.deltaTime);
     }
 
     [ContextMenu("현재 씬의 각도를 오프셋으로 저장")]
