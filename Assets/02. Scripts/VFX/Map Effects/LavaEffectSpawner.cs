@@ -70,11 +70,10 @@ public class LavaEffectSpawner : MonoBehaviour
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.3f);
         Gizmos.matrix = transform.localToWorldMatrix;
 
-        BoxCollider box = GetComponent<BoxCollider>();
-        if (box != null)
+        if (_spawnArea != null)
         {
-            Gizmos.DrawCube(box.center, box.size);
-            Gizmos.DrawWireCube(box.center, box.size);
+            Gizmos.DrawCube(_spawnArea.center, _spawnArea.size);
+            Gizmos.DrawWireCube(_spawnArea.center, _spawnArea.size);
         }
     }
 #endif
