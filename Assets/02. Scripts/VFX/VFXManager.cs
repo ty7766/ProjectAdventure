@@ -153,7 +153,7 @@ public class VFXManager : Singleton<VFXManager>
 
     private void SetupVFXReturnToScript(GameObject vfxObject, VFXType type)
     {
-        if(vfxObject.TryGetComponent<VFXReturnToPool>(out var returnScript) == false)
+        if(!vfxObject.TryGetComponent<VFXReturnToPool>(out var returnScript))
         {
             returnScript = vfxObject.AddComponent<VFXReturnToPool>();
         }
