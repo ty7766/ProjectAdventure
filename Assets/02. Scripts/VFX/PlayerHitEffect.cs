@@ -10,6 +10,7 @@ public class PlayerHitEffect : MonoBehaviour
     private float _blinkInterval = 0.1f; // 깜빡이는 간격
 
     private SkinnedMeshRenderer[] _skinnedMeshRenderers;
+    private Coroutine _blinkCoroutine;
     private WaitForSeconds _waitForInterval;
 
     private void Awake()
@@ -23,8 +24,11 @@ public class PlayerHitEffect : MonoBehaviour
     /// </summary>
     public void PlayHitEffect()
     {
-        StopAllCoroutines();
-        StartCoroutine(BlinkRoutine());
+        if (_blinkCoroutine != null)
+        {
+            StopCoroutine(_blinkCoroutine);
+        }
+        _blinkCoroutine = StartCoroutine(BlinkRoutine());
     }
 
     private IEnumerator BlinkRoutine()
@@ -39,6 +43,8 @@ public class PlayerHitEffect : MonoBehaviour
         }
 
         ToggleRenderers(true);
+
+        _blinkCoroutine = null;
     }
 
     private void ToggleRenderers(bool isEnabled)
