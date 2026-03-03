@@ -11,7 +11,7 @@ public class VFXManager : Singleton<VFXManager>
         public int PoolSize;
     }
 
-    [Header("이펙트 등록 (Inspector")]
+    [Header("이펙트 등록 (Inspector)")]
     [SerializeField]
     private List<VFXData> _vfxList;
 
