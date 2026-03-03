@@ -23,7 +23,6 @@ public class LavaEffectSpawner : MonoBehaviour
     private void Awake()
     {
         _spawnArea = GetComponent<BoxCollider>();
-        _spawnArea.isTrigger = true; // 물리 충돌 방지
     }
 
     private void Start()
