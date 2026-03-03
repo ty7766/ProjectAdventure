@@ -68,6 +68,11 @@ public class SoundManager : Singleton<SoundManager>
     /// <param name="soundType">재생할 사운드 enum 타입</param>
     public void PlaySFX(SoundType soundType)
     {
+        if (soundType == SoundType.None)
+        {
+            return;
+        }
+
         if(_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
             _sfxSource.PlayOneShot(audioClip);
@@ -89,7 +94,7 @@ public class SoundManager : Singleton<SoundManager>
 
         if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
-            GameObject tempAudioHost = new GameObject("Temp3DAudio_" + soundType.ToString());
+            GameObject tempAudioHost = new GameObject($"Temp3DAudio_{soundType}");
             tempAudioHost.transform.position = position;
 
             AudioSource audioSource = tempAudioHost.AddComponent<AudioSource>();
