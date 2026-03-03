@@ -47,7 +47,7 @@ public class SoundManager : Singleton<SoundManager>
 
         if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
-            if(_bgmSource.clip == audioClip && _bgmSource.isPlaying == true)
+            if(_bgmSource.clip == audioClip && _bgmSource.isPlaying)
             {
                 return;
             }
