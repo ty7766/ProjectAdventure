@@ -234,7 +234,7 @@ public class MapManager : MonoBehaviour
         Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
-        group.CurrentActivePath.transform.SetParent(this.transform);
+        group.CurrentActivePath.transform.SetParent(transform);
 
         CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
     }
