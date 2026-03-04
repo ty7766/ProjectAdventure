@@ -34,7 +34,6 @@ public class FloatingCursor : MonoBehaviour
     
     private void ProcessFloatingCursor()
     {
-        float newY = _basePosition.y + Mathf.Sin(Time.time * _cursorMoveSpeed) * _cursorBobbingHeight;
-        transform.position = new Vector3(_basePosition.x, newY, _basePosition.z);
+        transform.position = _basePosition + Vector3.up * (Mathf.Sin(Time.time * _cursorMoveSpeed) * _cursorBobbingHeight);
     }
 }
