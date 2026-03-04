@@ -38,7 +38,7 @@ public class MapGuideLine : MonoBehaviour
 
         Vector3 basePosition = (_originTransform != null) ? _originTransform.position : transform.position;
 
-        for(int i = 0; i < _spawnPointToAlign.Length;i++)
+        for(int i = 0; i < _spawnPointToAlign.Length; i++)
         {
             //계산된 중심 위치로 강제 이동
             if (_spawnPointToAlign[i] != null)
@@ -49,7 +49,6 @@ public class MapGuideLine : MonoBehaviour
         CustomDebug.Log("모든 SpawnPoint 정렬 완료!");
     }
 
-    [Conditional("UNITY_EDITOR")]
     private void DrawMapGuideLinesWithGizmos()
     {
         if (_mapManager == null)
@@ -74,7 +73,7 @@ public class MapGuideLine : MonoBehaviour
     private Vector3 CalculatePosition(Vector3 basePosition, int index)
     {
         float zPosition = -(_mapManager.GetTileSize().z * index);
-        Vector3 offset = new Vector3(0,0, zPosition);
+        Vector3 offset = new Vector3(0, 0, zPosition);
         return basePosition + _mapManager.GetStartOffset() + offset;
     }
 
