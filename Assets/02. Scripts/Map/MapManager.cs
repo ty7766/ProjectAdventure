@@ -87,7 +87,7 @@ public class MapManager : MonoBehaviour
     {
         if(_controls != null)
         {
-            _controls?.Map.Enable();
+            _controls.Map.Enable();
             _controls.Map.SelectMap.started += _onSelectMap;
             _controls.Map.ChangeMap.started += _onChangeMap;
         }
