@@ -225,7 +225,7 @@ public class MapManager : MonoBehaviour
         MapInfo mapInfo = group.Maps[index];
         if (mapInfo.Prefab == null)
         {
-            Debug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
+            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
             return;
         }
         Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
@@ -236,6 +236,6 @@ public class MapManager : MonoBehaviour
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(this.transform);
 
-        Debug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
+        CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
     }
 }
