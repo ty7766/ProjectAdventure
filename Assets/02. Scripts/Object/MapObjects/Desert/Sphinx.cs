@@ -36,7 +36,7 @@ public class Sphinx : SpawnedObjectManager<Transform>
     [SerializeField]
     private float _randomDurationMax = 0.3f;
 
-    private List<GameObject> _spawnedEyeEffects = new List<GameObject>();
+    private GameObject[] _spawnedEyeEffects = System.Array.Empty<GameObject>();
     private WaitForSeconds _waitPatternInterval;
     private WaitForSeconds _waitEyeGlow;
     private WaitForSeconds _waitWarning;
@@ -47,7 +47,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
         SetupEyeEffects();
     }
 
-    //SpawnedObjectManager 상속
     protected override IEnumerator SpawnRoutine()
     {
         while (true)
@@ -65,14 +64,16 @@ public class Sphinx : SpawnedObjectManager<Transform>
             yield return StartCoroutine(SpawnRocksSequence());
         }
     }
-    //SpawnedObjectManager 상속
+
     protected override void ReturnObjectToPool(Transform rock)
     {
-        UnregisterObject(rock);
-        if (rock != null)
+        if (rock == null)
         {
-            ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
+            return;
         }
+
+        UnregisterObject(rock);
+        ObjectPoolManager.Instance.ReturnObject(_objectType, rock.gameObject);
     }
 
     private void CachingCoroutines()
@@ -90,25 +91,26 @@ public class Sphinx : SpawnedObjectManager<Transform>
             return;
         }
 
+        List<GameObject> effects = new List<GameObject>();
         foreach (Transform anchor in _eyes)
         {
-            if (anchor != null)
+            if (anchor == null)
             {
-                GameObject effect = Instantiate(_eyeEffectPrefab, anchor.position, anchor.rotation, anchor);
-                effect.SetActive(false);
-                _spawnedEyeEffects.Add(effect);
+                continue;
             }
+
+            GameObject effect = Instantiate(_eyeEffectPrefab, anchor.position, anchor.rotation, anchor);
+            effect.SetActive(false);
+            effects.Add(effect);
         }
+        _spawnedEyeEffects = effects.ToArray();
     }
 
     private void SetEyeEffectActive(bool isActive)
     {
         foreach (GameObject effect in _spawnedEyeEffects)
         {
-            if (effect != null)
-            {
-                effect.SetActive(isActive);
-            }
+            effect.SetActive(isActive);
         }
     }
 
@@ -144,10 +146,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
 
         Vector3 centerPosition = (_spawnCenterPoint != null) ? _spawnCenterPoint.position : transform.position;
 
-        Vector3 finalPosition = centerPosition + new Vector3(circle.x, 0, circle.y);
-
-        finalPosition.y = centerPosition.y;
-
-        return finalPosition;
+        return centerPosition + new Vector3(circle.x, 0, circle.y);
     }
 }
