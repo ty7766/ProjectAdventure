@@ -22,6 +22,7 @@ public class FallingRock : SpecialObject
 
     //--- Components ---//
     private Rigidbody _rigidbody;
+    public float LifeTime => _lifeTime;
 
     //--- Unity Methods ---//
     protected override void Awake()
@@ -34,7 +35,6 @@ public class FallingRock : SpecialObject
 
     private void Start()
     {
-        ReserveDestroyAfterLifetime();
         ApplyInitialTumble();
     }
 
@@ -55,11 +55,6 @@ public class FallingRock : SpecialObject
     private void ApplyInitialTumble()
     {
         _rigidbody.angularVelocity = Random.insideUnitSphere * _tumbleForce;
-    }
-
-    private void ReserveDestroyAfterLifetime()
-    {
-        Destroy(gameObject, _lifeTime);
     }
 
     private void DestroyIfCollidedWithEnvironment(Collider other)
