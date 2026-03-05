@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Collider))]
 public class GemObject : SpecialObject
@@ -25,22 +24,10 @@ public class GemObject : SpecialObject
     //--- Private Methods ---//
     private void CollectGem()
     {
-        if(_stageManager == null)
-        {
-            FindStageManagerWhenIsNull();
-        }
-
-        if (_stageManager != null)
-        {
-            _stageManager.CollectGem(_gemID);
-            gameObject.SetActive(false);
-            VFXManager.Instance.PlayVFX(VFXType.CollectGem, transform.position, Quaternion.identity);
-            SoundManager.Instance.PlaySFX(SoundType.SFX_GemCollect);
-        }
-        else
-        {
-            CustomDebug.LogWarning("StageManager reference is missing in GemObject.");
-        }
+        _stageManager.CollectGem(_gemID);
+        gameObject.SetActive(false);
+        VFXManager.Instance.PlayVFX(VFXType.CollectGem, transform.position, Quaternion.identity);
+        SoundManager.Instance.PlaySFX(SoundType.SFX_GemCollect);
     }
 
     private void CheckCollectedGemInMap()
@@ -48,7 +35,6 @@ public class GemObject : SpecialObject
         if (_stageManager != null && _stageManager.IsGemCollected(_gemID))
         {
             gameObject.SetActive(false);
-            return;
         }
     }
 
