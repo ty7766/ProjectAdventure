@@ -88,8 +88,7 @@ public class Surfboard : MonoBehaviour
     }
     private void MoveTowardsTarget(Transform targetPoint)
     {
-        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
-        transform.position = newPosition;
+        transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
     }
 
     private void RotateTowardsTarget(Transform targetPoint)
