@@ -143,7 +143,6 @@ public class Sphinx : SpawnedObjectManager<Transform>
     private Vector3 GetRandomPosition()
     {
         Vector2 circle = Random.insideUnitCircle * _spawnRadius;
-
         Vector3 centerPosition = (_spawnCenterPoint != null) ? _spawnCenterPoint.position : transform.position;
 
         return centerPosition + new Vector3(circle.x, 0, circle.y);
