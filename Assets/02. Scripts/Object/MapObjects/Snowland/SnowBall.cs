@@ -52,13 +52,10 @@ public class SnowBall : MonoBehaviour
 
     private void InitializeSnowBallRigidBody()
     {
-        if (_rigidBody != null)
-        {
-            _rigidBody.linearVelocity = Vector3.zero;
-            _rigidBody.angularVelocity = Vector3.zero;
-            _rigidBody.Sleep();
-            _rigidBody.WakeUp();
-        }
+        _rigidBody.linearVelocity = Vector3.zero;
+        _rigidBody.angularVelocity = Vector3.zero;
+        _rigidBody.Sleep();
+        _rigidBody.WakeUp();
     }
 
     private void OnCollisionEnter(Collision collision)
