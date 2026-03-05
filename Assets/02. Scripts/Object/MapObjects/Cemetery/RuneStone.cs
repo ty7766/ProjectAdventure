@@ -86,21 +86,12 @@ public class RuneStone : MonoBehaviour
         _prefabDictionary = new Dictionary<RuneType, GameObject>();
         foreach (var mapping in _prefabDatabase)
         {
-            if (!_prefabDictionary.ContainsKey(mapping.type))
-            {
-                _prefabDictionary.Add(mapping.type, mapping.prefab);
-            }
+            _prefabDictionary.TryAdd(mapping.type, mapping.prefab);
         }
     }
 
     private IEnumerator RuneChangeLoop()
     {
-        if (_runeSequence == null || _runeSequence.Length == 0)
-        {
-            Debug.LogError("[RuneStone] 룬 순서(_runeSequence)가 비어있습니다!");
-            yield break;
-        }
-
         while (true)
         {
             //인덱스 증가
@@ -126,7 +117,7 @@ public class RuneStone : MonoBehaviour
         {
             if (targetPrefab != null)
             {
-                _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation, this.transform);
+                _currentRuneInstance = Instantiate(targetPrefab, transform.position + _runeChangeVFXPosition, targetPrefab.transform.rotation, transform);
             }
         }
         else
