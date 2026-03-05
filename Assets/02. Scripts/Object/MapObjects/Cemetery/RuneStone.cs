@@ -24,7 +24,7 @@ public class RuneStone : MonoBehaviour
     private RuneType[] _runeSequence;
 
     [Header("프리팹 도감")]
-    [Tooltip("모든 룬 프리팹을 여기에 등록하세요.")]
+    [Tooltip("_기믹에 사용할 Rune 등록")]
     [SerializeField]
     private List<RunePrefabMapping> _prefabDatabase;
 
@@ -52,11 +52,14 @@ public class RuneStone : MonoBehaviour
             meshRenderer.enabled = false;
         }
 
-        // 2. 캐싱
         _waitInterval = new WaitForSeconds(_changeInterval);
-
-        // 3. 딕셔너리 변환 (검색 속도 최적화)
         InitializePrefabDictionary();
+
+        foreach (var rune in _runeSequence)
+        {
+            Assert.IsTrue(_prefabDictionary.ContainsKey(rune),
+                $"[RuneStone] '{rune}'에 해당하는 프리팹이 _prefabDatabase에 등록되지 않았습니다.");
+        }
     }
 
     private void OnEnable()
