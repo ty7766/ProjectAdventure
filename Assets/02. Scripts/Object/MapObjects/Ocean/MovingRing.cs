@@ -38,7 +38,7 @@ public class MovingRing : MonoBehaviour
     /// </summary>
     /// <param name="speed">링 속도</param>
     /// <param name="maxDistance">링이 이동할 거리</param>
-    public void InitializeForRingAttributs(float speed, float maxDistance, Vector3 direction)
+    public void InitializeForRingAttributes(float speed, float maxDistance, Vector3 direction)
     {
         _speed = speed;
         _maxDistance = maxDistance;
