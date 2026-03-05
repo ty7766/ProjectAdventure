@@ -27,8 +27,8 @@ public class FallingRock : SpecialObject
     protected override void Awake()
     {
         base.Awake();
-        GetAdditionalComponents();
 
+        _rigidbody = GetComponent<Rigidbody>();
         Assert.IsNotNull(_rigidbody, $"[FallingRock] '{name}'에 Rigidbody가 없습니다. (RequireComponent 확인 필요)");
     }
 
@@ -52,11 +52,6 @@ public class FallingRock : SpecialObject
     }
 
     //--- Private Methods ---//
-    private void GetAdditionalComponents()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-    }
-
     private void ApplyInitialTumble()
     {
         _rigidbody.angularVelocity = Random.insideUnitSphere * _tumbleForce;
