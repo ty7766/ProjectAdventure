@@ -75,7 +75,6 @@ public class FallingRock : SpecialObject
         PlayerController playerController = player.GetComponent<PlayerController>();
         if (playerController != null)
         {
-            CustomDebug.Log("[화산탄] 플레이어 명중!");
             playerController.TakeDamage(_damageAmount);
         }
     }
