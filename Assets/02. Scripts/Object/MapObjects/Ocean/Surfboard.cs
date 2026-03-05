@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class Surfboard : MonoBehaviour
 {
@@ -36,6 +35,7 @@ public class Surfboard : MonoBehaviour
         {
             CustomDebug.LogError($"[Surfboard] '{name}'의 WayPoints는 최소 2개 이상이어야 합니다. 스크립트를 비활성화합니다.");
             this.enabled = false;
+            return;
         }
     }
 
