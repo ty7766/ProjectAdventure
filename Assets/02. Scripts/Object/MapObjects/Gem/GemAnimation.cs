@@ -36,9 +36,8 @@ public class GemAnimation : MonoBehaviour
 
     private void ApplyFloatingForGem()
     {
-        float newY = _initialLocalPosition.y + (Mathf.Sin(Time.time * _floatFrequency) * _floatAmplitude);
-
-        Vector3 newPosition = new Vector3(_initialLocalPosition.x, newY, _initialLocalPosition.z);
+        Vector3 newPosition = _initialLocalPosition;
+        newPosition.y += Mathf.Sin(Time.time * _floatFrequency) * _floatAmplitude;
         transform.localPosition = newPosition;
     }
 }
