@@ -57,7 +57,7 @@ public class MovingRing : MonoBehaviour
             transform.DetachChildren();
         }
 
-        ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
+        ObjectPoolManager.Instance.ReturnObject(_objectType, gameObject);
     }
 
     private void OnCollisionEnter(Collision collision)
