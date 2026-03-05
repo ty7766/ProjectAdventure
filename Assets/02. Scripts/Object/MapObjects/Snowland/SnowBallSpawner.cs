@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -19,26 +18,28 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
     [SerializeField, Tooltip("-x 방향으로 굴러가도록 설정")]
     private Vector3 _initialForce = new Vector3(-2f, 0f, 0f);
 
-    private WaitForSeconds _snowBallspawnInterval;
+    private WaitForSeconds _snowBallSpawnInterval;
 
     private void Awake()
     {
         Assert.IsNotNull(_spawnArea, $"[{gameObject.name}] 스포너에 _spawnArea가 할당되지 않았습니다! 인스펙터를 확인하세요.");
-        _snowBallspawnInterval = new WaitForSeconds(_spawnInterval);
+        _snowBallSpawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
-    //SpawnedObjectManager 상속
     protected override IEnumerator SpawnRoutine()
     {
         while (true)
         {
-            yield return _snowBallspawnInterval;
+            yield return _snowBallSpawnInterval;
             SpawnSnowBallRandomArea();
         }
     }
-    //SpawnedObjectManager 상속
     protected override void ReturnObjectToPool(SnowBall snowBallObject)
     {
+        if(snowBallObject == null)
+        {
+            return;
+        }
         UnregisterObject(snowBallObject);
         snowBallObject.ReturnToPool();
     }
@@ -53,11 +54,10 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
             return;
         }
 
-        ApplyForceForSnowBall(snowBall);
-
         if (snowBall.TryGetComponent<SnowBall>(out var ballScript))
         {
             RegisterObject(ballScript);
+            ApplyForceForSnowBall(ballScript);
         }
     }
 
@@ -74,12 +74,10 @@ public class SnowBallSpawner : SpawnedObjectManager<SnowBall>
         return _spawnArea.transform.TransformPoint(randomLocalPos);
     }
 
-    private void ApplyForceForSnowBall(GameObject snowBall)
+    private void ApplyForceForSnowBall(SnowBall snowBall)
     {
-        if (snowBall != null && snowBall.TryGetComponent<Rigidbody>(out var rb))
-        {
-            rb.AddForce(_initialForce, ForceMode.Impulse);
-        }
+        Rigidbody rigidbody = snowBall.GetComponent<Rigidbody>();
+        rigidbody.AddForce(_initialForce, ForceMode.Impulse);
     }
 
 #if UNITY_EDITOR

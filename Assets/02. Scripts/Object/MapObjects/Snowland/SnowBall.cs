@@ -32,7 +32,6 @@ public class SnowBall : MonoBehaviour
     private void OnEnable()
     {
         InitializeSnowBallRigidBody();
-        StartCoroutine(ActivateSnowBallRoutine());
         _lifeRoutine = StartCoroutine(ActivateSnowBallRoutine());
     }
 
@@ -47,7 +46,7 @@ public class SnowBall : MonoBehaviour
             _lifeRoutine = null;
         }
 
-        ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
+        ObjectPoolManager.Instance.ReturnObject(_objectType, gameObject);
     }
 
     private void InitializeSnowBallRigidBody()
