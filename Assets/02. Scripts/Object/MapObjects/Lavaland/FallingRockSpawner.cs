@@ -74,6 +74,7 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
         {
             RegisterObject(rockScript);
             ApplyLaunchForce(rockScript);
+            rockScript.OnDestroyed += HandleRockDestroyed;
             StartCoroutine(ReturnAfterLifetime(rockScript));
         }
         else
@@ -87,9 +88,13 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
         yield return new WaitForSeconds(rock.LifeTime);
         if (rock != null)
         {
-            UnregisterObject(rock);
             ReturnObjectToPool(rock);
         }
+    }
+
+    private void HandleRockDestroyed(FallingRock rock)
+    {
+        UnregisterObject(rock);
     }
 
     private void ApplyLaunchForce(FallingRock rock)

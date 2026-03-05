@@ -4,7 +4,6 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Rigidbody))]
 public class FallingRock : SpecialObject
 {
-    //--- Settings ---//
     [Header("VFX 설정")]
     [SerializeField]
     private VFXType _vfxType = VFXType.FallingRockHit;
@@ -20,11 +19,11 @@ public class FallingRock : SpecialObject
     [Tooltip("회전 힘의 크기")]
     private float _tumbleForce = 10f;
 
-    //--- Components ---//
     private Rigidbody _rigidbody;
     public float LifeTime => _lifeTime;
 
-    //--- Unity Methods ---//
+    public event System.Action<FallingRock> OnDestroyed;
+
     protected override void Awake()
     {
         base.Awake();
@@ -36,6 +35,11 @@ public class FallingRock : SpecialObject
     private void Start()
     {
         ApplyInitialTumble();
+    }
+
+    private void OnDestroy()
+    {
+        OnDestroyed?.Invoke(this);
     }
 
     protected override void ApplyEffect(GameObject player)
@@ -51,7 +55,6 @@ public class FallingRock : SpecialObject
         DestroyIfCollidedWithEnvironment(other);
     }
 
-    //--- Private Methods ---//
     private void ApplyInitialTumble()
     {
         _rigidbody.angularVelocity = Random.insideUnitSphere * _tumbleForce;
