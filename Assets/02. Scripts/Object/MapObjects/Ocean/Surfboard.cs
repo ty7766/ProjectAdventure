@@ -118,19 +118,16 @@ public class Surfboard : MonoBehaviour
     //플레이어가 순간이동하는 것을 방지하기 위함
     private void SnapRotationWithPlayerDetachment(Quaternion targetRotation)
     {
-        if (_attachedPlayer != null)
-        {
-            _attachedPlayer.SetParent(null);
-        }
-
         transform.rotation = targetRotation;
+        _shouldSnapRotation = false;
 
-        if (_attachedPlayer != null)
+        if (_attachedPlayer == null)
         {
-            _attachedPlayer.SetParent(transform);
+            return;
         }
 
-        _shouldSnapRotation = false;
+        _attachedPlayer.SetParent(null);
+        _attachedPlayer.SetParent(transform);
     }
 
     private void CheckArrival(Transform targetPoint)
@@ -179,7 +176,7 @@ public class Surfboard : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            collision.transform.SetParent(this.transform);
+            collision.transform.SetParent(transform);
             _attachedPlayer = collision.transform;
         }
     }
@@ -189,7 +186,7 @@ public class Surfboard : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            if(collision.transform.parent == this.transform)
+            if(collision.transform.parent == transform)
             {
                 collision.transform.SetParent(null);
             }
