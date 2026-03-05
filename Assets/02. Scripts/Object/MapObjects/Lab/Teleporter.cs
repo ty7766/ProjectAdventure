@@ -14,7 +14,7 @@ public class Teleporter : MonoBehaviour
 
     [Tooltip("단방향 설정")]
     [SerializeField]
-    private bool _isOneWay = false;
+    private bool _isOneWay;
 
     [Header("위치 보정")]
     [Tooltip("텔레포트 시 Y축을 얼마나 띄워줄지 설정 (바닥 끼임 방지)")]
@@ -24,6 +24,12 @@ public class Teleporter : MonoBehaviour
     private bool _isReady = true;
 
     private Coroutine _cooldownCoroutine;
+    private WaitForSeconds _waitCooldown;
+
+    private void Awake()
+    {
+        _waitCooldown = new WaitForSeconds(_cooldownTime);
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -46,20 +52,13 @@ public class Teleporter : MonoBehaviour
             return false;
         }
 
-        if (_isOneWay == false)
+        if (_destination == null)
         {
-            if (_destination == null)
+            if(!_isOneWay)
             {
                 CustomDebug.LogWarning($"[Teleporter] {name} : 목적지가 설정되지 않았습니다.");
-                return false;
             }
-        }
-        else
-        {
-            if(_destination == null)
-            {
-                return false;
-            }
+            return false;
         }
 
         return true;
@@ -78,25 +77,22 @@ public class Teleporter : MonoBehaviour
             playerMovement.TeleportTo(targetPosition);
         }
 
-        if (_destination != null)
-        {
-            _destination.ReceivePlayer(_cooldownTime);
-        }
+        _destination.ReceivePlayer();
     }
 
-    private void ReceivePlayer(float duration)
+    private void ReceivePlayer()
     {
         if(_cooldownCoroutine != null)
         {
-            StopCoroutine( _cooldownCoroutine );
+            StopCoroutine(_cooldownCoroutine);
         }
-        _cooldownCoroutine = StartCoroutine(ApplyCooldown(duration));
+        _cooldownCoroutine = StartCoroutine(ApplyCooldown());
     }
 
-    private IEnumerator ApplyCooldown(float duration)
+    private IEnumerator ApplyCooldown()
     {
         _isReady = false;
-        yield return new WaitForSeconds(duration);
+        yield return _waitCooldown;
         _isReady = true;
         _cooldownCoroutine = null;
     }
