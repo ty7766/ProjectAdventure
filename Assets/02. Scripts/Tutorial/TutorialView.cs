@@ -51,23 +51,20 @@ public class TutorialView : MonoBehaviour
     //--- Public Methods ---//
     public void ShowStep(TutorialStepConfig config)
     {
-        Vector2 spotlightScreenPos = GetScreenPosition(config);
+        Vector2 spotlightScreenPos = GetScreenPosition(config) + config.SpotlightOffset;
         UpdateSpotlight(spotlightScreenPos, config.HoleSize);
 
         _descriptionText.text = config.DescriptionText;
         _textPanel.gameObject.SetActive(true);
         _textPanel.alpha = 0f;
-        PositionTextPanel(config.ArrowTipTarget);
 
-        Canvas.ForceUpdateCanvases();
-        GetRectTransformScreenBounds(_textPanelRect, out Vector2 textCenter, out Vector2 textHalfSize);
+        Vector2 tipScreenPos = RectTransformUtility.WorldToScreenPoint(null, config.ArrowTipTarget.position);
+        PositionTextPanel(tipScreenPos);
 
-        Vector2 spotlightHalfSize = config.HoleSize * 0.5f;
-        Vector2 direction = (textCenter - spotlightScreenPos).normalized;
-        Vector2 arrowFrom = TutorialArrowRenderer.GetBoxEdgePoint(spotlightScreenPos, spotlightHalfSize, direction);
-        Vector2 arrowTo = TutorialArrowRenderer.GetBoxEdgePoint(textCenter, textHalfSize, -direction);
+        Vector2 direction = (tipScreenPos - spotlightScreenPos).normalized;
+        Vector2 arrowFrom = TutorialArrowRenderer.GetBoxEdgePoint(spotlightScreenPos, config.HoleSize * 0.5f, direction);
 
-        _arrowRenderer.Animate(arrowFrom, arrowTo, OnArrowComplete);
+        _arrowRenderer.Animate(arrowFrom, tipScreenPos, OnArrowComplete);
     }
 
     /// <summary>
@@ -124,9 +121,8 @@ public class TutorialView : MonoBehaviour
         _materialInstance.SetVector(HoleSizeID, new Vector4(holeSize.x, holeSize.y, 0f, 0f));
     }
 
-    private void PositionTextPanel(RectTransform tipTarget)
+    private void PositionTextPanel(Vector2 tipScreenPos)
     {
-        Vector2 tipScreenPos = RectTransformUtility.WorldToScreenPoint(null, tipTarget.position);
         RectTransformUtility.ScreenPointToLocalPointInRectangle(
             _textPanelRect.parent as RectTransform,
             tipScreenPos,
@@ -134,21 +130,6 @@ public class TutorialView : MonoBehaviour
             out Vector2 localPos
         );
         _textPanelRect.anchoredPosition = localPos;
-    }
-
-    private void GetRectTransformScreenBounds(RectTransform rect, out Vector2 center, out Vector2 halfSize)
-    {
-        Vector3[] corners = new Vector3[4];
-        rect.GetWorldCorners(corners);
-        // Screen Space - Overlay 캔버스: GetWorldCorners는 스크린 픽셀 좌표를 반환
-        center = new Vector2(
-            (corners[0].x + corners[2].x) * 0.5f,
-            (corners[0].y + corners[2].y) * 0.5f
-        );
-        halfSize = new Vector2(
-            (corners[2].x - corners[0].x) * 0.5f,
-            (corners[2].y - corners[0].y) * 0.5f
-        );
     }
 
     private void OnArrowComplete()

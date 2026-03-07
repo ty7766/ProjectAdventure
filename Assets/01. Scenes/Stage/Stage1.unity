@@ -376,6 +376,7 @@ GameObject:
   m_Component:
   - component: {fileID: 275002495}
   - component: {fileID: 275002494}
+  - component: {fileID: 275002496}
   m_Layer: 0
   m_Name: TutorialManager
   m_TagString: Untagged
@@ -436,9 +437,9 @@ MonoBehaviour:
       \uB9F5\uC5D0 \uC788\uB294 \uBCF4\uC11D\uC744 \uC218\uC9D1\uD574\uC57C \uD569\uB2C8\uB2E4."
   - _stepName: Destination
     _targetType: 0
-    _worldTarget: {fileID: 671544723}
+    _worldTarget: {fileID: 584284536}
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 200, y: 200}
+    _holeSize: {x: 300, y: 400}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 1920908434}
     _descriptionText: "\uB3C4\uCC29\uC810\uC785\uB2C8\uB2E4. \uB3C4\uCC29\uC810\uAE4C\uC9C0
@@ -461,8 +462,7 @@ MonoBehaviour:
     _arrowTipTarget: {fileID: 398884146}
     _descriptionText: "\uD604\uC7AC \uC2B5\uB4DD\uD55C Gem\uC758 \uAC1C\uC218\uC785\uB2C8\uB2E4."
   _tutorialView: {fileID: 1478835236}
-  _cameraFollow: {fileID: 330585548}
-  _cameraMoveSmooth: 0.3
+  _cameraController: {fileID: 275002496}
 --- !u!4 &275002495
 Transform:
   m_ObjectHideFlags: 0
@@ -478,6 +478,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &275002496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 275002493}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02228a62466157c49aae5f8c3e97d409, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialCameraController
+  _cameraFollow: {fileID: 330585548}
+  _cameraMoveSmooth: 0.3
 --- !u!1001 &325598390
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1230,6 +1244,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 553854138}
   m_CullTransparentMesh: 1
+--- !u!4 &584284536 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 771060744184932701, guid: 870cd4a0ab7c63b4293b32fcd01f1162, type: 3}
+  m_PrefabInstance: {fileID: 671544722}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &595027232 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9138965635562253996, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
@@ -2220,6 +2239,7 @@ GameObject:
   - component: {fileID: 1478835233}
   - component: {fileID: 1478835235}
   - component: {fileID: 1478835236}
+  - component: {fileID: 1478835237}
   m_Layer: 5
   m_Name: TutorialPanel
   m_TagString: Untagged
@@ -2271,14 +2291,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialView
   _overlayImage: {fileID: 553854140}
   _spotlightMaterial: {fileID: 2100000, guid: 13a16acee3dd9ea4095e86fdcc9127ed, type: 2}
+  _arrowRenderer: {fileID: 1478835237}
+  _textPanel: {fileID: 2038438891}
+  _descriptionText: {fileID: 260897210}
+  _textFadeDuration: 0.3
+--- !u!114 &1478835237
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1478835232}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec201531fef015042b39568c63012195, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialArrowRenderer
   _arrowContainer: {fileID: 519343269}
   _dotPrefab: {fileID: 5421361924382212472, guid: ee31ccef91d1af44b81ac78ce429b191, type: 3}
   _arrowHead: {fileID: 24388828}
   _dotSpacing: 20
   _dotRevealInterval: 0.03
-  _textPanel: {fileID: 2038438891}
-  _descriptionText: {fileID: 260897210}
-  _textFadeDuration: 0.3
 --- !u!4 &1516804858
 Transform:
   m_ObjectHideFlags: 0
