@@ -33,8 +33,14 @@ public class TutorialManager : MonoBehaviour
     /// </summary>
     public bool ShouldShowTutorial()
     {
-        return GameSaveManager.Instance.CurrentStageNumber == 1
-            && !GameSaveManager.Instance.HasCompletedTutorial();
+        //디버깅용
+        int stageNumber = GameSaveManager.Instance.CurrentStageNumber;
+        bool isTutorialStage = stageNumber == 1 || stageNumber == 0;
+        return isTutorialStage && !GameSaveManager.Instance.HasCompletedTutorial();
+
+        //실제용
+        //return GameSaveManager.Instance.CurrentStageNumber == 1
+        //    && !GameSaveManager.Instance.HasCompletedTutorial();
     }
 
     /// <summary>
