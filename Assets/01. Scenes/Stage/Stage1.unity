@@ -366,7 +366,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 595027232}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 150, y: 200}
-    _arrowTipScreenPosition: {x: 500, y: 500}
+    _arrowTipScreenPosition: {x: 1000, y: 10000}
     _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4."
   - _stepName: Map
     _targetType: 0
@@ -419,6 +419,7 @@ MonoBehaviour:
     _arrowTipScreenPosition: {x: 200, y: 100}
     _descriptionText: "\uD604\uC7AC \uC2B5\uB4DD\uD55C Gem\uC758 \uAC1C\uC218\uC785\uB2C8\uB2E4."
   _tutorialView: {fileID: 1478835236}
+  _gizmoCamera: {fileID: 330585545}
 --- !u!4 &275002495
 Transform:
   m_ObjectHideFlags: 0
@@ -2035,7 +2036,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1478835233
 RectTransform:
   m_ObjectHideFlags: 0

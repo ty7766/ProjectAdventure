@@ -91,21 +91,4 @@ public class TutorialManager : MonoBehaviour
         _onCompleteCallback = null;
     }
 
-    private void OnDrawGizmos()
-    {
-        if (_steps == null || Camera.main == null) return;
-
-        foreach (TutorialStepConfig step in _steps)
-        {
-            Vector2 arrowTip = step.ArrowTipScreenPosition;
-            if (arrowTip == Vector2.zero) continue;
-
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(
-                new Vector3(arrowTip.x, arrowTip.y, Camera.main.nearClipPlane + 1f)
-            );
-
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawSphere(worldPos, 0.15f);
-        }
-    }
 }
