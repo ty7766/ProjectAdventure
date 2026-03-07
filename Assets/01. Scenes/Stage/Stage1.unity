@@ -366,14 +366,14 @@ MonoBehaviour:
     _worldTarget: {fileID: 595027232}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 150, y: 200}
-    _arrowTipScreenPosition: {x: 0, y: 0}
-    _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4"
+    _arrowTipScreenPosition: {x: 500, y: 500}
+    _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4."
   - _stepName: Map
     _targetType: 0
     _worldTarget: {fileID: 1133851749}
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 400, y: 300}
-    _arrowTipScreenPosition: {x: 0, y: 0}
+    _holeSize: {x: 800, y: 600}
+    _arrowTipScreenPosition: {x: 500, y: 500}
     _descriptionText: "\uAC74\uB108\uAC00\uC57C\uD560 \uB9F5\uC785\uB2C8\uB2E4. [E]
       \uD0A4\uB85C \uD574\uB2F9 \uB9F5\uC744 \uBC14\uAFC0 \uC218 \uC788\uC2B5\uB2C8\uB2E4.
       \uD574\uB2F9 \uB9F5\uC744 \uBC14\uAFB8\uC5B4 \uB3C4\uCC29\uC810\uAE4C\uC9C0
@@ -408,15 +408,15 @@ MonoBehaviour:
     _targetType: 1
     _worldTarget: {fileID: 0}
     _uiTarget: {fileID: 325598392}
-    _holeSize: {x: 100, y: 200}
-    _arrowTipScreenPosition: {x: 0, y: 0}
+    _holeSize: {x: 200, y: 100}
+    _arrowTipScreenPosition: {x: 500, y: 100}
     _descriptionText: "HP\uAC00 0\uC774\uB418\uBA74 Game Over\uAC00 \uB429\uB2C8\uB2E4."
   - _stepName: GemUI
     _targetType: 1
     _worldTarget: {fileID: 0}
     _uiTarget: {fileID: 325598391}
-    _holeSize: {x: 100, y: 200}
-    _arrowTipScreenPosition: {x: 0, y: 0}
+    _holeSize: {x: 200, y: 100}
+    _arrowTipScreenPosition: {x: 200, y: 100}
     _descriptionText: "\uD604\uC7AC \uC2B5\uB4DD\uD55C Gem\uC758 \uAC1C\uC218\uC785\uB2C8\uB2E4."
   _tutorialView: {fileID: 1478835236}
 --- !u!4 &275002495
@@ -1365,7 +1365,6 @@ GameObject:
   m_Component:
   - component: {fileID: 814873380}
   - component: {fileID: 814873382}
-  - component: {fileID: 814873381}
   m_Layer: 5
   m_Name: BackgroundImage
   m_TagString: Untagged
@@ -1392,36 +1391,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &814873381
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 814873379}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.9019608}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &814873382
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2377,7 +2346,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2038438890}
   - component: {fileID: 2038438893}
-  - component: {fileID: 2038438892}
   - component: {fileID: 2038438891}
   m_Layer: 5
   m_Name: TextPanel
@@ -2419,36 +2387,6 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &2038438892
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2038438889}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
 --- !u!222 &2038438893
 CanvasRenderer:
   m_ObjectHideFlags: 0

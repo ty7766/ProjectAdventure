@@ -60,14 +60,12 @@ public class TutorialView : MonoBehaviour
         Vector2 screenPosition = GetScreenPosition(config);
         UpdateSpotlight(screenPosition, config.HoleSize);
 
-        Vector2 arrowTipScreenPosition = RectTransformUtility.WorldToScreenPoint(null,config.ArrowTipTarget.position);
-        
         if (_animationCoroutine != null)
         {
             StopCoroutine(_animationCoroutine);
         }
 
-        _animationCoroutine = StartCoroutine(AnimateArrow(screenPosition, arrowTipScreenPosition, config.DescriptionText));
+        _animationCoroutine = StartCoroutine(AnimateArrow(screenPosition, config.ArrowTipScreenPosition, config.DescriptionText));
     }
 
     public void Hide()
@@ -140,7 +138,15 @@ public class TutorialView : MonoBehaviour
         _arrowHead.rectTransform.rotation = Quaternion.Euler(0f, 0f, angle - 90f);
         _arrowHead.gameObject.SetActive(true);
 
-        //TextPanel Fadein
+        //TextPanel 위치 설정 후 Fadein
+        RectTransform textPanelRect = _textPanel.GetComponent<RectTransform>();
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            textPanelRect.parent as RectTransform,
+            to,
+            null,
+            out Vector2 textLocalPos
+        );
+        textPanelRect.anchoredPosition = textLocalPos;
         _textPanel.gameObject.SetActive(true);
         yield return StartCoroutine(FadeInTextPanel());
 
