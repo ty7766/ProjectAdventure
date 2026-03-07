@@ -401,14 +401,16 @@ MonoBehaviour:
     _worldTarget: {fileID: 595027232}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 150, y: 200}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 1629207403}
     _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4."
   - _stepName: Map
     _targetType: 0
     _worldTarget: {fileID: 1133851749}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 800, y: 600}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 710716547}
     _descriptionText: "\uAC74\uB108\uAC00\uC57C\uD560 \uB9F5\uC785\uB2C8\uB2E4. [E]
       \uD0A4\uB85C \uD574\uB2F9 \uB9F5\uC744 \uBC14\uAFC0 \uC218 \uC788\uC2B5\uB2C8\uB2E4.
       \uD574\uB2F9 \uB9F5\uC744 \uBC14\uAFB8\uC5B4 \uB3C4\uCC29\uC810\uAE4C\uC9C0
@@ -418,7 +420,8 @@ MonoBehaviour:
     _worldTarget: {fileID: 843756758}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 100, y: 100}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 735635000}
     _descriptionText: "\uAD50\uCCB4\uD560 \uB9F5\uC744 \uC120\uD0DD\uD560 \uC218
       \uC788\uB294 \uCEE4\uC11C\uC785\uB2C8\uB2E4. [<- ->] \uD0A4\uB85C \uAD50\uCCB4\uD558\uACE0
       \uC2F6\uC740 \uB9F5\uC744 \uC120\uD0DD\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
@@ -427,7 +430,8 @@ MonoBehaviour:
     _worldTarget: {fileID: 1635724485}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 200, y: 200}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 1
+    _arrowTipTarget: {fileID: 265501962}
     _descriptionText: "\uBAA9\uD45C\uB97C \uB2EC\uC131\uD558\uAE30 \uC704\uD574\uC11C\uB294
       \uB9F5\uC5D0 \uC788\uB294 \uBCF4\uC11D\uC744 \uC218\uC9D1\uD574\uC57C \uD569\uB2C8\uB2E4."
   - _stepName: Destination
@@ -435,25 +439,30 @@ MonoBehaviour:
     _worldTarget: {fileID: 671544723}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 200, y: 200}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 1920908434}
     _descriptionText: "\uB3C4\uCC29\uC810\uC785\uB2C8\uB2E4. \uB3C4\uCC29\uC810\uAE4C\uC9C0
       \uAC00\uAE30 \uC704\uD574\uC11C\uB294 \uD5D8\uB09C\uD55C \uB9F5\uC744 \uC9C0\uB098\uAC00\uC57C\uB9CC
       \uD569\uB2C8\uB2E4."
   - _stepName: HPUI
     _targetType: 1
     _worldTarget: {fileID: 0}
-    _uiTarget: {fileID: 325598392}
+    _uiTarget: {fileID: 901033791}
     _holeSize: {x: 200, y: 100}
-    _arrowTipTarget: {fileID: 0}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 785771013}
     _descriptionText: "HP\uAC00 0\uC774\uB418\uBA74 Game Over\uAC00 \uB429\uB2C8\uB2E4."
   - _stepName: GemUI
     _targetType: 1
     _worldTarget: {fileID: 0}
     _uiTarget: {fileID: 325598391}
-    _holeSize: {x: 200, y: 100}
-    _arrowTipTarget: {fileID: 0}
+    _holeSize: {x: 100, y: 100}
+    _moveCameraToTarget: 0
+    _arrowTipTarget: {fileID: 398884146}
     _descriptionText: "\uD604\uC7AC \uC2B5\uB4DD\uD55C Gem\uC758 \uAC1C\uC218\uC785\uB2C8\uB2E4."
   _tutorialView: {fileID: 1478835236}
+  _cameraFollow: {fileID: 330585548}
+  _cameraMoveSmooth: 0.3
 --- !u!4 &275002495
 Transform:
   m_ObjectHideFlags: 0
@@ -601,11 +610,6 @@ PrefabInstance:
 --- !u!224 &325598391 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2020603461557561715, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-  m_PrefabInstance: {fileID: 325598390}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &325598392 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5515873385420002211, guid: be66360aa35981147a78907d7129fb4c, type: 3}
   m_PrefabInstance: {fileID: 325598390}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &330585543
@@ -1699,6 +1703,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
   m_PrefabInstance: {fileID: 843756757}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &901033791 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 6556916912556836706, guid: be66360aa35981147a78907d7129fb4c, type: 3}
+  m_PrefabInstance: {fileID: 325598390}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1133851748
 GameObject:

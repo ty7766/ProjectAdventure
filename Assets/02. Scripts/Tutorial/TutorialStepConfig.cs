@@ -21,6 +21,10 @@ public class TutorialStepConfig
     [SerializeField]
     private Vector2 _holeSize = new Vector2(200f, 200f);
 
+    [Header("카메라 이동")]
+    [SerializeField]
+    private bool _moveCameraToTarget;
+
     [Header("화살표 & 텍스트")]
     [SerializeField]
     private RectTransform _arrowTipTarget;
@@ -33,6 +37,7 @@ public class TutorialStepConfig
     public Transform WorldTarget => _worldTarget;
     public RectTransform UiTarget => _uiTarget;
     public Vector2 HoleSize => _holeSize;
+    public bool MoveCameraToTarget => _moveCameraToTarget;
     public RectTransform ArrowTipTarget => _arrowTipTarget;
     public string DescriptionText => _descriptionText;
 }

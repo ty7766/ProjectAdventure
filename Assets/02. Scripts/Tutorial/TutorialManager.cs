@@ -1,33 +1,40 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using GameManager.Singleton;
-
+using UnityEngine;
 
 public class TutorialManager : MonoBehaviour
 {
+    //--- Serialized Fields ---//
     [Header("튜토리얼 설정")]
     [SerializeField]
     private List<TutorialStepConfig> _steps;
     [SerializeField]
     private TutorialView _tutorialView;
+    [SerializeField]
+    private TutorialCameraController _cameraController;
 
+    //--- Fields ---//
     private int _currentStepIndex;
     private Action _onCompleteCallback;
-    private bool _isActive;
 
+    //--- Properties ---//
+    public static bool IsActive { get; private set; }
+
+    //--- Unity Methods ---//
     private void Update()
     {
-        if(!_isActive)
+        if (!IsActive)
         {
             return;
         }
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
             AdvanceStep();
         }
     }
 
+    //--- Public Methods ---//
     /// <summary>
     /// 현재 씬에서 튜토리얼을 표시해야 하는지 확인합니다.
     /// </summary>
@@ -57,15 +64,26 @@ public class TutorialManager : MonoBehaviour
 
         _onCompleteCallback = onComplete;
         _currentStepIndex = 0;
-        _isActive = true;
+        IsActive = true;
 
         _tutorialView.gameObject.SetActive(true);
         ShowCurrentStep();
     }
 
+    //--- Private Methods ---//
     private void ShowCurrentStep()
     {
-        _tutorialView.ShowStep(_steps[_currentStepIndex]);
+        TutorialStepConfig config = _steps[_currentStepIndex];
+
+        if (config.MoveCameraToTarget && config.WorldTarget != null)
+        {
+            _tutorialView.HideCurrentStep();
+            _cameraController.MoveToTarget(config.WorldTarget, () => _tutorialView.ShowStep(config));
+        }
+        else
+        {
+            _tutorialView.ShowStep(config);
+        }
     }
 
     private void AdvanceStep()
@@ -83,12 +101,12 @@ public class TutorialManager : MonoBehaviour
 
     private void CompleteTutorial()
     {
-        _isActive = false;
+        IsActive = false;
+        _cameraController.RestoreFollow();
         _tutorialView.Hide();
         _tutorialView.gameObject.SetActive(false);
         GameSaveManager.Instance.SetTutorialCompleted();
         _onCompleteCallback?.Invoke();
         _onCompleteCallback = null;
     }
-
 }
