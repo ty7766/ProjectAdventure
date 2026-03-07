@@ -11,8 +11,6 @@ public class GroundWarning : MonoBehaviour
     [Header("장판 속성")]
     [SerializeField] 
     private float _blinkSpeed = 10.0f;
-    [SerializeField] 
-    private SpriteRenderer _spriteRenderer;
 
     [Header("장판 위치 보정값")]
     [SerializeField]
@@ -20,6 +18,7 @@ public class GroundWarning : MonoBehaviour
     [SerializeField]
     private Vector3 _warningRotation = new Vector3(90, 0, 0);
 
+    private SpriteRenderer _spriteRenderer;
     private Coroutine _blinkCoroutine;
 
     private void Awake()
@@ -40,13 +39,12 @@ public class GroundWarning : MonoBehaviour
 
         if (vfxObject != null && vfxObject.TryGetComponent(out GroundWarning warning))
         {
-            warning._vfxType = vfxType;
             warning.InitializeTransform(position);
             warning.ActivateBlinkCoroutine(duration);
         }
     }
 
-    public void ActivateBlinkCoroutine(float duration)
+    private void ActivateBlinkCoroutine(float duration)
     {
         if (_blinkCoroutine != null)
         {
@@ -64,11 +62,10 @@ public class GroundWarning : MonoBehaviour
     private IEnumerator BlinkAndReturn(float duration)
     {
         float timer = 0f;
-        Color originalColor = _spriteRenderer.color;
 
-        // 초기화
-        originalColor.a = 0f;
-        _spriteRenderer.color = originalColor;
+        Color baseColor = _spriteRenderer.color;
+        baseColor.a = 0f;
+        _spriteRenderer.color = baseColor;
 
         while (timer < duration)
         {
@@ -76,7 +73,7 @@ public class GroundWarning : MonoBehaviour
 
             float alpha = Mathf.Lerp(0.2f, 0.8f, Mathf.Abs(Mathf.Sin(timer * _blinkSpeed)));
 
-            Color newColor = originalColor;
+            Color newColor = baseColor;
             newColor.a = alpha;
             _spriteRenderer.color = newColor;
 

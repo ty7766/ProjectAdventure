@@ -4,7 +4,6 @@ using UnityEngine.Assertions;
 [RequireComponent(typeof(Rigidbody))]
 public class FallingRock : SpecialObject
 {
-    //--- Settings ---//
     [Header("VFX 설정")]
     [SerializeField]
     private VFXType _vfxType = VFXType.FallingRockHit;
@@ -20,22 +19,27 @@ public class FallingRock : SpecialObject
     [Tooltip("회전 힘의 크기")]
     private float _tumbleForce = 10f;
 
-    //--- Components ---//
     private Rigidbody _rigidbody;
+    public float LifeTime => _lifeTime;
 
-    //--- Unity Methods ---//
+    public event System.Action<FallingRock> OnDestroyed;
+
     protected override void Awake()
     {
         base.Awake();
-        GetAdditionalComponents();
 
+        _rigidbody = GetComponent<Rigidbody>();
         Assert.IsNotNull(_rigidbody, $"[FallingRock] '{name}'에 Rigidbody가 없습니다. (RequireComponent 확인 필요)");
     }
 
     private void Start()
     {
-        ReserveDestroyAfterLifetime();
         ApplyInitialTumble();
+    }
+
+    private void OnDestroy()
+    {
+        OnDestroyed?.Invoke(this);
     }
 
     protected override void ApplyEffect(GameObject player)
@@ -51,20 +55,9 @@ public class FallingRock : SpecialObject
         DestroyIfCollidedWithEnvironment(other);
     }
 
-    //--- Private Methods ---//
-    private void GetAdditionalComponents()
-    {
-        _rigidbody = GetComponent<Rigidbody>();
-    }
-
     private void ApplyInitialTumble()
     {
         _rigidbody.angularVelocity = Random.insideUnitSphere * _tumbleForce;
-    }
-
-    private void ReserveDestroyAfterLifetime()
-    {
-        Destroy(gameObject, _lifeTime);
     }
 
     private void DestroyIfCollidedWithEnvironment(Collider other)
@@ -82,7 +75,6 @@ public class FallingRock : SpecialObject
         PlayerController playerController = player.GetComponent<PlayerController>();
         if (playerController != null)
         {
-            CustomDebug.Log("[화산탄] 플레이어 명중!");
             playerController.TakeDamage(_damageAmount);
         }
     }

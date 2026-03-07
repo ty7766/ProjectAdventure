@@ -26,7 +26,7 @@ public class RuneGate : MonoBehaviour
     private Quaternion _rightOpenRot;
 
     private Coroutine _doorRoutine;
-    private bool _isOpen = false;
+    private bool _isOpen;
 
     private void Awake()
     {

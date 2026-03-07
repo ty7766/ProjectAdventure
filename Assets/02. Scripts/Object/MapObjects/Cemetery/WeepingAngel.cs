@@ -31,7 +31,7 @@ public class WeepingAngel : MonoBehaviour
     private float _sqrActiveRange;
     private float _cosViewAngle;
 
-    private bool _canChase = false;
+    private bool _canChase;
 
     private void Awake()
     {
@@ -87,7 +87,7 @@ public class WeepingAngel : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(_canChase)
+        if (_canChase)
         {
             ChasePlayer();
         }

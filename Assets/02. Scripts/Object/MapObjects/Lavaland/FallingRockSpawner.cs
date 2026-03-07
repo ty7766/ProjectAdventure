@@ -42,7 +42,7 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
         _waitSpawnInterval = new WaitForSeconds(_spawnInterval);
     }
 
-    //SpawnedObjectManager 상속
+
     protected override IEnumerator SpawnRoutine()
     {
         while (true)
@@ -51,7 +51,7 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
             ProcessRockSpawning();
         }
     }
-    //SpawnedObjectManager 상속
+
     protected override void ReturnObjectToPool(FallingRock fallingRock)
     {
         if (fallingRock != null)
@@ -73,7 +73,9 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
         if (rock.TryGetComponent<FallingRock>(out var rockScript))
         {
             RegisterObject(rockScript);
-            ApplyLaunchForce(rock);
+            ApplyLaunchForce(rockScript);
+            rockScript.OnDestroyed += HandleRockDestroyed;
+            StartCoroutine(ReturnAfterLifetime(rockScript));
         }
         else
         {
@@ -81,13 +83,25 @@ public class FallingRockSpawner : SpawnedObjectManager<FallingRock>
         }
     }
 
-    private void ApplyLaunchForce(GameObject rock)
+    private IEnumerator ReturnAfterLifetime(FallingRock rock)
     {
-        if (rock.TryGetComponent(out Rigidbody rigidbody))
+        yield return new WaitForSeconds(rock.LifeTime);
+        if (rock != null)
         {
-            Vector3 direction = FallingRockTrajectoryCalculator.GetRandomLaunchDirection(transform.up, _spread);
-            rigidbody.AddForce(direction * _launchSpeed, ForceMode.VelocityChange);
+            ReturnObjectToPool(rock);
         }
+    }
+
+    private void HandleRockDestroyed(FallingRock rock)
+    {
+        UnregisterObject(rock);
+    }
+
+    private void ApplyLaunchForce(FallingRock rock)
+    {
+        Rigidbody rigidbody = rock.GetComponent<Rigidbody>();
+        Vector3 direction = FallingRockTrajectoryCalculator.GetRandomLaunchDirection(transform.up, _spread);
+        rigidbody.AddForce(direction * _launchSpeed, ForceMode.VelocityChange);
     }
 
     private void PlayLaunchEffect()

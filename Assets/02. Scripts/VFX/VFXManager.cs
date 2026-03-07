@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using JetBrains.Annotations;
 
 public class VFXManager : Singleton<VFXManager>
 {
@@ -12,16 +11,16 @@ public class VFXManager : Singleton<VFXManager>
         public int PoolSize;
     }
 
-    [Header("이펙트 등록 (Inspector")]
+    [Header("이펙트 등록 (Inspector)")]
     [SerializeField]
     private List<VFXData> _vfxList;
 
-    private Dictionary<VFXType, Queue<GameObject>> _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
-    private Dictionary<VFXType, GameObject> _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
+    private Dictionary<VFXType, Queue<GameObject>> _poolDictionary;
+    private Dictionary<VFXType, GameObject> _vfxPrefabDictionary;
 
     protected override void Awake()
     {
-        base.Awake();   //싱글톤 Awake 실행
+        base.Awake();
         if (Instance != this)
         {
             return;
@@ -42,41 +41,17 @@ public class VFXManager : Singleton<VFXManager>
             return null;
         }
 
-        //대기열 비었으면 추가 생성
-        if (_poolDictionary[type].Count == 0)
-        {
-            if(_vfxPrefabDictionary.TryGetValue(type, out GameObject vfxPrefab))
-            {
-                CreateNewObject(type, vfxPrefab);
-            }
-            else
-            {
-                CustomDebug.LogWarning($"VFXManager: 프리팹 타입 {type} 이 null 입니다.");
-                return null;
-            }
-        }
+        GameObject vfxObject =  GetOrCreateVFX(type);
 
-        GameObject vfxObject = _poolDictionary[type].Dequeue();
         if (vfxObject == null)
         {
-            return PlayVFX(type, position, rotation);
+            return null;
         }
-        vfxObject.transform.position = position;
-        vfxObject.transform.rotation = rotation.Equals(default(Quaternion)) ? Quaternion.identity : rotation;
+
+        vfxObject.transform.SetPositionAndRotation(position, rotation == default ? Quaternion.identity : rotation);
         vfxObject.SetActive(true);
 
         return vfxObject;
-    }
-
-    /// <summary>
-    /// 기존 호환성을 위한 오버로딩
-    /// </summary>
-    /// <param name="type">VFX 타입</param>
-    /// <param name="position">VFX가 생성될 위치</param>
-    /// <returns></returns>
-    public GameObject PlayVFX(VFXType type, Vector3 position)
-    {
-        return PlayVFX(type, position, Quaternion.identity);
     }
 
     /// <summary>
@@ -96,60 +71,89 @@ public class VFXManager : Singleton<VFXManager>
         _poolDictionary[type].Enqueue(vfxObject);
     }
 
-    //설정된 개수만큼 미리 생성
-    private void InitializePool()
+    private GameObject GetOrCreateVFX(VFXType type)
     {
-        VFXDictionaryClear();       //중복 방지
-        FillEveryVFXTypePool();
-    }
-
-    private void VFXDictionaryClear()
-    {
-        _poolDictionary.Clear();
-        _vfxPrefabDictionary.Clear();
-    }
-
-    private void FillEveryVFXTypePool()
-    {
-        foreach (var vfxType in _vfxList)
+        if (_poolDictionary[type].Count == 0)
         {
-            if (_poolDictionary.ContainsKey(vfxType.Type))
+            if (_vfxPrefabDictionary.TryGetValue(type, out GameObject prefab))
             {
-                continue;
+                return CreateNewVFXObject(type, prefab);
             }
 
-            if (vfxType.Prefab == null)
-            {
-                continue;
-            }
-
-            //Dictionary Init
-            _poolDictionary.Add(vfxType.Type, new Queue<GameObject>());
-            _vfxPrefabDictionary.Add(vfxType.Type, vfxType.Prefab);
-
-            for (int i = 0; i < vfxType.PoolSize; i++)
-            {
-                CreateNewObject(vfxType.Type, vfxType.Prefab);
-            }
+            CustomDebug.LogWarning($"VFXManager: {type}의 Prefab을 찾을 수 없습니다.");
+            return null;
         }
-    }
 
-    private GameObject CreateNewObject(VFXType type, GameObject prefab)
-    {
-        GameObject vfxObject = Instantiate(prefab, transform);
-
-        SetupVFXReturnToPool(vfxObject, type);
-
-        vfxObject.SetActive(false);
-        _poolDictionary[type].Enqueue(vfxObject);
+        GameObject vfxObject = _poolDictionary[type].Dequeue();
+        if(vfxObject == null)
+        {
+            return GetOrCreateVFX(type);
+        }
 
         return vfxObject;
     }
 
-    private void SetupVFXReturnToPool(GameObject vfxObject, VFXType type)
+    //설정된 개수만큼 미리 생성
+    private void InitializePool()
     {
-        var returnScript = vfxObject.GetComponent<VFXReturnToPool>();
-        if(returnScript == null)
+        _poolDictionary = new Dictionary<VFXType, Queue<GameObject>>();
+        _vfxPrefabDictionary = new Dictionary<VFXType, GameObject>();
+
+        foreach (var vfxData in _vfxList)
+        {
+            if (!ValidateVFXData(vfxData))
+            {
+                continue;
+            }
+
+            InitializeVFXType(vfxData);
+        }
+    }
+
+    private bool ValidateVFXData(VFXData data)
+    {
+        if(_poolDictionary.ContainsKey(data.Type))
+        {
+            CustomDebug.LogWarning($"VFXManager: {data.Type}이 중복 등록되었습니다.");
+            return false;
+        }
+
+        if(data.Prefab == null)
+        {
+            CustomDebug.LogWarning($"VFXManager: {data.Type}의 Prefab이 null입니다.");
+            return false;
+        }
+
+        return true;
+    }
+
+    private void InitializeVFXType(VFXData data)
+    {
+        //Dictionary Init
+        _poolDictionary[data.Type] = new Queue<GameObject>();
+        _vfxPrefabDictionary[data.Type] = data.Prefab;
+
+        for (int i = 0; i < data.PoolSize; i++)
+        {
+            GameObject newVfx = CreateNewVFXObject(data.Type, data.Prefab);
+            _poolDictionary[data.Type].Enqueue(newVfx);
+        }
+    }
+
+    private GameObject CreateNewVFXObject(VFXType type, GameObject prefab)
+    {
+        GameObject vfxObject = Instantiate(prefab, transform);
+
+        SetupVFXReturnToScript(vfxObject, type);
+
+        vfxObject.SetActive(false);
+
+        return vfxObject;
+    }
+
+    private void SetupVFXReturnToScript(GameObject vfxObject, VFXType type)
+    {
+        if(!vfxObject.TryGetComponent<VFXReturnToPool>(out var returnScript))
         {
             returnScript = vfxObject.AddComponent<VFXReturnToPool>();
         }

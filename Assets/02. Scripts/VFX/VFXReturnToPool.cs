@@ -3,12 +3,17 @@ using System.Collections;
 
 public class VFXReturnToPool : MonoBehaviour
 {
+    private const float DEFAULT_RETURN_TIME = 2.0f;
+
     private VFXType _myType;
     private ParticleSystem _particleSystem;
+    private Coroutine _returnCoroutine;
+    private WaitForSeconds _defaultWait;
 
     private void Awake()
     {
         _particleSystem = GetComponent<ParticleSystem>();
+        _defaultWait = new WaitForSeconds(DEFAULT_RETURN_TIME);
     }
 
     /// <summary>
@@ -22,22 +27,38 @@ public class VFXReturnToPool : MonoBehaviour
 
     private void OnEnable()
     {
-        StartCoroutine(CheckIfAlive());
+        if (_returnCoroutine != null)
+        {
+            StopCoroutine(_returnCoroutine);
+        }
+
+        _returnCoroutine = StartCoroutine(ReturnWhenFinished());
+    }
+    private void OnDisable()
+    {
+        if(_returnCoroutine != null)
+        {
+            StopCoroutine(_returnCoroutine);
+            _returnCoroutine = null;
+        }
     }
 
-    private IEnumerator CheckIfAlive()
+    private IEnumerator ReturnWhenFinished()
     {
-        //파티클이 재생중이면 대기
         if (_particleSystem != null)
         {
-            yield return new WaitWhile(() => _particleSystem.IsAlive(true));
+            while (_particleSystem.IsAlive(true))
+            {
+                yield return null;
+            }
         }
         else
         {
-            yield return new WaitForSeconds(2.0f);
+            yield return _defaultWait;
         }
 
         //파티클 끝나면 반납
-        VFXManager.Instance.ReturnToPool(_myType, this.gameObject);
+        VFXManager.Instance.ReturnToPool(_myType, gameObject);
+        _returnCoroutine = null;
     }
 }

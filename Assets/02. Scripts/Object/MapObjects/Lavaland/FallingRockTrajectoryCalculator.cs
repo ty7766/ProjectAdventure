@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Assertions;
 
 public static class FallingRockTrajectoryCalculator
 {
@@ -21,11 +22,12 @@ public static class FallingRockTrajectoryCalculator
     public static Vector3 PredictLandingPosition(Vector3 startPos, Vector3 initialVelocity, float fallHeight)
     {
         float gravity = Mathf.Abs(Physics.gravity.y);
-        float v0_y = initialVelocity.y;
+        float vy = initialVelocity.y;
+        Assert.IsTrue(fallHeight >= 0, $"[FallingRockTrajectoryCalculator]fallHeight는 0 이상이어야 합니다. (입력값: { fallHeight})");
 
         // 근의 공식 등을 응용하여 바닥(-fallHeight)에 도달하는 시간(t) 계산
         // t = (v0 + sqrt(v0^2 + 2gh)) / g
-        float timeToImpact = (v0_y + Mathf.Sqrt((v0_y * v0_y) + (2 * gravity * fallHeight))) / gravity;
+        float timeToImpact = (vy + Mathf.Sqrt((vy * vy) + (2 * gravity * fallHeight))) / gravity;
 
         // 위치 = 시작점 + (속도 * 시간)
         // 수평 이동은 등속 운동, 수직 이동은 등가속도 운동이나 위 공식으로 퉁쳐서 최종 위치 예측

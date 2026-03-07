@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
 
 public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
 {
@@ -28,7 +27,7 @@ public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
     [SerializeField, Tooltip("링 이동 속도")]
     private float _tileSpeed = 5.0f;
 
-    //SpawnedObjectManager 상속
+
     protected override IEnumerator SpawnRoutine()
     {
         while (true)
@@ -37,9 +36,13 @@ public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
             SpawnRing();
         }
     }
-    //SpawnedObjectManager 상속
+
     protected override void ReturnObjectToPool(MovingRing movingRing)
     {
+        if (movingRing == null)
+        {
+            return;
+        }
         UnregisterObject(movingRing);
         movingRing.ReturnToPool();
     }
@@ -54,7 +57,7 @@ public class MovingRingSpawner : SpawnedObjectManager<MovingRing>
             RegisterObject(ringScript);
 
             Vector3 direction = (_direction == RingDirection.Left_MinusX) ? Vector3.left : Vector3.right;
-            ringScript.InitializeForRingAttributs(_tileSpeed, _moveDistance, direction);
+            ringScript.InitializeForRingAttributes(_tileSpeed, _moveDistance, direction);
         }
     }
 

@@ -14,6 +14,8 @@ public class CameraFollow : MonoBehaviour
     [SerializeField]
     private Vector3 _playerOffset;
 
+    private Vector3 _velocity;
+
     private void LateUpdate()
     {
         if (_target == null)
@@ -21,9 +23,7 @@ public class CameraFollow : MonoBehaviour
             return;
         }
 
-        Vector3 desiredPosition = _target.position + _playerOffset;
-        Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, _smoothSpeed);
-        transform.position = smoothedPosition;
+        transform.position = Vector3.SmoothDamp(transform.position, _target.position + _playerOffset, ref _velocity, _smoothSpeed);
     }
 
     [ContextMenu("현재 씬의 각도를 오프셋으로 저장")]

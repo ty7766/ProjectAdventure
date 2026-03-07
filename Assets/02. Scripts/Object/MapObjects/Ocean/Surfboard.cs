@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System.Collections.Generic;
 
 public class Surfboard : MonoBehaviour
 {
@@ -36,6 +35,7 @@ public class Surfboard : MonoBehaviour
         {
             CustomDebug.LogError($"[Surfboard] '{name}'의 WayPoints는 최소 2개 이상이어야 합니다. 스크립트를 비활성화합니다.");
             this.enabled = false;
+            return;
         }
     }
 
@@ -88,8 +88,7 @@ public class Surfboard : MonoBehaviour
     }
     private void MoveTowardsTarget(Transform targetPoint)
     {
-        Vector3 newPosition = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
-        transform.position = newPosition;
+        transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
     }
 
     private void RotateTowardsTarget(Transform targetPoint)
@@ -119,19 +118,16 @@ public class Surfboard : MonoBehaviour
     //플레이어가 순간이동하는 것을 방지하기 위함
     private void SnapRotationWithPlayerDetachment(Quaternion targetRotation)
     {
-        if (_attachedPlayer != null)
-        {
-            _attachedPlayer.SetParent(null);
-        }
-
         transform.rotation = targetRotation;
+        _shouldSnapRotation = false;
 
-        if (_attachedPlayer != null)
+        if (_attachedPlayer == null)
         {
-            _attachedPlayer.SetParent(transform);
+            return;
         }
 
-        _shouldSnapRotation = false;
+        _attachedPlayer.SetParent(null);
+        _attachedPlayer.SetParent(transform);
     }
 
     private void CheckArrival(Transform targetPoint)
@@ -180,7 +176,7 @@ public class Surfboard : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            collision.transform.SetParent(this.transform);
+            collision.transform.SetParent(transform);
             _attachedPlayer = collision.transform;
         }
     }
@@ -190,7 +186,7 @@ public class Surfboard : MonoBehaviour
     {
         if(collision.gameObject.CompareTag("Player"))
         {
-            if(collision.transform.parent == this.transform)
+            if(collision.transform.parent == transform)
             {
                 collision.transform.SetParent(null);
             }

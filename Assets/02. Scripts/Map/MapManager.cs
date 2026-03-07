@@ -87,7 +87,7 @@ public class MapManager : MonoBehaviour
     {
         if(_controls != null)
         {
-            _controls?.Map.Enable();
+            _controls.Map.Enable();
             _controls.Map.SelectMap.started += _onSelectMap;
             _controls.Map.ChangeMap.started += _onChangeMap;
         }
@@ -97,7 +97,7 @@ public class MapManager : MonoBehaviour
     {
         if(_controls != null)
         {
-            _controls?.Map.Disable();
+            _controls.Map.Disable();
             _controls.Map.SelectMap.started -= _onSelectMap;
             _controls.Map.ChangeMap.started -= _onChangeMap;
         }
@@ -225,7 +225,7 @@ public class MapManager : MonoBehaviour
         MapInfo mapInfo = group.Maps[index];
         if (mapInfo.Prefab == null)
         {
-            Debug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
+            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
             return;
         }
         Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
@@ -234,8 +234,8 @@ public class MapManager : MonoBehaviour
         Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
-        group.CurrentActivePath.transform.SetParent(this.transform);
+        group.CurrentActivePath.transform.SetParent(transform);
 
-        Debug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
+        CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
     }
 }

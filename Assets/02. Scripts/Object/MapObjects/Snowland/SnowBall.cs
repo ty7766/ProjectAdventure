@@ -20,8 +20,9 @@ public class SnowBall : MonoBehaviour
     private float _lifeTime = 10f;
 
     private Rigidbody _rigidBody;
+    private Coroutine _lifeRoutine;
     private WaitForSeconds _lifeTimeInterval;
-
+    
     private void Awake()
     {
         _rigidBody = GetComponent<Rigidbody>();
@@ -31,7 +32,7 @@ public class SnowBall : MonoBehaviour
     private void OnEnable()
     {
         InitializeSnowBallRigidBody();
-        StartCoroutine(ActivateSnowBallRoutine());
+        _lifeRoutine = StartCoroutine(ActivateSnowBallRoutine());
     }
 
     /// <summary>
@@ -39,19 +40,21 @@ public class SnowBall : MonoBehaviour
     /// </summary>
     public void ReturnToPool()
     {
-        StopAllCoroutines();
-        ObjectPoolManager.Instance.ReturnObject(_objectType, this.gameObject);
+        if (_lifeRoutine != null)
+        {
+            StopCoroutine(_lifeRoutine);
+            _lifeRoutine = null;
+        }
+
+        ObjectPoolManager.Instance.ReturnObject(_objectType, gameObject);
     }
 
     private void InitializeSnowBallRigidBody()
     {
-        if (_rigidBody != null)
-        {
-            _rigidBody.linearVelocity = Vector3.zero;
-            _rigidBody.angularVelocity = Vector3.zero;
-            _rigidBody.Sleep();
-            _rigidBody.WakeUp();
-        }
+        _rigidBody.linearVelocity = Vector3.zero;
+        _rigidBody.angularVelocity = Vector3.zero;
+        _rigidBody.Sleep();
+        _rigidBody.WakeUp();
     }
 
     private void OnCollisionEnter(Collision collision)
