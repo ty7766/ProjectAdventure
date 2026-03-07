@@ -60,12 +60,14 @@ public class TutorialView : MonoBehaviour
         Vector2 screenPosition = GetScreenPosition(config);
         UpdateSpotlight(screenPosition, config.HoleSize);
 
-        if(_animationCoroutine != null)
+        Vector2 arrowTipScreenPosition = RectTransformUtility.WorldToScreenPoint(null,config.ArrowTipTarget.position);
+        
+        if (_animationCoroutine != null)
         {
             StopCoroutine(_animationCoroutine);
         }
 
-        _animationCoroutine = StartCoroutine(AnimateArrow(screenPosition, config.ArrowTipScreenPosition, config.DescriptionText));
+        _animationCoroutine = StartCoroutine(AnimateArrow(screenPosition, arrowTipScreenPosition, config.DescriptionText));
     }
 
     public void Hide()

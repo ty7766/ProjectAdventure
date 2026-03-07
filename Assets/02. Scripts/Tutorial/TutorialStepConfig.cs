@@ -23,7 +23,7 @@ public class TutorialStepConfig
 
     [Header("화살표 & 텍스트")]
     [SerializeField]
-    private Vector2 _arrowTipScreenPosition;
+    private RectTransform _arrowTipTarget;
     [SerializeField]
     [TextArea]
     private string _descriptionText;
@@ -33,6 +33,6 @@ public class TutorialStepConfig
     public Transform WorldTarget => _worldTarget;
     public RectTransform UiTarget => _uiTarget;
     public Vector2 HoleSize => _holeSize;
-    public Vector2 ArrowTipScreenPosition => _arrowTipScreenPosition;
+    public RectTransform ArrowTipTarget => _arrowTipTarget;
     public string DescriptionText => _descriptionText;
 }
