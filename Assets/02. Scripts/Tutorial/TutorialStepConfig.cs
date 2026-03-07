@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class TutorialStepConfig : MonoBehaviour
+[System.Serializable]
+public class TutorialStepConfig
 {
     public enum TargetType { WorldObject, UIElement}
 
