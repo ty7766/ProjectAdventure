@@ -235,7 +235,5 @@ public class MapManager : MonoBehaviour
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(transform);
-
-        CustomDebug.Log($"[슬롯 변경] {group.GroupName} -> {mapInfo.Prefab.name} (Offset: {mapInfo.OffsetPosition})");
     }
 }
