@@ -119,81 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &24388826
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 24388827}
-  - component: {fileID: 24388829}
-  - component: {fileID: 24388828}
-  m_Layer: 5
-  m_Name: ArrowHead
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &24388827
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 24388826}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 519343269}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 30, y: 30}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &24388828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 24388826}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  m_Maskable: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 427043106037edd48bc190ffba69ac49, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
---- !u!222 &24388829
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 24388826}
-  m_CullTransparentMesh: 1
 --- !u!1 &260897208
 GameObject:
   m_ObjectHideFlags: 0
@@ -402,6 +327,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 595027232}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 150, y: 200}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 1629207403}
     _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4."
@@ -409,7 +335,8 @@ MonoBehaviour:
     _targetType: 0
     _worldTarget: {fileID: 1133851749}
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 800, y: 600}
+    _holeSize: {x: 1000, y: 800}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 710716547}
     _descriptionText: "\uAC74\uB108\uAC00\uC57C\uD560 \uB9F5\uC785\uB2C8\uB2E4. [E]
@@ -421,6 +348,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 843756758}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 100, y: 100}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 735635000}
     _descriptionText: "\uAD50\uCCB4\uD560 \uB9F5\uC744 \uC120\uD0DD\uD560 \uC218
@@ -430,7 +358,8 @@ MonoBehaviour:
     _targetType: 0
     _worldTarget: {fileID: 1635724485}
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 200, y: 200}
+    _holeSize: {x: 100, y: 100}
+    _spotlightOffset: {x: 0, y: 300}
     _moveCameraToTarget: 1
     _arrowTipTarget: {fileID: 265501962}
     _descriptionText: "\uBAA9\uD45C\uB97C \uB2EC\uC131\uD558\uAE30 \uC704\uD574\uC11C\uB294
@@ -440,6 +369,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 584284536}
     _uiTarget: {fileID: 0}
     _holeSize: {x: 300, y: 400}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 1920908434}
     _descriptionText: "\uB3C4\uCC29\uC810\uC785\uB2C8\uB2E4. \uB3C4\uCC29\uC810\uAE4C\uC9C0
@@ -450,6 +380,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 0}
     _uiTarget: {fileID: 901033791}
     _holeSize: {x: 200, y: 100}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 785771013}
     _descriptionText: "HP\uAC00 0\uC774\uB418\uBA74 Game Over\uAC00 \uB429\uB2C8\uB2E4."
@@ -458,6 +389,7 @@ MonoBehaviour:
     _worldTarget: {fileID: 0}
     _uiTarget: {fileID: 325598391}
     _holeSize: {x: 100, y: 100}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 398884146}
     _descriptionText: "\uD604\uC7AC \uC2B5\uB4DD\uD55C Gem\uC758 \uAC1C\uC218\uC785\uB2C8\uB2E4."
@@ -1024,42 +956,6 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
---- !u!1 &519343268
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 519343269}
-  m_Layer: 5
-  m_Name: ArrowContainer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &519343269
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 519343268}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 24388827}
-  m_Father: {fileID: 1478835233}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &534781943
 GameObject:
   m_ObjectHideFlags: 0
@@ -2239,14 +2135,13 @@ GameObject:
   - component: {fileID: 1478835233}
   - component: {fileID: 1478835235}
   - component: {fileID: 1478835236}
-  - component: {fileID: 1478835237}
   m_Layer: 5
   m_Name: TutorialPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1478835233
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2260,7 +2155,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 553854139}
-  - {fileID: 519343269}
   - {fileID: 2038438890}
   m_Father: {fileID: 534781947}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2291,27 +2185,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TutorialView
   _overlayImage: {fileID: 553854140}
   _spotlightMaterial: {fileID: 2100000, guid: 13a16acee3dd9ea4095e86fdcc9127ed, type: 2}
-  _arrowRenderer: {fileID: 1478835237}
   _textPanel: {fileID: 2038438891}
   _descriptionText: {fileID: 260897210}
   _textFadeDuration: 0.3
---- !u!114 &1478835237
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1478835232}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ec201531fef015042b39568c63012195, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TutorialArrowRenderer
-  _arrowContainer: {fileID: 519343269}
-  _dotPrefab: {fileID: 5421361924382212472, guid: ee31ccef91d1af44b81ac78ce429b191, type: 3}
-  _arrowHead: {fileID: 24388828}
-  _dotSpacing: 20
-  _dotRevealInterval: 0.03
 --- !u!4 &1516804858
 Transform:
   m_ObjectHideFlags: 0

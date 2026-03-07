@@ -12,10 +12,6 @@ public class TutorialView : MonoBehaviour
     [SerializeField]
     private Material _spotlightMaterial;
 
-    [Header("화살표")]
-    [SerializeField]
-    private TutorialArrowRenderer _arrowRenderer;
-
     [Header("텍스트 패널")]
     [SerializeField]
     private CanvasGroup _textPanel;
@@ -61,10 +57,11 @@ public class TutorialView : MonoBehaviour
         Vector2 tipScreenPos = RectTransformUtility.WorldToScreenPoint(null, config.ArrowTipTarget.position);
         PositionTextPanel(tipScreenPos);
 
-        Vector2 direction = (tipScreenPos - spotlightScreenPos).normalized;
-        Vector2 arrowFrom = TutorialArrowRenderer.GetBoxEdgePoint(spotlightScreenPos, config.HoleSize * 0.5f, direction);
-
-        _arrowRenderer.Animate(arrowFrom, tipScreenPos, OnArrowComplete);
+        if (_fadeCoroutine != null)
+        {
+            StopCoroutine(_fadeCoroutine);
+        }
+        _fadeCoroutine = StartCoroutine(FadeInTextPanel());
     }
 
     /// <summary>
@@ -74,8 +71,6 @@ public class TutorialView : MonoBehaviour
     {
         _materialInstance.SetVector(HoleCenterID, new Vector4(-9999f, -9999f, 0f, 0f));
         _materialInstance.SetVector(HoleSizeID, Vector4.zero);
-
-        _arrowRenderer.Clear();
 
         if (_fadeCoroutine != null)
         {
@@ -130,15 +125,6 @@ public class TutorialView : MonoBehaviour
             out Vector2 localPos
         );
         _textPanelRect.anchoredPosition = localPos;
-    }
-
-    private void OnArrowComplete()
-    {
-        if (_fadeCoroutine != null)
-        {
-            StopCoroutine(_fadeCoroutine);
-        }
-        _fadeCoroutine = StartCoroutine(FadeInTextPanel());
     }
 
     private IEnumerator FadeInTextPanel()
