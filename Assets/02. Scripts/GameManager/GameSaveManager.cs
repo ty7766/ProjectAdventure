@@ -10,6 +10,9 @@ namespace GameManager.Singleton
 
     public class GameSaveManager : Singleton<GameSaveManager>
     {
+        //튜토리얼 확인용 문자열
+        private const string TutorialCompletedKey = "TutorialCompleted";
+
         [SerializeField] private List<StageData> _stageDataBase;
         [SerializeField] private List<StageSaveRecord> _saveData;
 
@@ -160,6 +163,23 @@ namespace GameManager.Singleton
             }
 
             return sum;
+        }
+
+        /// <summary>
+        /// 튜토리얼 완료 여부를 반환합니다.
+        /// </summary>
+        public bool HasCompletedTutorial()
+        {
+            return PlayerPrefs.GetInt(TutorialCompletedKey, 0) == 1;
+        }
+
+        /// <summary>
+        /// 튜토리얼 완료 상태를 저장합니다.
+        /// </summary>
+        public void SetTutorialCompleted()
+        {
+            PlayerPrefs.SetInt(TutorialCompletedKey, 1);
+            PlayerPrefs.Save();
         }
 
         //--- Private Methods ---//
