@@ -552,6 +552,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6405408139535789515, guid: 7753a3e9a4e871c469ec2af9c8389dfb, type: 3}
   m_PrefabInstance: {fileID: 763642629}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &764879137 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6312860330468633006, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+  m_PrefabInstance: {fileID: 2606235899887192567}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!114 &810807374 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7039951688853965961, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
@@ -845,6 +856,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_Dropdown
+--- !u!114 &1394434899 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3032874293147472406, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+  m_PrefabInstance: {fileID: 2606235899887192567}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
 --- !u!1001 &1436035924
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -993,6 +1015,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GraphicManager
   urpAsset: {fileID: 11400000, guid: 4b83569d67af61e458304325a23e5dfd, type: 2}
+  _dofSettings:
+  - Aperture: 1
+    FocusDistance: 4.12
+    FocalLength: 135
+    Name: Title
+  - Aperture: 1.8
+    FocusDistance: 0.52
+    FocalLength: 75
+    Name: Stage
 --- !u!114 &1546778416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1104,7 +1135,9 @@ MonoBehaviour:
   _dropDownAA: {fileID: 1089068161}
   _dropDownVSync: {fileID: 1306918310}
   _sliderGamma: {fileID: 668442795}
+  _textGammaValue: {fileID: 1394434899}
   _sliderRenderScale: {fileID: 1823945006}
+  _textRenderScaleValue: {fileID: 764879137}
   _dropDownTextureQuality: {fileID: 2060792998}
   _dropDownTextureFiltering: {fileID: 831717307}
   _dropDownShadowQuality: {fileID: 1880067776}
@@ -2421,6 +2454,14 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1451911025986952306, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+      propertyPath: m_Value
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1451911025986952306, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+      propertyPath: m_MinValue
+      value: -0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 1540302100146831508, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -2712,6 +2753,10 @@ PrefabInstance:
     - target: {fileID: 2819696291916532738, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3032874293147472406, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+      propertyPath: m_text
+      value: 0.50
       objectReference: {fileID: 0}
     - target: {fileID: 3106716934848275559, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchorMax.y
@@ -3364,6 +3409,10 @@ PrefabInstance:
     - target: {fileID: 6246022227499895784, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6312860330468633006, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+      propertyPath: m_text
+      value: 100%
       objectReference: {fileID: 0}
     - target: {fileID: 6696556757715070556, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchorMax.y

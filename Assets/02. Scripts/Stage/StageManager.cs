@@ -79,6 +79,7 @@ public class StageManager : MonoBehaviour
         _initialFixedDeltaTime = Time.fixedDeltaTime;
         PauseGameSmoothly();
         DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
+        GraphicManager.Instance.SetDoFMode("Stage");
     }
 
     private void Update()

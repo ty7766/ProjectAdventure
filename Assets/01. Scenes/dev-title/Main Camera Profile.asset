@@ -139,7 +139,7 @@ MonoBehaviour:
     m_Value: 1
   scatter:
     m_OverrideState: 1
-    m_Value: 1
+    m_Value: 0.877
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -185,6 +185,29 @@ MonoBehaviour:
   - {fileID: -4212870483031218901}
   - {fileID: 5576247297870158391}
   - {fileID: -4764551766870933632}
+  - {fileID: 4757186892268440240}
+--- !u!114 &4757186892268440240
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5485954d14dfb9a4c8ead8edb0ded5b1, type: 3}
+  m_Name: LiftGammaGain
+  m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.LiftGammaGain
+  active: 1
+  lift:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
+  gamma:
+    m_OverrideState: 1
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
+  gain:
+    m_OverrideState: 0
+    m_Value: {x: 1, y: 1, z: 1, w: 0}
 --- !u!114 &5576247297870158391
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -201,7 +224,7 @@ MonoBehaviour:
   master:
     m_OverrideState: 1
     m_Value:
-      <length>k__BackingField: 2
+      <length>k__BackingField: 3
       m_Loop: 0
       m_ZeroValue: 0
       m_Range: 1
@@ -209,19 +232,28 @@ MonoBehaviour:
         serializedVersion: 2
         m_Curve:
         - serializedVersion: 3
-          time: 0.0103270225
-          value: 0.007407427
-          inSlope: -0.0457842
-          outSlope: -0.0457842
+          time: 0
+          value: 0
+          inSlope: -0.16858767
+          outSlope: -0.16858767
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0
+          outWeight: 0
+        - serializedVersion: 3
+          time: 0.4246824
+          value: 0.3962264
+          inSlope: 1.1509656
+          outSlope: 1.1509656
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 1
-          inSlope: 0.4716385
-          outSlope: 0
+          value: 0.9433962
+          inSlope: -0
+          outSlope: -0
           tangentMode: 0
           weightedMode: 0
           inWeight: 0

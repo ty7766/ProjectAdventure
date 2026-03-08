@@ -1,7 +1,52 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
+
+[Serializable]
+public class DOFSettings
+{
+    [Header("DOF Parameters")]
+    [Tooltip("조리개 값 (f-number). 낮을수록 배경 흐림이 심해짐")]
+    public float Aperture;
+
+    [Tooltip("초점 거리 (Focus Distance). 카메라로부터 초점이 맞는 지점까지의 거리 (단위: m)")]
+    public float FocusDistance;
+
+    [Tooltip("초점 길이 (Focal Length). 렌즈의 망원/광각 정도 (단위: mm)")]
+    public float FocalLength;
+
+    public string Name; // 설정 이름 (예: "Stage", "Title")
+
+    // 기본값 생성자
+    public DOFSettings()
+    {
+        Aperture = 5.6f;
+        FocusDistance = 10f;
+        FocalLength = 50f;
+        Name = "Default";
+    }
+
+    public DOFSettings(float aperture, float focusDistance, float focalLength, string name)
+    {
+        Aperture = aperture;
+        FocusDistance = focusDistance;
+        FocalLength = focalLength;
+        Name = name;
+    }
+
+    public void ApplyTo(DepthOfField dof)
+    {
+        if (dof != null)
+        {
+            dof.aperture.Override(Aperture);
+            dof.focusDistance.Override(FocusDistance);
+            dof.focalLength.Override(FocalLength);
+        }
+    }
+}
 
 /// <summary>
 /// 게임의 그래픽 설정 및 후처리를 관리하며, 모든 설정값의 저장 및 불러오기를 담당하는 싱글톤 클래스입니다.
@@ -20,6 +65,9 @@ public class GraphicManager : Singleton<GraphicManager>
 
     [Header("URP Asset Reference")]
     public UniversalRenderPipelineAsset urpAsset;
+
+    [Header("DOF Default Settings")]
+    [SerializeField] private List<DOFSettings> _dofSettings;
 
     protected override void Awake()
     {
@@ -209,6 +257,11 @@ public class GraphicManager : Singleton<GraphicManager>
         PlayerPrefs.SetInt("DOFOn", isOn ? 1 : 0);
     }
     #endregion
+
+    public void SetDoFMode(string modeName)
+    {
+        _dofSettings?.Find(_dof => _dof.Name == modeName)?.ApplyTo(_dof);
+    }
 
     /// <summary>
     /// 저장된 모든 그래픽 설정값을 불러와 게임에 즉시 적용합니다.
