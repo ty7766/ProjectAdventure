@@ -66,6 +66,19 @@ public class TitleCameraController : MonoBehaviour
         _transitionCoroutine = StartCoroutine(TransitionRoutine(targetPoint));
     }
 
+    public void SetCameraInstantly(string pointName)
+    {
+        CameraPoint targetPoint = points.Find(p => p.pointName == pointName);
+        if (targetPoint == null)
+        {
+            Debug.LogWarning($"<color=red>어라?</color> '{pointName}'(이)라는 이름의 포인트가 없는데 형?");
+            return;
+        }
+        transform.position = targetPoint.position;
+        transform.rotation = Quaternion.Euler(targetPoint.rotation);
+        currentFocusDistance = targetPoint.focusDistance;
+    }
+
     private IEnumerator TransitionRoutine(CameraPoint target)
     {
         Vector3 startPos = transform.position;

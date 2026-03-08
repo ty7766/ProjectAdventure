@@ -18,6 +18,7 @@ public class TitleFlowController : MonoBehaviour
     private float _introDuration = 0.5f;
 
     private Coroutine _fadeCoroutine;
+    private CanvasGroup _currentActiveCanvas;
 
     private void Start()
     {
@@ -28,18 +29,30 @@ public class TitleFlowController : MonoBehaviour
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("Title");
-        _fadeCoroutine = StartCoroutine(SequentialFade(_stageSelectCanvas, _titleCanvas));
+        _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _titleCanvas));
+        _currentActiveCanvas = _titleCanvas;
     }
 
     public void GoToStageSelect()
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("StageSelect");
-        _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _stageSelectCanvas));
+        _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _stageSelectCanvas));
+        _currentActiveCanvas = _stageSelectCanvas;
+    }
+
+    public void GoToOptions()
+    {
+        if(_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        _titleCameraController.DoTransition("Options");
+        //_currentActiveCanvas = _optionsCanvas;
+        //_fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _optionsCanvas));
     }
 
     private void InitializeTitleView()
     {
+        _currentActiveCanvas = _titleCanvas;
+        _titleCameraController.SetCameraInstantly("Title");
         _stageSelectCanvas.blocksRaycasts = false;
         _stageSelectCanvas.interactable = true;
         _titleCanvas.blocksRaycasts = false;

@@ -25,6 +25,13 @@ public class TitlePresenter
     public void OnOptionsButtonClicked()
     {
         // Handle options button click logic here
+        if(!_flowController)
+        {
+            CustomDebug.LogWarning("[TitlePresenter.cs] flowController was null!!");
+            return;
+        }
+        _flowController.GoToOptions();
+
     }
 
     public void OnExitButtonClicked()
