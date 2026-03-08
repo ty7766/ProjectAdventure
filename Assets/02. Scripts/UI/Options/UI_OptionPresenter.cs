@@ -25,7 +25,14 @@ public class UI_OptionPresenter
             tabButton.AddButtonListener(() => OnTabSelected(tabName));
         }
         _currentTab = _tabButtons[0].TabName; // Default to the first tab
+        UpdateTabView();
         UpdateTabButtonVisuals();
+    }
+
+    //--- Button Handlers ---//
+    public void OnBackButtonClicked()
+    {
+        _view.FlowController.GoToTitle();
     }
 
     private void Initialize()
@@ -37,6 +44,7 @@ public class UI_OptionPresenter
     {
         _currentTab = tabName;
         UpdateTabButtonVisuals();
+        UpdateTabView();
     }
 
     private void UpdateTabButtonVisuals()
@@ -50,8 +58,26 @@ public class UI_OptionPresenter
             else
             {
                 tabButton.SetGraphicOpacity(_unselectedTabOpacity);
-                CustomDebug.Log($"{tabButton.name}, {_unselectedTabOpacity}");
             }
+        }
+    }
+
+    private void UpdateTabView()
+    {
+        switch (_currentTab)
+        {
+            case "Graphic":
+                _view.ShowGraphicTab();
+                break;
+            case "Sound":
+                _view.ShowAudioTab();
+                break;
+            case "KeyBind":
+                _view.ShowKeyBindTab();
+                break;
+            default:
+                Debug.LogError($"Unknown tab name: {_currentTab}");
+                break;
         }
     }
 

@@ -10,6 +10,8 @@ public class TitleFlowController : MonoBehaviour
     private CanvasGroup _titleCanvas;
     [SerializeField]
     private CanvasGroup _stageSelectCanvas;
+    [SerializeField]
+    private CanvasGroup _optionsCanvas;
 
     [Header("Settings")]
     [SerializeField, Range(0.1f, 3f)]
@@ -45,8 +47,8 @@ public class TitleFlowController : MonoBehaviour
     {
         if(_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("Options");
-        //_currentActiveCanvas = _optionsCanvas;
-        //_fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _optionsCanvas));
+        _currentActiveCanvas = _optionsCanvas;
+        _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _optionsCanvas));
     }
 
     private void InitializeTitleView()
@@ -59,6 +61,7 @@ public class TitleFlowController : MonoBehaviour
         _titleCanvas.interactable = true;
         _titleCanvas.alpha = 0.0f;
         _stageSelectCanvas.alpha = 0.0f;
+        _optionsCanvas.alpha = 0.0f;
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
