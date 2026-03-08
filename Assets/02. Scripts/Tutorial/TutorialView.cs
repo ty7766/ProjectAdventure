@@ -20,10 +20,10 @@ public class TutorialView : MonoBehaviour
     [SerializeField]
     private float _textFadeDuration = 0.3f;
 
-    //--- Fields ---//
     private Material _materialInstance;
     private RectTransform _textPanelRect;
     private Coroutine _fadeCoroutine;
+    private Camera _mainCamera;
 
     private static readonly int HoleCenterID = Shader.PropertyToID("_HoleCenter");
     private static readonly int HoleSizeID = Shader.PropertyToID("_HoleSize");
@@ -31,6 +31,7 @@ public class TutorialView : MonoBehaviour
     //--- Unity Methods ---//
     private void Awake()
     {
+        _mainCamera = Camera.main;
         _materialInstance = Instantiate(_spotlightMaterial);
         _overlayImage.material = _materialInstance;
         _textPanelRect = _textPanel.GetComponent<RectTransform>();
@@ -54,8 +55,11 @@ public class TutorialView : MonoBehaviour
         _textPanel.gameObject.SetActive(true);
         _textPanel.alpha = 0f;
 
-        Vector2 tipScreenPos = RectTransformUtility.WorldToScreenPoint(null, config.ArrowTipTarget.position);
-        PositionTextPanel(tipScreenPos);
+        if(config.TipTarget != null)
+        {
+            Vector2 tipScreenPos = RectTransformUtility.WorldToScreenPoint(null, config.TipTarget.position);
+            PositionTextPanel(tipScreenPos);
+        }
 
         if (_fadeCoroutine != null)
         {
@@ -99,7 +103,7 @@ public class TutorialView : MonoBehaviour
                 CustomDebug.LogWarning("TutorialView: WorldTarget이 null입니다.");
                 return Vector2.zero;
             }
-            return Camera.main.WorldToScreenPoint(config.WorldTarget.position);
+            return _mainCamera.WorldToScreenPoint(config.WorldTarget.position);
         }
 
         if (config.UiTarget == null)

@@ -27,20 +27,19 @@ public class TutorialStepConfig
     [SerializeField]
     private bool _moveCameraToTarget;
 
-    [Header("화살표 & 텍스트")]
+    [Header("텍스트")]
     [SerializeField]
-    private RectTransform _arrowTipTarget;
+    private RectTransform _tipTarget;
     [SerializeField]
     [TextArea]
     private string _descriptionText;
 
-    public string StepName => _stepName;
     public TargetType Target => _targetType;
     public Transform WorldTarget => _worldTarget;
     public RectTransform UiTarget => _uiTarget;
     public Vector2 HoleSize => _holeSize;
     public Vector2 SpotlightOffset => _spotlightOffset;
     public bool MoveCameraToTarget => _moveCameraToTarget;
-    public RectTransform ArrowTipTarget => _arrowTipTarget;
+    public RectTransform TipTarget => _tipTarget;
     public string DescriptionText => _descriptionText;
 }

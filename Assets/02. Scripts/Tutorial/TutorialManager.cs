@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using GameManager.Singleton;
 using UnityEngine;
 
@@ -8,7 +7,7 @@ public class TutorialManager : MonoBehaviour
     //--- Serialized Fields ---//
     [Header("튜토리얼 설정")]
     [SerializeField]
-    private List<TutorialStepConfig> _steps;
+    private TutorialStepConfig[] _steps;
     [SerializeField]
     private TutorialView _tutorialView;
     [SerializeField]
@@ -55,7 +54,7 @@ public class TutorialManager : MonoBehaviour
     /// </summary>
     public void StartTutorial(Action onComplete)
     {
-        if (_steps == null || _steps.Count == 0)
+        if (_steps == null || _steps.Length == 0)
         {
             CustomDebug.LogWarning("TutorialManager: 등록된 스텝이 없습니다.");
             onComplete?.Invoke();
@@ -90,7 +89,7 @@ public class TutorialManager : MonoBehaviour
     {
         _currentStepIndex++;
 
-        if (_currentStepIndex >= _steps.Count)
+        if (_currentStepIndex >= _steps.Length)
         {
             CompleteTutorial();
             return;
