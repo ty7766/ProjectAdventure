@@ -371,8 +371,8 @@ MonoBehaviour:
     _moveCameraToTarget: 0
     _arrowTipTarget: {fileID: 1920908434}
     _descriptionText: "\uB3C4\uCC29\uC810\uC785\uB2C8\uB2E4. \uB3C4\uCC29\uC810\uAE4C\uC9C0
-      \uAC00\uAE30 \uC704\uD574\uC11C\uB294 \uD5D8\uB09C\uD55C \uB9F5\uC744 \uC9C0\uB098\uAC00\uC57C\uB9CC
-      \uD569\uB2C8\uB2E4."
+      \uAC00\uAE30 \uC704\uD574\uC11C\uB294 \uAC01 \uB9F5\uC744 \uB9E4\uCE6D\uD574\uC11C
+      \uACBD\uB85C\uB97C \uB9CC\uB4E4\uC5B4\uC57C \uD569\uB2C8\uB2E4."
   - _stepName: HPUI
     _targetType: 1
     _worldTarget: {fileID: 0}
