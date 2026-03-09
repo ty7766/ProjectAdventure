@@ -443,6 +443,10 @@ public class HUDView : MonoBehaviour
 
     private void HandlePauseKeyInput()
     {
+        if (TutorialManager.IsActive)
+        {
+            return;
+        }
         if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
         {
             TogglePauseMenu();
