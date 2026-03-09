@@ -9,7 +9,7 @@ namespace Utils.IO
         /// <summary>
         /// 게임 데이터를 디스크에 저장합니다
         /// </summary>
-        public static void SaveGameData(string filePath, List<StageSaveRecord> saveData)
+        public static void SaveGameData(string filePath, GameSaveData saveData)
         {
             try
             {
@@ -28,16 +28,14 @@ namespace Utils.IO
         /// </summary>
         /// <param name="filePath"></param>
         /// <returns></returns>
-        public static List<StageSaveRecord> LoadGameData(string filePath)
+        public static GameSaveData LoadGameData(string filePath)
         {
-            List<StageSaveRecord> result;
             if (File.Exists(filePath))
             {
                 try
                 {
                     var json = File.ReadAllText(filePath);
-                    result = JsonConvert.DeserializeObject<List<StageSaveRecord>>(json);
-                    return result;
+                    return JsonConvert.DeserializeObject<GameSaveData>(json);
                 }
                 catch (System.Exception e)
                 {
