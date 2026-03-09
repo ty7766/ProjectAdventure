@@ -72,6 +72,7 @@ public class TitleView : MonoBehaviour
         _exitButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnExitButtonClicked(); });
         _playButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnPlayButtonClicked(); });
         _optionsButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnOptionsButtonClicked(); });
+        GraphicManager.Instance.SetDoFMode("Title");
     }
 
     private void DisposeButtonHandlers()
