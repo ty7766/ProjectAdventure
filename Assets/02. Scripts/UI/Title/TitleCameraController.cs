@@ -20,9 +20,6 @@ public class TitleCameraController : MonoBehaviour
     [Header("Position Settings")]
     [SerializeField]
     private List<CameraPoint> points = new List<CameraPoint>();
-
-    [Header("Focus Settings (Sync)")]
-    [SerializeField, Tooltip("여기에 DoF가 있는 Global Volume을 넣어줘!")]
     private Volume postProcessVolume;
 
     [SerializeField, Min(0.1f), Tooltip("여기서 초점을 조절하면 물리 카메라와 볼륨이 같이 움직여!")]
@@ -35,6 +32,18 @@ public class TitleCameraController : MonoBehaviour
     private Camera _mainCamera;
     private DepthOfField _dof;
     private Coroutine _transitionCoroutine;
+
+    private void Start()
+    {
+        postProcessVolume = GraphicManager.Instance.Volume;
+         if (postProcessVolume && postProcessVolume.profile != null)
+        {
+            if (postProcessVolume.profile.TryGet(out _dof))
+            {
+                _dof.focusDistance.value = currentFocusDistance;
+            }
+        }
+    }
 
     private void OnEnable()
     {
@@ -64,6 +73,19 @@ public class TitleCameraController : MonoBehaviour
 
         if (_transitionCoroutine != null) StopCoroutine(_transitionCoroutine);
         _transitionCoroutine = StartCoroutine(TransitionRoutine(targetPoint));
+    }
+
+    public void SetCameraInstantly(string pointName)
+    {
+        CameraPoint targetPoint = points.Find(p => p.pointName == pointName);
+        if (targetPoint == null)
+        {
+            Debug.LogWarning($"<color=red>어라?</color> '{pointName}'(이)라는 이름의 포인트가 없는데 형?");
+            return;
+        }
+        transform.position = targetPoint.position;
+        transform.rotation = Quaternion.Euler(targetPoint.rotation);
+        currentFocusDistance = targetPoint.focusDistance;
     }
 
     private IEnumerator TransitionRoutine(CameraPoint target)
