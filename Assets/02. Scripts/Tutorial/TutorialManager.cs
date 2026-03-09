@@ -13,14 +13,16 @@ public class TutorialManager : MonoBehaviour
     [SerializeField]
     private TutorialCameraController _cameraController;
 
-    //--- Fields ---//
     private int _currentStepIndex;
     private Action _onCompleteCallback;
 
-    //--- Properties ---//
     public static bool IsActive { get; private set; }
 
-    //--- Unity Methods ---//
+    private void OnDisable()
+    {
+        IsActive = false;
+    }
+
     private void Update()
     {
         if (!IsActive)
