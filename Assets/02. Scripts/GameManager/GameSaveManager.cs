@@ -13,6 +13,8 @@ namespace GameManager.Singleton
         [SerializeField] private List<StageData> _stageDataBase;
         [SerializeField] private List<StageSaveRecord> _saveData;
 
+        private bool _hasCompletedTutorial;
+
         [Header("현재 스테이지 정보")]
         [SerializeField] private int _currentStage;
 
@@ -34,12 +36,12 @@ namespace GameManager.Singleton
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            if (pauseStatus) SaveSystem.SaveGameData(SavePath, _saveData);
+            if (pauseStatus) Save();
         }
 
         private void OnApplicationQuit()
         {
-            SaveSystem.SaveGameData(SavePath, _saveData);
+            Save();
         }
 
         //--- Public Methods ---//
@@ -55,7 +57,7 @@ namespace GameManager.Singleton
 
             record.IsCleared = true;
             record.AcquiredStars = Mathf.Max(acquiredStars, record.AcquiredStars);
-            SaveSystem.SaveGameData(SavePath, _saveData);
+            Save();
         }
 
         /// <summary>
@@ -162,7 +164,33 @@ namespace GameManager.Singleton
             return sum;
         }
 
+        /// <summary>
+        /// 튜토리얼 완료 여부를 반환합니다.
+        /// </summary>
+        public bool HasCompletedTutorial()
+        {
+            return _hasCompletedTutorial;
+        }
+
+        /// <summary>
+        /// 튜토리얼 완료 상태를 저장합니다.
+        /// </summary>
+        public void SetTutorialCompleted()
+        {
+            _hasCompletedTutorial = true;
+            Save();
+        }
+
         //--- Private Methods ---//
+        private void Save()
+        {
+            SaveSystem.SaveGameData(SavePath, new GameSaveData
+            {
+                HasCompletedTutorial = _hasCompletedTutorial,
+                StageRecords = _saveData
+            });
+        }
+
         private void InitializeSaveData()
         {
             _saveData = new List<StageSaveRecord>();
@@ -177,13 +205,17 @@ namespace GameManager.Singleton
                 var loadedData = SaveSystem.LoadGameData(SavePath);
                 if (loadedData != null)
                 {
-                    foreach (var record in loadedData)
+                    _hasCompletedTutorial = loadedData.HasCompletedTutorial;
+                    if (loadedData.StageRecords != null)
                     {
-                        var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
-                        if (target != null)
+                        foreach (var record in loadedData.StageRecords)
                         {
-                            target.IsCleared = record.IsCleared;
-                            target.AcquiredStars = record.AcquiredStars;
+                            var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
+                            if (target != null)
+                            {
+                                target.IsCleared = record.IsCleared;
+                                target.AcquiredStars = record.AcquiredStars;
+                            }
                         }
                     }
                     CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
@@ -194,7 +226,7 @@ namespace GameManager.Singleton
                 CustomDebug.Log("새 세이브 파일을 생성합니다.");
             }
 
-            SaveSystem.SaveGameData(SavePath, _saveData);
+            Save();
         }
 
     }

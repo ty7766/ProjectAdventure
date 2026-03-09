@@ -19,9 +19,16 @@ public class StageSaveRecord : ISerializationCallbackReceiver
     {
 
     }
-    
+
     public void OnAfterDeserialize()
     {
         AcquiredStars = Mathf.Clamp(AcquiredStars, 0, 3);
     }
+}
+
+[System.Serializable]
+public class GameSaveData
+{
+    public bool HasCompletedTutorial;
+    public List<StageSaveRecord> StageRecords;
 }

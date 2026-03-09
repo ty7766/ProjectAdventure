@@ -16,6 +16,9 @@ public class CameraFollow : MonoBehaviour
 
     private Vector3 _velocity;
 
+    //--- Properties ---//
+    public Vector3 PlayerOffset => _playerOffset;
+
     private void LateUpdate()
     {
         if (_target == null)

@@ -19,6 +19,8 @@ public class HUDFlowPresenter : MonoBehaviour
     private StageManager _stageManager;
     [SerializeField]
     private PlayerProperties _playerModel;
+    [SerializeField]
+    private TutorialManager _tutorialManager;
 
     [Header("Text Strings")]
     [SerializeField]
@@ -105,7 +107,15 @@ public class HUDFlowPresenter : MonoBehaviour
         _hudView.ShowHUD();
         _hudView.IsPauseMenuActive = true;
 
-        _stageManager?.StartStage();
+        //처음 플레이 할 시 게임 시작 전 튜토리얼 보여주기 
+        if (_tutorialManager != null && _tutorialManager.ShouldShowTutorial())
+        {
+            _tutorialManager.StartTutorial(() => _stageManager?.StartStage());
+        }
+        else
+        {
+            _stageManager?.StartStage();
+        }
     }
 
     // --- Death Sequence ---
