@@ -19,6 +19,15 @@ public class HUDSystemPresenter : MonoBehaviour
         UnsubscribeButtonEvents();
     }
 
+    /// <summary>
+    /// 스테이지 전환 시 StageManager 레퍼런스를 재연결합니다.
+    /// </summary>
+    /// <param name="stageManager">현재 활성화된 스테이지의 StageManager</param>
+    public void Setup(StageManager stageManager)
+    {
+        _stageManager = stageManager;
+    }
+
     private void SubscribeButtonEvents()
     {
         if (_hudView == null) return;
@@ -70,7 +79,7 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleRetryStage()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        StageLoader.Instance.ReloadCurrentStage();
     }
 
     private void HandleGoToNextStage()

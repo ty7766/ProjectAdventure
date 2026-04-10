@@ -8,5 +8,5 @@ public class StageData : ScriptableObject
     public int StageNumber;
     public RequiredStageCondition RequiredCondition;
     public int RequiredStarsValue;
-    public string SceneName;
+    public GameObject StagePrefab;
 }
