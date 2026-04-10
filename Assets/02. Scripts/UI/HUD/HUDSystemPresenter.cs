@@ -66,6 +66,7 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenu()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene("dev-title");
     }
 

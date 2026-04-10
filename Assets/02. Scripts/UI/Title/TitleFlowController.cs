@@ -77,7 +77,7 @@ public class TitleFlowController : MonoBehaviour
         // 1. 먼저 깔끔하게 페이드아웃 싹싹
         while (timer < halfDuration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             fadeOut.alpha = Mathf.Lerp(1f, 0f, timer / halfDuration);
             yield return null;
         }
@@ -87,7 +87,7 @@ public class TitleFlowController : MonoBehaviour
         timer = 0f;
         while (timer < halfDuration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             fadeIn.alpha = Mathf.Lerp(0f, 1f, timer / halfDuration);
             yield return null;
         }
@@ -101,7 +101,7 @@ public class TitleFlowController : MonoBehaviour
         float timer = 0f;
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             target.alpha = Mathf.Lerp(0f, 1f, timer / duration);
             yield return null;
         }
