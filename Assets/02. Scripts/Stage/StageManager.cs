@@ -25,14 +25,20 @@ public class StageManager : MonoBehaviour
 {
     //--- Components & Settings ---//
     [Header("Components")]
-    [SerializeField] private PlayerController _playerController;
+    [SerializeField] 
+    private PlayerController _playerController;
 
     [Header("Stage Settings")]
-    [SerializeField] private int _requiredGemsToClear = 1;
-    [SerializeField] private Transform _playerStartPosition;
+    [SerializeField] 
+    private int _requiredGemsToClear = 1;
+    [SerializeField] 
+    private Transform _playerStartPosition;
+    [SerializeField]
+    private float _playerStartPositionOffset;
 
     [Header("Stage Objects")]
-    [SerializeField] private List<StageObject> _stageObjects;
+    [SerializeField]
+    private List<StageObject> _stageObjects;
 
     //--- Fields ---//
     private int _collectedGems = 0;
@@ -201,7 +207,8 @@ public class StageManager : MonoBehaviour
 
         if (_playerController != null && _playerStartPosition != null)
         {
-            _playerController.PlaceAtStartPosition(_playerStartPosition.position);
+            Vector3 startPos = _playerStartPosition.position + Vector3.up * _playerStartPositionOffset;
+            _playerController.PlaceAtStartPosition(startPos);
         }
 
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);

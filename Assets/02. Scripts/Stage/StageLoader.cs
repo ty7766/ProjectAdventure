@@ -22,6 +22,7 @@ public class StageLoader : Singleton<StageLoader>
     private Dictionary<int, GameObject> _stageInstances = new Dictionary<int, GameObject>();
     private int _currentStageNumber = -1;
 
+    protected override bool PersistAcrossScenes => false;
     protected override void Awake()
     {
         base.Awake();

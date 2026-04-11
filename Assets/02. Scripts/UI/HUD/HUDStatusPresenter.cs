@@ -22,9 +22,15 @@ public class HUDStatusPresenter : MonoBehaviour
     /// </summary>
     public void Setup(StageManager stageManager)
     {
-        UnsubscribeEventHandlers();
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged -= HandleGemUpdate;
+        }
         _stageManager = stageManager;
-        SubscribeEventHandlers();
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged += HandleGemUpdate;
+        }
     }
 
     private void Update()

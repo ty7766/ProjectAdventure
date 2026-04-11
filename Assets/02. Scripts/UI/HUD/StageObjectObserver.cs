@@ -28,18 +28,7 @@ public class StageObjectObserver : MonoBehaviour
 
     public void Setup(StageManager stageManager)
     {
-        // 기존 구독 해제
-        if (_stageManager != null)
-        {
-            _stageManager.OnGemCountChanged -= HandleCollectedGems;
-            if (_stageManager.PlayerController != null)
-            {
-                _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
-                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
-                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
-            }
-        }
-
+        UnsubscribeAllEvents();
         _stageManager = stageManager;
         _timeLimits.Clear();
 
@@ -122,17 +111,7 @@ public class StageObjectObserver : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (_stageManager)
-        {
-            _stageManager.OnGemCountChanged -= HandleCollectedGems;
-
-            if (_stageManager.PlayerController)
-            {
-                _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
-                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
-                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
-            }
-        }
+        UnsubscribeAllEvents();
     }
 
     private void HandleCollectedGems(int collectedNumberOfGems, int totalNumberOfGems)
@@ -214,6 +193,22 @@ public class StageObjectObserver : MonoBehaviour
 
         if(healthObjects.All(obj => obj.isCleared == false))
         {
+            _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
+        }
+    }
+
+    private void UnsubscribeAllEvents()
+    {
+        if (!_stageManager)
+        {
+            return;
+        }
+        _stageManager.OnGemCountChanged -= HandleCollectedGems;
+
+        if(_stageManager.PlayerController)
+        {
+            _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
+            _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
             _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
         }
     }
