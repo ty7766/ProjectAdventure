@@ -71,6 +71,7 @@ public class PlayerMovement : MonoBehaviour
     public void TeleportTo(Vector3 position)
     {
         _rb.position = position;
+        transform.position = position;
         ResetMovements();
     }
 

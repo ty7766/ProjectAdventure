@@ -29,6 +29,7 @@ public class StageManager : MonoBehaviour
 
     [Header("Stage Settings")]
     [SerializeField] private int _requiredGemsToClear = 1;
+    [SerializeField] private Transform _playerStartPosition;
 
     [Header("Stage Objects")]
     [SerializeField] private List<StageObject> _stageObjects;
@@ -197,6 +198,11 @@ public class StageManager : MonoBehaviour
         _stageTimer = 0f;
         _isTimerRunning = false;
         _initialFixedDeltaTime = Time.fixedDeltaTime;
+
+        if (_playerController != null && _playerStartPosition != null)
+        {
+            _playerController.PlaceAtStartPosition(_playerStartPosition.position);
+        }
 
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
         PauseGameSmoothly();

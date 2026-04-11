@@ -10,6 +10,10 @@ public class StageLoader : Singleton<StageLoader>
     [SerializeField]
     private HUDSystemPresenter _hudSystemPresenter;
     [SerializeField]
+    private HUDStatusPresenter _hudStatusPresenter;
+    [SerializeField]
+    private CameraFollow _cameraFollow;
+    [SerializeField]
     private PlayerController _playerController;
     [SerializeField]
     private PlayerProperties _playerProperties;
@@ -105,7 +109,14 @@ public class StageLoader : Singleton<StageLoader>
         }
 
         stageManager.SetPlayerController(_playerController);
+
+        // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
+        if (_hudStatusPresenter != null) _hudStatusPresenter.Setup(stageManager);
+        else CustomDebug.LogError("[StageLoader] HUDStatusPresenter is not assigned.");
+
         stageManager.InitializeStage();
+
+        _cameraFollow?.SnapToTarget();
 
         if (_hudFlowPresenter != null)
         {

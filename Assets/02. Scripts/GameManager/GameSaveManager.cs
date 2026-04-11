@@ -76,7 +76,7 @@ namespace GameManager.Singleton
             _currentStage = stageNumber;
 
             //이미 게임 씬이면 프리팹만 교체, 아니면 씬 이동후 StageLoader가 처리
-            if (StageLoader.Instance != null)
+            if (StageLoader.HasInstance)
             {
                 StageLoader.Instance.LoadStage(stageNumber);
             }

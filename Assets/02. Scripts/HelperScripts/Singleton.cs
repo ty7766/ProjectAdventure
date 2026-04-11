@@ -4,6 +4,8 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
     private static bool _isMissing = false;
+    public static bool HasInstance => _instance != null;
+
     public static T Instance
     {
         get
