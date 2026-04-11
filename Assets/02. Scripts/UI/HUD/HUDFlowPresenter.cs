@@ -21,6 +21,8 @@ public class HUDFlowPresenter : MonoBehaviour
     private PlayerProperties _playerModel;
     [SerializeField]
     private TutorialManager _tutorialManager;
+    [SerializeField]
+    private StageObjectObserver _stageObjectObserver;
 
     [Header("Text Strings")]
     [SerializeField]
@@ -83,6 +85,8 @@ public class HUDFlowPresenter : MonoBehaviour
         // 새 구독
         if (_stageManager != null) _stageManager.OnStageCleared += HandleStageClear;
         if (_playerModel != null) _playerModel.OnPlayerDeath += HandlePlayerDeath;
+
+        _stageObjectObserver?.Setup(_stageManager);
 
         // UI 갱신
         _isSetupCalled = true;

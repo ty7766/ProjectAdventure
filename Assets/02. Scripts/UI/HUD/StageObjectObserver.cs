@@ -26,8 +26,23 @@ public class StageObjectObserver : MonoBehaviour
 
     private List<int> _timeLimits = new List<int>();
 
-    private void Start()
+    public void Setup(StageManager stageManager)
     {
+        // 기존 구독 해제
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged -= HandleCollectedGems;
+            if (_stageManager.PlayerController != null)
+            {
+                _stageManager.PlayerController.OnPlayerFallenDown -= HandlePlayerFallenDown;
+                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerTakenDamage;
+                _stageManager.PlayerController.OnPlayerDamageTaken -= HandlePlayerHealthChanged;
+            }
+        }
+
+        _stageManager = stageManager;
+        _timeLimits.Clear();
+
         if (!_stageManager || !_stageManager.PlayerController)
         {
             CustomDebug.LogError("[Stage Object Observer] Stage Manager or Player Controller is missing!", this);
