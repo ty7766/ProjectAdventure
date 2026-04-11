@@ -1932,6 +1932,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TMP_Dropdown
+--- !u!1 &2087955791 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2017753771538064437, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
+  m_PrefabInstance: {fileID: 29121225408815737}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &29121225408815737
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1993,6 +1998,18 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7479170038604289644, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7479170038604289644, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7479170038604289644, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7479170038604289644, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -2043,13 +2060,33 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2017753771538064437, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 29121225408815744}
   m_SourcePrefab: {fileID: 100100000, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
 --- !u!225 &29121225408815738 stripped
 CanvasGroup:
   m_CorrespondingSourceObject: {fileID: 1227327686993939685, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
   m_PrefabInstance: {fileID: 29121225408815737}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &29121225408815744
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2087955791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.GraphicRaycaster
+  m_IgnoreReversedGraphics: 1
+  m_BlockingObjects: 0
+  m_BlockingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!1001 &2606235899887192567
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2468,6 +2505,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1540302100146831508, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1540302100146831508, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
+      propertyPath: m_AnchorMin.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1623586868854415813, guid: 77ebaed4032dbd34c8e7dd9be256e669, type: 3}
@@ -4032,9 +4073,9 @@ SceneRoots:
   - {fileID: 29121225408815737}
   - {fileID: 1841687173}
   - {fileID: 2606235899887192567}
-  - {fileID: 631701750}
   - {fileID: 698952740}
   - {fileID: 1523415575}
   - {fileID: 1779978124}
   - {fileID: 1677837263}
   - {fileID: 1546778417}
+  - {fileID: 631701750}
