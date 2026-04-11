@@ -218,6 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerController: {fileID: 0}
   _requiredGemsToClear: 3
+  _playerStartPosition: {fileID: 1334266602733744981}
   _stageObjects:
   - stageObjectType: 4
     value: 2
