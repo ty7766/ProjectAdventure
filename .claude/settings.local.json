@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(sed:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(python3:*)",
+      "Bash(python:*)",
+      "Bash(xargs grep:*)",
+      "Bash(done)"
     ]
   }
 }
