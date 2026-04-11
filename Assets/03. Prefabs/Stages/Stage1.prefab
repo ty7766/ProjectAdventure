@@ -219,6 +219,7 @@ MonoBehaviour:
   _playerController: {fileID: 0}
   _requiredGemsToClear: 1
   _playerStartPosition: {fileID: 5945231740732147464}
+  _playerStartPositionOffset: 0.35
   _stageObjects:
   - stageObjectType: 4
     value: 1
