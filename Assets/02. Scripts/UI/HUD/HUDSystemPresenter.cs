@@ -80,6 +80,7 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleRetryStage()
     {
+        Time.timeScale = 1f;
         StageLoader.Instance.ReloadCurrentStage();
     }
 
