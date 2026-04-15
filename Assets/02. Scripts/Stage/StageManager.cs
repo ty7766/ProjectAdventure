@@ -25,13 +25,20 @@ public class StageManager : MonoBehaviour
 {
     //--- Components & Settings ---//
     [Header("Components")]
-    [SerializeField] private PlayerController _playerController;
+    [SerializeField] 
+    private PlayerController _playerController;
 
     [Header("Stage Settings")]
-    [SerializeField] private int _requiredGemsToClear = 1;
+    [SerializeField] 
+    private int _requiredGemsToClear = 1;
+    [SerializeField] 
+    private Transform _playerStartPosition;
+    [SerializeField]
+    private float _playerStartPositionOffset;
 
     [Header("Stage Objects")]
-    [SerializeField] private List<StageObject> _stageObjects;
+    [SerializeField]
+    private List<StageObject> _stageObjects;
 
     //--- Fields ---//
     private int _collectedGems = 0;
@@ -39,6 +46,7 @@ public class StageManager : MonoBehaviour
     private float _initialFixedDeltaTime;
     private float _stageTimer = 0f;
     private bool _isTimerRunning = true;
+    private bool _isInitialized = false;
 
     private HashSet<string> _collectedGemIDs = new HashSet<string>();
 
@@ -75,11 +83,11 @@ public class StageManager : MonoBehaviour
 
     private void Start()
     {
-        OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
-        _initialFixedDeltaTime = Time.fixedDeltaTime;
-        PauseGameSmoothly();
-        DisablePlayerControl(); //스테이지 시작 전에는 플레이어 움직임 비활성화
-        GraphicManager.Instance.SetDoFMode("Stage");
+        // StageLoader.InitializeStage()가 먼저 호출된 경우 중복 실행 방지
+        if (!_isInitialized)
+        {
+            InitializeStage();
+        }
     }
 
     private void Update()
@@ -166,6 +174,48 @@ public class StageManager : MonoBehaviour
         return _collectedGemIDs.Contains(gemID);
     }
 
+    /// <summary>
+    /// PlayerController 레퍼런스를 외부에서 주입합니다. 기존 이벤트 구독을 해제하고 새 컨트롤러로 재구독합니다.
+    /// </summary>
+    /// <param name="controller">연결할 PlayerController</param>
+    public void SetPlayerController(PlayerController controller)
+    {
+        if(_playerController != null)
+        {
+            _playerController.OnPlayerDamageTaken -= HandlePlayerDamageTakenEvent;
+            _playerController.OnPlayerFallenDown -= HandlePlayerFallenDownEvent;
+        }
+        _playerController = controller;
+        SubscribeEvents();
+    }
+
+    /// <summary>
+    /// 스테이지 상태를 초기화하고 게임을 일시정지 후 플레이어 조작을 비활성화합니다.
+    /// StageLoader가 스테이지를 활성화할 때 호출됩니다.
+    /// </summary>
+    public void InitializeStage()
+    {
+        _isInitialized = true;
+
+        _collectedGems = 0;
+        _collectedGemIDs.Clear();
+        _isPlayerDamageTaken = false;
+        _isPlayerFallenDown = false;
+        _stageTimer = 0f;
+        _isTimerRunning = false;
+        _initialFixedDeltaTime = Time.fixedDeltaTime;
+
+        if (_playerController != null && _playerStartPosition != null)
+        {
+            Vector3 startPos = _playerStartPosition.position + Vector3.up * _playerStartPositionOffset;
+            _playerController.PlaceAtStartPosition(startPos);
+        }
+
+        OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+        PauseGameSmoothly();
+        DisablePlayerControl();
+        GraphicManager.Instance.SetDoFMode("Stage");
+    }
 
     //--- Private Helpers ---//
     private void SubscribeEvents()

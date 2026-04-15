@@ -61,29 +61,28 @@ namespace GameManager.Singleton
         }
 
         /// <summary>
-        /// 스테이지 번호로 스테이지 씬을 로드합니다.
+        /// 스테이지 번호로 스테이지를 로드합니다. 게임 씬에 있으면 StageLoader로 프리팹을 교체하고,
+        /// 타이틀 등 다른 씬에 있으면 게임 씬(PlayStage)으로 이동합니다.
         /// </summary>
-        /// <param name="stageNumber"></param>
+        /// <param name="stageNumber">로드할 스테이지 번호 (1-based)</param>
         public void LoadStage(int stageNumber)
         {
-            string sceneName = null;
-            foreach(StageData stageData in _stageDataBase)
+            if (!CheckStageUnlockRequirement(stageNumber))
             {
-                if(stageData.StageNumber == stageNumber)
-                {
-                    sceneName = stageData.SceneName;
-                    break;
-                }
+                CustomDebug.LogError($"해금되지 않은 스테이지 : {stageNumber}");
+                return;
             }
 
-            if(sceneName != null && CheckStageUnlockRequirement(stageNumber))
+            _currentStage = stageNumber;
+
+            //이미 게임 씬이면 프리팹만 교체, 아니면 씬 이동후 StageLoader가 처리
+            if (StageLoader.HasInstance)
             {
-                _currentStage = stageNumber;
-                SceneManager.LoadScene(sceneName);
+                StageLoader.Instance.LoadStage(stageNumber);
             }
             else
             {
-                CustomDebug.LogError($"찾을 수 없거나 해금되지 않은 스테이지 : {stageNumber}");
+                SceneManager.LoadScene("PlayStage");
             }
         }
 

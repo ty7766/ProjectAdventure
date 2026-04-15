@@ -170,6 +170,17 @@ public class PlayerController : MonoBehaviour
     }
 
     /// <summary>
+    /// 플레이어를 지정한 위치로 즉시 이동시키고 리스폰 지점도 해당 위치로 설정합니다.
+    /// </summary>
+    public void PlaceAtStartPosition(Vector3 position)
+    {
+        _isAlive = true;
+        _invTimer = _invincibleTime;
+        _movement.TeleportTo(position);
+        _respawnPoint = position;
+    }
+
+    /// <summary>
     /// 플레이어의 조작을 비활성화합니다. (컷씬, 대화, 경직 등)
     /// </summary>
     public void DisablePlayerControl()

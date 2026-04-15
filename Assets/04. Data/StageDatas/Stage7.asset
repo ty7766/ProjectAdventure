@@ -15,4 +15,4 @@ MonoBehaviour:
   StageNumber: 7
   RequiredCondition: 1
   RequiredStarsValue: 0
-  SceneName: Stage7
+  StagePrefab: {fileID: 2424920440084049716, guid: 33fbf102d8e535144ad4214ee7643acb, type: 3}

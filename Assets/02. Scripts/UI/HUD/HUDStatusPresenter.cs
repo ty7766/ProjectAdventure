@@ -17,6 +17,22 @@ public class HUDStatusPresenter : MonoBehaviour
         SubscribeEventHandlers();
     }
 
+    /// <summary>
+    /// 스테이지 전환 시 StageManager 레퍼런스를 재연결하고 이벤트를 재구독합니다.
+    /// </summary>
+    public void Setup(StageManager stageManager)
+    {
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged -= HandleGemUpdate;
+        }
+        _stageManager = stageManager;
+        if (_stageManager != null)
+        {
+            _stageManager.OnGemCountChanged += HandleGemUpdate;
+        }
+    }
+
     private void Update()
     {
         HandleTimerUI();

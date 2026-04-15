@@ -4,6 +4,9 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T _instance;
     private static bool _isMissing = false;
+    public static bool HasInstance => _instance != null;
+    protected virtual bool PersistAcrossScenes => true;
+
     public static T Instance
     {
         get
@@ -31,6 +34,10 @@ public class Singleton<T> : MonoBehaviour where T : MonoBehaviour
         }
         _instance = this as T;
         _isMissing = false;
-        DontDestroyOnLoad(gameObject);
+
+        if(PersistAcrossScenes)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }

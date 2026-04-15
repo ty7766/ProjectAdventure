@@ -19,6 +19,13 @@ public class CameraFollow : MonoBehaviour
     //--- Properties ---//
     public Vector3 PlayerOffset => _playerOffset;
 
+    public void SnapToTarget()
+    {
+        if (_target == null) return;
+        transform.position = _target.position + _playerOffset;
+        _velocity = Vector3.zero;
+    }
+
     private void LateUpdate()
     {
         if (_target == null)

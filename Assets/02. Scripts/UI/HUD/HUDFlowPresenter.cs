@@ -21,6 +21,8 @@ public class HUDFlowPresenter : MonoBehaviour
     private PlayerProperties _playerModel;
     [SerializeField]
     private TutorialManager _tutorialManager;
+    [SerializeField]
+    private StageObjectObserver _stageObjectObserver;
 
     [Header("Text Strings")]
     [SerializeField]
@@ -31,6 +33,9 @@ public class HUDFlowPresenter : MonoBehaviour
     private string _stageGoString = "GO!";
 
     public static Dictionary<StageObjectType, string> MissionTextDict = new Dictionary<StageObjectType, string>();
+
+    private Coroutine _countDownCoroutine;
+    private bool _isSetupCalled = false;
     
 
 
@@ -51,13 +56,41 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private void Start()
     {
-        HandleStageStart();
+        if (!_isSetupCalled)
+        {
+            HandleStageStart();
+        }
     }
 
     private void OnDestroy()
     {
         if (_stageManager != null) _stageManager.OnStageCleared -= HandleStageClear;
         if (_playerModel != null) _playerModel.OnPlayerDeath -= HandlePlayerDeath;
+    }
+
+    /// <summary>
+    /// 스테이지 전환 시 StageManager와 PlayerProperties 레퍼런스를 재연결하고 스테이지 시작 시퀀스를 실행합니다.
+    /// </summary>
+    /// <param name="stageManager">현재 활성화된 스테이지의 StageManager</param>
+    /// <param name="playerModel">플레이어 스탯 및 이벤트 제공 컴포넌트</param>
+    public void Setup(StageManager stageManager, PlayerProperties playerModel)
+    {
+        // 기존 구독 해제
+        if (_stageManager != null) _stageManager.OnStageCleared -= HandleStageClear;
+        if (_playerModel != null) _playerModel.OnPlayerDeath -= HandlePlayerDeath;
+
+        _stageManager = stageManager;
+        _playerModel = playerModel;
+
+        // 새 구독
+        if (_stageManager != null) _stageManager.OnStageCleared += HandleStageClear;
+        if (_playerModel != null) _playerModel.OnPlayerDeath += HandlePlayerDeath;
+
+        _stageObjectObserver?.Setup(_stageManager);
+
+        // UI 갱신
+        _isSetupCalled = true;
+        HandleStageStart();
     }
 
     // --- Start Sequence ---
@@ -75,7 +108,11 @@ public class HUDFlowPresenter : MonoBehaviour
         _hudView.ShowStageStartPanel();
         _hudView.ShowStageObjectView();
 
-        StartCoroutine(StartCountDown());
+        if (_countDownCoroutine != null)
+        {
+            StopCoroutine(_countDownCoroutine);
+        }
+        _countDownCoroutine = StartCoroutine(StartCountDown());
     }
 
     private IEnumerator StartCountDown()

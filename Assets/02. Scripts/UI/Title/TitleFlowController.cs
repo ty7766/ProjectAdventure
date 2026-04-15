@@ -47,6 +47,8 @@ public class TitleFlowController : MonoBehaviour
     {
         if(_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
         _titleCameraController.DoTransition("Options");
+        _optionsCanvas.gameObject.SetActive(true);
+        _optionsCanvas.alpha = 0f;
         _currentActiveCanvas = _optionsCanvas;
         _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _optionsCanvas));
     }
@@ -61,33 +63,34 @@ public class TitleFlowController : MonoBehaviour
         _titleCanvas.interactable = true;
         _titleCanvas.alpha = 0.0f;
         _stageSelectCanvas.alpha = 0.0f;
-        _optionsCanvas.alpha = 0.0f;
+        _optionsCanvas.gameObject.SetActive(false);
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
     private IEnumerator SequentialFade(CanvasGroup fadeOut, CanvasGroup fadeIn)
     {
-        // 터치 컷
         fadeOut.blocksRaycasts = false;
 
-        // 전체 시간을 반으로 나눠서 페이드아웃, 페이드인에 각각 사용!
         float halfDuration = _fadeDuration / 2f;
         float timer = 0f;
 
-        // 1. 먼저 깔끔하게 페이드아웃 싹싹
         while (timer < halfDuration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             fadeOut.alpha = Mathf.Lerp(1f, 0f, timer / halfDuration);
             yield return null;
         }
         fadeOut.alpha = 0f;
 
-        // 2. 끝나면 바로 페이드인 시작
+        if (fadeOut == _optionsCanvas || fadeOut == _stageSelectCanvas)
+        {
+            fadeOut.gameObject.SetActive(false);
+        }
+
         timer = 0f;
         while (timer < halfDuration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             fadeIn.alpha = Mathf.Lerp(0f, 1f, timer / halfDuration);
             yield return null;
         }
@@ -101,7 +104,7 @@ public class TitleFlowController : MonoBehaviour
         float timer = 0f;
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.unscaledDeltaTime;
             target.alpha = Mathf.Lerp(0f, 1f, timer / duration);
             yield return null;
         }
