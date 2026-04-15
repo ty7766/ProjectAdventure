@@ -175,6 +175,7 @@ public class PlayerController : MonoBehaviour
     public void PlaceAtStartPosition(Vector3 position)
     {
         _isAlive = true;
+        _isMovable = true;
         _invTimer = _invincibleTime;
         _movement.TeleportTo(position);
         _respawnPoint = position;

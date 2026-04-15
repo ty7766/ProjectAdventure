@@ -39,8 +39,11 @@ public class Surfboard : MonoBehaviour
         }
     }
 
-    private void Start()
+    private void OnEnable()
     {
+        _isMovingForward = true;
+        _shouldSnapRotation = false;
+        _attachedPlayer = null;
         InitializePositionAndRotation();
     }
 

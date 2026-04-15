@@ -10,7 +10,7 @@ public class GemObject : SpecialObject
     [Header("Components")]
     [SerializeField] private StageManager _stageManager;
 
-    private void Start()
+    private void OnEnable()
     {
         FindStageManagerWhenIsNull();
         CheckCollectedGemInMap();
