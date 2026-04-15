@@ -80,6 +80,16 @@ public class StageLoader : Singleton<StageLoader>
         stageInstance.SetActive(true);
 
         ConnectReferences(stageInstance);
+
+        // CollectGem()으로 개별 비활성화된 GemObject를 재활성화
+        // ConnectReferences() 이후 호출하여 _collectedGemIDs 클리어 뒤에 OnEnable이 실행되도록 순서 보장
+        foreach (var gem in stageInstance.GetComponentsInChildren<GemObject>(true))
+        {
+            if (!gem.gameObject.activeSelf)
+            {
+                gem.gameObject.SetActive(true);
+            }
+        }
     }
 
     private void PreloadAllStages()

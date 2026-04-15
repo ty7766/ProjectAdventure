@@ -32,7 +32,7 @@ public class FallingRock : SpecialObject
         Assert.IsNotNull(_rigidbody, $"[FallingRock] '{name}'에 Rigidbody가 없습니다. (RequireComponent 확인 필요)");
     }
 
-    private void Start()
+    private void OnEnable()
     {
         ApplyInitialTumble();
     }
