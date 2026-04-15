@@ -29,7 +29,10 @@ public class TitleFlowController : MonoBehaviour
 
     public void GoToTitle()
     {
-        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        if (_fadeCoroutine != null)
+        {
+            StopCoroutine(_fadeCoroutine);
+        }
         _titleCameraController.DoTransition("Title");
         _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _titleCanvas));
         _currentActiveCanvas = _titleCanvas;
@@ -37,15 +40,21 @@ public class TitleFlowController : MonoBehaviour
 
     public void GoToStageSelect()
     {
-        if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
-        _titleCameraController.DoTransition("StageSelect");
+        if (_fadeCoroutine != null)
+        {
+            StopCoroutine(_fadeCoroutine);
+        }
+            _titleCameraController.DoTransition("StageSelect");
         _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _stageSelectCanvas));
         _currentActiveCanvas = _stageSelectCanvas;
     }
 
     public void GoToOptions()
     {
-        if(_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
+        if (_fadeCoroutine != null)
+        {
+            StopCoroutine(_fadeCoroutine);
+        }
         _titleCameraController.DoTransition("Options");
         _optionsCanvas.gameObject.SetActive(true);
         _optionsCanvas.alpha = 0f;
@@ -86,6 +95,12 @@ public class TitleFlowController : MonoBehaviour
         {
             fadeOut.gameObject.SetActive(false);
         }
+
+        if(!fadeIn.gameObject.activeSelf)
+        {
+            fadeIn.gameObject.SetActive(true);
+        }
+        fadeIn.alpha = 0f;
 
         timer = 0f;
         while (timer < halfDuration)
