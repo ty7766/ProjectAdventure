@@ -1,10 +1,10 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class MapChangeEffect : MonoBehaviour
 {
-    [Header("전환 애니메이션 설정")]
+    [Header("Effect Properties")]
     [SerializeField]
     private float _transitionDuration = 0.5f;
     [SerializeField]
@@ -25,7 +25,9 @@ public class MapChangeEffect : MonoBehaviour
     private IEnumerator AnimateExit(GameObject map, float duration)
     {
         foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
+        {
             handler.OnMapExitStart();
+        }
 
         Vector3 startPosition = map.transform.position;
         Vector3 endPosition = startPosition + Vector3.down * _exitDropDistance;
@@ -53,11 +55,11 @@ public class MapChangeEffect : MonoBehaviour
 
     private IEnumerator AnimateEnter(GameObject map, Vector3 finalPosition, float duration)
     {
-        // 핸들러를 먼저 호출 (맵이 최종 위치에 있는 상태에서 OnEnable이 실행된 직후)
         foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
+        {
             handler.OnMapEnterStart();
+        }
 
-        // 핸들러 비활성화 후 맵을 위로 올려서 애니메이션 시작 위치로 이동
         Vector3 startPosition = finalPosition + Vector3.up * _enterDropDistance;
         map.transform.position = startPosition;
 
@@ -81,7 +83,7 @@ public class MapChangeEffect : MonoBehaviour
             yield return null;
         }
 
-        map.transform.position = endPosition;
+        map.transform.position = finalPosition;
         SetRenderersAlpha(materials, 1f);
         SetMaterialsTransparent(materials, false);
 
