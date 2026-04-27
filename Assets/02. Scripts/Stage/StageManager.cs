@@ -214,7 +214,7 @@ public class StageManager : MonoBehaviour
         OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
         PauseGameSmoothly();
         DisablePlayerControl();
-        GraphicManager.Instance.SetDoFMode("Stage");
+        GraphicManager.Instance?.SetDoFMode("Stage");
     }
 
     //--- Private Helpers ---//
@@ -260,7 +260,7 @@ public class StageManager : MonoBehaviour
 
         CheckStageObject();
         OnStageCleared?.Invoke();
-        SoundManager.Instance.PlaySFX(SoundType.SFX_ClearUI);
+        SoundManager.Instance?.PlaySFX(SoundType.SFX_ClearUI);
 
         SaveStageClearData();
     }
@@ -369,6 +369,6 @@ public class StageManager : MonoBehaviour
                 acquiredStars++;
             }
         }
-        GameSaveManager.Instance.RecordStageClear(acquiredStars);
+        GameSaveManager.Instance?.RecordStageClear(acquiredStars);
     }
 }
