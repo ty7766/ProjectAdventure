@@ -12,16 +12,14 @@ public class MapChangeEffect : MonoBehaviour
     [SerializeField]
     private float _enterDropDistance = 8f;
 
-    public float EnterDropDistance => _enterDropDistance;
-
     public void PlayExit(GameObject map)
     {
         StartCoroutine(AnimateExit(map, _transitionDuration));
     }
 
-    public void PlayEnter(GameObject map, Vector3 startPosition, Vector3 endPosition)
+    public void PlayEnter(GameObject map, Vector3 finalPosition)
     {
-        StartCoroutine(AnimateEnter(map, startPosition, endPosition, _transitionDuration));
+        StartCoroutine(AnimateEnter(map, finalPosition, _transitionDuration));
     }
 
     private IEnumerator AnimateExit(GameObject map, float duration)
@@ -53,10 +51,15 @@ public class MapChangeEffect : MonoBehaviour
         Destroy(map);
     }
 
-    private IEnumerator AnimateEnter(GameObject map, Vector3 startPosition, Vector3 endPosition, float duration)
+    private IEnumerator AnimateEnter(GameObject map, Vector3 finalPosition, float duration)
     {
+        // 핸들러를 먼저 호출 (맵이 최종 위치에 있는 상태에서 OnEnable이 실행된 직후)
         foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
             handler.OnMapEnterStart();
+
+        // 핸들러 비활성화 후 맵을 위로 올려서 애니메이션 시작 위치로 이동
+        Vector3 startPosition = finalPosition + Vector3.up * _enterDropDistance;
+        map.transform.position = startPosition;
 
         Renderer[] renderers = map.GetComponentsInChildren<Renderer>();
         Material[] materials = CollectMaterials(renderers);
@@ -73,7 +76,7 @@ public class MapChangeEffect : MonoBehaviour
 
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
-            map.transform.position = Vector3.Lerp(startPosition, endPosition, t);
+            map.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
             SetRenderersAlpha(materials, t);
             yield return null;
         }

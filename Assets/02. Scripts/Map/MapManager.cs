@@ -267,13 +267,11 @@ public class MapManager : MonoBehaviour
                 Destroy(group.CurrentActivePath);
         }
 
-        Vector3 startPosition = _mapChangeEffect != null
-            ? finalPosition + Vector3.up * _mapChangeEffect.EnterDropDistance
-            : finalPosition;
-
-        group.CurrentActivePath = Instantiate(mapInfo.Prefab, startPosition, finalRotation);
+        // 최종 위치에서 생성 → 자식 컴포넌트 OnEnable이 올바른 부모 위치 기준으로 초기화됨
+        group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(transform);
 
-        _mapChangeEffect?.PlayEnter(group.CurrentActivePath, startPosition, finalPosition);
+        // PlayEnter 내부에서 위로 올린 뒤 내려오는 애니메이션 처리
+        _mapChangeEffect?.PlayEnter(group.CurrentActivePath, finalPosition);
     }
 }
