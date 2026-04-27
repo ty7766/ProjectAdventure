@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2820647475876775672}
   - component: {fileID: 5828915281396652030}
+  - component: {fileID: 4852398430870279020}
   m_Layer: 0
   m_Name: VFXManager
   m_TagString: Untagged
@@ -69,3 +70,18 @@ MonoBehaviour:
   - Type: 8
     Prefab: {fileID: 1696168356051795115, guid: 03cb18eb435c95e40a5a51bafa9eab3a, type: 3}
     PoolSize: 1
+--- !u!114 &4852398430870279020
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2406231754158476743}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7cea3e16856614e986c3829056ebe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapChangeEffect
+  _transitionDuration: 0.5
+  _exitDropDistance: 8
+  _enterDropDistance: 8
