@@ -2073,6 +2073,7 @@ MonoBehaviour:
   _cameraFollow: {fileID: 330585548}
   _playerController: {fileID: 1435260843}
   _playerProperties: {fileID: 1435260847}
+  _mapChangeEffect: {fileID: 1684966194}
 --- !u!4 &1630382103
 Transform:
   m_ObjectHideFlags: 0
@@ -2140,11 +2141,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _exitDropDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _enterDropDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _transitionDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b516266fd780155408f7eb865c09999d, type: 3}
+--- !u!114 &1684966194 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+  m_PrefabInstance: {fileID: 1684966193}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7cea3e16856614e986c3829056ebe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapChangeEffect
 --- !u!1 &1920908433
 GameObject:
   m_ObjectHideFlags: 0

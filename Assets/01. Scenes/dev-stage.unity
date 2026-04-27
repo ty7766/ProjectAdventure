@@ -1624,6 +1624,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04572a6bc5476746a96c83477e7df0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1435260844 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4949414615787084936, guid: 57072af85927fae42b9d7af3a26fe716, type: 3}
+  m_PrefabInstance: {fileID: 1435260842}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 30572911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43027956e4e826643af8c207b90d3321, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1478835232
 GameObject:
   m_ObjectHideFlags: 0
@@ -1783,8 +1794,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DevStageLoader
   _stagePrefab: {fileID: 2424920440084049716, guid: 33fbf102d8e535144ad4214ee7643acb, type: 3}
   _playerController: {fileID: 1435260843}
-  _playerProperties: {fileID: 0}
+  _playerProperties: {fileID: 1435260844}
   _cameraFollow: {fileID: 330585548}
+  _mapChangeEffect: {fileID: 1684966194}
   _hudStatusPresenter: {fileID: 2041563626}
   _hudFlowPresenter: {fileID: 2041563625}
   _hudSystemPresenter: {fileID: 2041563622}
@@ -1890,11 +1902,34 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _exitDropDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _enterDropDistance
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+      propertyPath: _transitionDuration
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b516266fd780155408f7eb865c09999d, type: 3}
+--- !u!114 &1684966194 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
+  m_PrefabInstance: {fileID: 1684966193}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7cea3e16856614e986c3829056ebe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapChangeEffect
 --- !u!1 &1920908433
 GameObject:
   m_ObjectHideFlags: 0
