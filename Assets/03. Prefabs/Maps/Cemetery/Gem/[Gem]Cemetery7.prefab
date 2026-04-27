@@ -974,7 +974,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f05186976220d4896da7cdbf2051e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _angelSpeed: 1.2
+  _angelSpeed: 1
   _angelRotationSpeed: 8
   _damageAmount: 1
   _activeRange: 10
@@ -1175,7 +1175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f05186976220d4896da7cdbf2051e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _angelSpeed: 1.2
+  _angelSpeed: 1
   _angelRotationSpeed: 8
   _damageAmount: 1
   _activeRange: 10
@@ -1669,7 +1669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f05186976220d4896da7cdbf2051e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _angelSpeed: 1.2
+  _angelSpeed: 1
   _angelRotationSpeed: 8
   _damageAmount: 1
   _activeRange: 10
@@ -2102,7 +2102,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f05186976220d4896da7cdbf2051e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _angelSpeed: 1.2
+  _angelSpeed: 1
   _angelRotationSpeed: 8
   _damageAmount: 1
   _activeRange: 10
