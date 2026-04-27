@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Component
+public abstract class SpawnedObjectManager<T> : MonoBehaviour, IMapTransitionHandler where T : Component
 {
     // 공통 해시 풀
     protected HashSet<T> _spawnedObjects = new HashSet<T>();
@@ -56,6 +56,11 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour where T : Componen
             _spawnedObjects.Remove(spawnedObject);
         }
     }
+
+    // IMapTransitionHandler
+    public void OnMapExitStart() => this.enabled = false; // OnDisable()이 즉시 실행돼 풀 반납 처리
+    public void OnMapEnterStart() { }
+    public void OnMapEnterEnd() { }
 
     /// <summary>
     /// 실제 스폰 로직 (자식마다 다르므로 추상 메서드)
