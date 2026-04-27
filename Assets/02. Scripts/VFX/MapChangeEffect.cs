@@ -26,6 +26,9 @@ public class MapChangeEffect : MonoBehaviour
 
     private IEnumerator AnimateExit(GameObject map, float duration)
     {
+        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
+            handler.OnMapExitStart();
+
         Vector3 startPosition = map.transform.position;
         Vector3 endPosition = startPosition + Vector3.down * _exitDropDistance;
         Renderer[] renderers = map.GetComponentsInChildren<Renderer>();
@@ -52,6 +55,9 @@ public class MapChangeEffect : MonoBehaviour
 
     private IEnumerator AnimateEnter(GameObject map, Vector3 startPosition, Vector3 endPosition, float duration)
     {
+        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
+            handler.OnMapEnterStart();
+
         Renderer[] renderers = map.GetComponentsInChildren<Renderer>();
         Material[] materials = CollectMaterials(renderers);
         SetMaterialsTransparent(materials, true);
@@ -75,6 +81,9 @@ public class MapChangeEffect : MonoBehaviour
         map.transform.position = endPosition;
         SetRenderersAlpha(materials, 1f);
         SetMaterialsTransparent(materials, false);
+
+        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
+            handler.OnMapEnterEnd();
     }
 
     private Material[] CollectMaterials(Renderer[] renderers)

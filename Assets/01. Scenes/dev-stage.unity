@@ -1792,7 +1792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0cc36dab6b4ee24ea2c316490aec3bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DevStageLoader
-  _stagePrefab: {fileID: 2424920440084049716, guid: 33fbf102d8e535144ad4214ee7643acb, type: 3}
+  _stagePrefab: {fileID: 5542017628068089547, guid: 4618e8d270510174098f8d1307d77629, type: 3}
   _playerController: {fileID: 1435260843}
   _playerProperties: {fileID: 1435260844}
   _cameraFollow: {fileID: 330585548}

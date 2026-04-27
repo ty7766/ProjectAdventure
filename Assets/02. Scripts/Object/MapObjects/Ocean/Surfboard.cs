@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Surfboard : MonoBehaviour
+public class Surfboard : MonoBehaviour, IMapTransitionHandler
 {
     [Header("경로 설정")]
     [Tooltip("서핑보드가 이동할 지점들을 순서대로 넣으세요.")]
@@ -173,6 +173,11 @@ public class Surfboard : MonoBehaviour
             }
         }
     }
+
+    // IMapTransitionHandler
+    public void OnMapExitStart() { }
+    public void OnMapEnterStart() => this.enabled = false; // FixedUpdate 중단 → 맵과 함께 이동
+    public void OnMapEnterEnd() => this.enabled = true;    // OnEnable → InitializePositionAndRotation
 
     //플레이어 탑승
     private void OnCollisionEnter(Collision collision)
