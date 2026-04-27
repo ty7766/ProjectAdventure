@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 491750545926863182}
   - component: {fileID: 11364411363920433}
   - component: {fileID: 2901469709765743195}
+  - component: {fileID: 4181478821289303656}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -73,6 +74,7 @@ MonoBehaviour:
   _tileSize: {x: 12, y: 1, z: 10}
   _startOffset: {x: 0, y: 0, z: 0}
   _mapChangeCooldownTime: 1
+  _mapChangeEffect: {fileID: 4181478821289303656}
 --- !u!114 &2901469709765743195
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,6 +91,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   _detectionHeight: 200
+--- !u!114 &4181478821289303656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 95747578020351565}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f7cea3e16856614e986c3829056ebe1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapChangeEffect
+  _transitionDuration: 0.2
+  _exitDropDistance: 1.5
+  _enterDropDistance: 1.5
 --- !u!1 &2355910683977948281
 GameObject:
   m_ObjectHideFlags: 0

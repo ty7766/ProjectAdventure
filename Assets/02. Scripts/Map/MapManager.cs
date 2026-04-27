@@ -51,6 +51,10 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private float _mapChangeCooldownTime = 1.0f;
 
+    [Header("맵 전환 이펙트")]
+    [SerializeField]
+    private MapChangeEffect _mapChangeEffect;
+
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
     private FloatingCursor _cursorScript;
@@ -207,7 +211,7 @@ public class MapManager : MonoBehaviour
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
-        SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
+        TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
         UpdateCursorPosition();
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
@@ -235,5 +239,35 @@ public class MapManager : MonoBehaviour
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(transform);
+    }
+
+    private void TransitionPath(PathGroup group, int index)
+    {
+        MapInfo mapInfo = group.Maps[index];
+        if (mapInfo.Prefab == null)
+        {
+            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
+            return;
+        }
+
+        Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
+        Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
+
+        if (group.CurrentActivePath != null)
+        {
+            if (_mapChangeEffect != null)
+                _mapChangeEffect.PlayExit(group.CurrentActivePath);
+            else
+                Destroy(group.CurrentActivePath);
+        }
+
+        Vector3 startPosition = _mapChangeEffect != null
+            ? finalPosition + Vector3.up * _mapChangeEffect.EnterDropDistance
+            : finalPosition;
+
+        group.CurrentActivePath = Instantiate(mapInfo.Prefab, startPosition, finalRotation);
+        group.CurrentActivePath.transform.SetParent(transform);
+
+        _mapChangeEffect?.PlayEnter(group.CurrentActivePath, startPosition, finalPosition);
     }
 }
