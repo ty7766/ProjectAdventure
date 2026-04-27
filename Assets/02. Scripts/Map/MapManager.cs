@@ -51,8 +51,6 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private float _mapChangeCooldownTime = 1.0f;
 
-    [Header("맵 전환 이펙트")]
-    [SerializeField]
     private MapChangeEffect _mapChangeEffect;
 
     private int _selectedSlotIndex = 0;
@@ -110,6 +108,14 @@ public class MapManager : MonoBehaviour
     private void OnDestroy()
     {
         _controls?.Dispose();
+    }
+
+    /// <summary>
+    /// 외부(StageLoader 등)에서 MapChangeEffect 레퍼런스를 주입합니다.
+    /// </summary>
+    public void SetMapChangeEffect(MapChangeEffect effect)
+    {
+        _mapChangeEffect = effect;
     }
 
     /// <summary>

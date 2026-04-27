@@ -17,6 +17,8 @@ public class StageLoader : Singleton<StageLoader>
     private PlayerController _playerController;
     [SerializeField]
     private PlayerProperties _playerProperties;
+    [SerializeField]
+    private MapChangeEffect _mapChangeEffect;
 
     // stageNumber(1-based) -> pre-instantiated stage instance
     private Dictionary<int, GameObject> _stageInstances = new Dictionary<int, GameObject>();
@@ -120,6 +122,9 @@ public class StageLoader : Singleton<StageLoader>
         }
 
         stageManager.SetPlayerController(_playerController);
+
+        var mapManager = stageRoot.GetComponentInChildren<MapManager>(true);
+        mapManager?.SetMapChangeEffect(_mapChangeEffect);
 
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
         if (_hudStatusPresenter != null) _hudStatusPresenter.Setup(stageManager);

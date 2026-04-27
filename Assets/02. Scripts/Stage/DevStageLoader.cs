@@ -9,6 +9,9 @@ public class DevStageLoader : MonoBehaviour
     [SerializeField] private PlayerProperties _playerProperties;
     [SerializeField] private CameraFollow _cameraFollow;
 
+    [Header("이펙트 (선택)")]
+    [SerializeField] private MapChangeEffect _mapChangeEffect;
+
     [Header("HUD (선택)")]
     [SerializeField] private HUDStatusPresenter _hudStatusPresenter;
     [SerializeField] private HUDFlowPresenter _hudFlowPresenter;
@@ -37,6 +40,9 @@ public class DevStageLoader : MonoBehaviour
         }
 
         stageManager.SetPlayerController(_playerController);
+
+        var mapManager = instance.GetComponentInChildren<MapManager>(true);
+        mapManager?.SetMapChangeEffect(_mapChangeEffect);
 
         // HUD 먼저 구독 (InitializeStage의 이벤트를 놓치지 않기 위해)
         _hudStatusPresenter?.Setup(stageManager);
