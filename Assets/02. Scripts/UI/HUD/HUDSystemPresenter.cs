@@ -81,13 +81,14 @@ public class HUDSystemPresenter : MonoBehaviour
     private void HandleRetryStage()
     {
         Time.timeScale = 1f;
-        StageLoader.Instance.ReloadCurrentStage();
+        StageLoader.Instance?.ReloadCurrentStage();
     }
 
     private void HandleGoToNextStage()
     {
+        if (GameSaveManager.Instance == null) return;
         int nextStageNumber = GameSaveManager.Instance.CurrentStageNumber + 1;
-        if (GameSaveManager.Instance.CheckStageUnlockRequirement(nextStageNumber) == true)
+        if (GameSaveManager.Instance.CheckStageUnlockRequirement(nextStageNumber))
         {
             GameSaveManager.Instance.LoadStage(nextStageNumber);
         }

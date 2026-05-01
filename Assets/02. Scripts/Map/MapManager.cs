@@ -51,6 +51,8 @@ public class MapManager : MonoBehaviour
     [SerializeField]
     private float _mapChangeCooldownTime = 1.0f;
 
+    private MapChangeEffect _mapChangeEffect;
+
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
     private FloatingCursor _cursorScript;
@@ -106,6 +108,14 @@ public class MapManager : MonoBehaviour
     private void OnDestroy()
     {
         _controls?.Dispose();
+    }
+
+    /// <summary>
+    /// 외부(StageLoader 등)에서 MapChangeEffect 레퍼런스를 주입합니다.
+    /// </summary>
+    public void SetMapChangeEffect(MapChangeEffect effect)
+    {
+        _mapChangeEffect = effect;
     }
 
     /// <summary>
@@ -207,7 +217,7 @@ public class MapManager : MonoBehaviour
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
-        SpawnPath(targetGroup, targetGroup.CurrentPathIndex);
+        TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
         UpdateCursorPosition();
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
@@ -235,5 +245,33 @@ public class MapManager : MonoBehaviour
 
         group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
         group.CurrentActivePath.transform.SetParent(transform);
+    }
+
+    private void TransitionPath(PathGroup group, int index)
+    {
+        MapInfo mapInfo = group.Maps[index];
+        if (mapInfo.Prefab == null)
+        {
+            CustomDebug.LogWarning($"[MapManager] '{group.GroupName}'의 {index}번 프리팹이 비어있습니다.");
+            return;
+        }
+
+        Vector3 finalPosition = group.SpawnPoint.position + mapInfo.OffsetPosition;
+        Quaternion finalRotation = group.SpawnPoint.rotation * Quaternion.Euler(mapInfo.OffsetRotation);
+
+        if (group.CurrentActivePath != null)
+        {
+            if (_mapChangeEffect != null)
+                _mapChangeEffect.PlayExit(group.CurrentActivePath);
+            else
+                Destroy(group.CurrentActivePath);
+        }
+
+        // 최종 위치에서 생성 → 자식 컴포넌트 OnEnable이 올바른 부모 위치 기준으로 초기화됨
+        group.CurrentActivePath = Instantiate(mapInfo.Prefab, finalPosition, finalRotation);
+        group.CurrentActivePath.transform.SetParent(transform);
+
+        // PlayEnter 내부에서 위로 올린 뒤 내려오는 애니메이션 처리
+        _mapChangeEffect?.PlayEnter(group.CurrentActivePath, finalPosition);
     }
 }
