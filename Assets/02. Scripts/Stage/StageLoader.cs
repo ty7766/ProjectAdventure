@@ -128,6 +128,7 @@ public class StageLoader : Singleton<StageLoader>
         {
             stageManager.SetMapManager(mapManager);
             mapManager.SetMapChangeEffect(_mapChangeEffect);
+            mapManager.ResetState();
         }
 
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)

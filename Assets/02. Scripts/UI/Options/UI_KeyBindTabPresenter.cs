@@ -176,6 +176,11 @@ public class UI_KeyBindTabPresenter
     {
         yield return null;
 
+        if (!_isListening)
+        {
+            yield break;
+        }
+
         _rebindingOperation = action.PerformInteractiveRebinding(bindingIndex)
             .OnMatchWaitForAnother(0.1f)
             .OnComplete(operation => OnRebindingComplete(actionIdentifier, action, bindingIndex))

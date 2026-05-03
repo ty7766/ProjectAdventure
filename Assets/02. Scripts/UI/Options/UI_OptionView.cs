@@ -46,13 +46,9 @@ public class UI_OptionView : MonoBehaviour
         _presenter.RefreshView();
     }
 
-    private void OnDisable()
-    {
-        _presenter.Cleanup();
-    }
-
     private void OnDestroy()
     {
+        _presenter.Cleanup();
         if(_backButton)
         {
             _backButton.onClick.RemoveListener(_presenter.OnBackButtonClicked);

@@ -176,6 +176,9 @@ public class PlayerController : MonoBehaviour
         _isAlive = true;
         _isMovable = true;
         _invTimer = _invincibleTime;
+        _properties.ResetHealth();
+        _animator.Rebind();
+        _animator.Update(0f);
         _movement.TeleportTo(position);
         _respawnPoint = position;
     }

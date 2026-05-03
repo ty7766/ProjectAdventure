@@ -128,6 +128,27 @@ public class MapManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 스테이지 재시작 시 맵 선택 상태를 초기화합니다.
+    /// </summary>
+    public void ResetState()
+    {
+        _selectedSlotIndex = 0;
+        _nextAllowedMapChangeTime = 0f;
+        foreach (PathGroup group in _pathGroups)
+        {
+            if (group.CurrentPathIndex != 0)
+            {
+                group.CurrentPathIndex = 0;
+                if (group.Maps != null && group.Maps.Length > 0 && group.SpawnPoint != null)
+                {
+                    SpawnPath(group, 0);
+                }
+            }
+        }
+        UpdateCursorPosition();
+    }
+
+    /// <summary>
     /// MapGuideLine을 위한 타일 사이즈 리턴 메소드
     /// </summary>
     public Vector3 GetTileSize()

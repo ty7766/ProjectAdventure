@@ -22,6 +22,7 @@ public class NotificationPresenter : MonoBehaviour
 {
     private static Queue<PopupContext> _popupQueue = new Queue<PopupContext>();
     private static bool _isShowingPopup = false;
+    private static NotificationPresenter _instance;
 
     [Header("Position Settings")]
     [SerializeField]
@@ -39,7 +40,19 @@ public class NotificationPresenter : MonoBehaviour
 
     private void Awake()
     {
+        _instance = this;
         _view = GetComponent<NotificationView>();
+    }
+
+    public static void Reset()
+    {
+        _popupQueue.Clear();
+        if (_instance != null)
+        {
+            _instance.StopAllCoroutines();
+            _instance._view?.HidePopup();
+        }
+        _isShowingPopup = false;
     }
 
     private void Start()

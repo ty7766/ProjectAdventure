@@ -97,7 +97,7 @@ public class StageSelectPresenter
                 int stageNumber = currentStageIndex + 1;
                 var record = stageManager.GetSaveRecord(stageNumber);
                 bool isUnlocked = stageManager.CheckStageUnlockRequirement(stageNumber);
-                _view.UpdateStageSlotByIndex(i, (int)record?.StageNumber, (int)record?.AcquiredStars, isUnlocked);
+                _view.UpdateStageSlotByIndex(i, stageNumber, record?.AcquiredStars ?? 0, isUnlocked);
             }
         }
     }

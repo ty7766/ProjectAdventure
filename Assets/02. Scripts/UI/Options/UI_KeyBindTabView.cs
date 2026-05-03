@@ -18,8 +18,9 @@ public class UI_KeyBindTabView : MonoBehaviour
 
     private void Awake()
     {
-        GameControls controls = InputManager.Instance.GameControls;
-        if (controls != null)
+        var inputManager = InputManager.Instance;
+        GameControls controls = inputManager?.GameControls;
+        if (inputManager != null && controls != null)
         {
             Initialize(controls);
         }

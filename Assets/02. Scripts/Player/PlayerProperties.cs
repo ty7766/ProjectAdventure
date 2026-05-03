@@ -12,9 +12,16 @@ public class PlayerProperties : MonoBehaviour
     [SerializeField]
     private float _turnSpeed = 15f;
 
+    private int _maxHealth;
+
     //--- Events ---//
     public event Action<int> OnHealthChanged;
     public event Action OnPlayerDeath;
+
+    private void Awake()
+    {
+        _maxHealth = _health;
+    }
 
     //--- Properties ---//
     public int Health
@@ -46,5 +53,11 @@ public class PlayerProperties : MonoBehaviour
     {
         get { return _turnSpeed; }
         set { _turnSpeed = Mathf.Max(0.0f, value); } // Ensure turn speed is non-negative
+    }
+
+    public void ResetHealth()
+    {
+        _health = _maxHealth;
+        OnHealthChanged?.Invoke(_health);
     }
 }
