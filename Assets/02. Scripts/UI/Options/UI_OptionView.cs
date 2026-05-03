@@ -40,6 +40,11 @@ public class UI_OptionView : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        _presenter.Start();
+    }
+
     private void OnDestroy()
     {
         if(_backButton)
@@ -104,6 +109,7 @@ public class UI_OptionView : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = targetAlpha;
-        canvasGroup.blocksRaycasts = targetAlpha > 0.1f;
+        canvasGroup.blocksRaycasts = targetAlpha > 0.05f;
+        canvasGroup.interactable = targetAlpha > 0.05f;
     }
 }

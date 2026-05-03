@@ -44,7 +44,7 @@ public class TitleFlowController : MonoBehaviour
         {
             StopCoroutine(_fadeCoroutine);
         }
-            _titleCameraController.DoTransition("StageSelect");
+        _titleCameraController.DoTransition("StageSelect");
         _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _stageSelectCanvas));
         _currentActiveCanvas = _stageSelectCanvas;
     }
@@ -73,6 +73,7 @@ public class TitleFlowController : MonoBehaviour
         _titleCanvas.alpha = 0.0f;
         _stageSelectCanvas.alpha = 0.0f;
         _optionsCanvas.gameObject.SetActive(false);
+        _titleCanvas.gameObject.SetActive(true);
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
