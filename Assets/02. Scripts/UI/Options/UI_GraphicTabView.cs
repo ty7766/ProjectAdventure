@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using TMPro;
 
 public class UI_GraphicTabView : MonoBehaviour
@@ -37,6 +38,31 @@ public class UI_GraphicTabView : MonoBehaviour
         _presenter.Initialize();
         if (_sliderGamma != null) _sliderGamma.onValueChanged.AddListener(_ => OnSliderValueChanged());
         if (_sliderRenderScale != null) _sliderRenderScale.onValueChanged.AddListener(_ => OnSliderValueChanged());
+
+        SetupRenderScaleDragEnd();
+    }
+
+    private void SetupRenderScaleDragEnd()
+    {
+        if (_sliderRenderScale == null) return;
+
+        EventTrigger trigger = _sliderRenderScale.GetComponent<EventTrigger>();
+        if (trigger == null)
+        {
+            trigger = _sliderRenderScale.gameObject.AddComponent<EventTrigger>();
+        }
+
+        EventTrigger.Entry pointerUpEntry = new EventTrigger.Entry();
+        pointerUpEntry.eventID = EventTriggerType.PointerUp;
+        pointerUpEntry.callback.AddListener((data) => _onRenderScaleDragEnd?.Invoke(_sliderRenderScale.value));
+        trigger.triggers.Add(pointerUpEntry);
+    }
+
+    private UnityAction<float> _onRenderScaleDragEnd;
+
+    public void BindRenderScaleDragEnd(UnityAction<float> onDragEnd)
+    {
+        _onRenderScaleDragEnd = onDragEnd;
     }
 
     private void OnDestroy()
