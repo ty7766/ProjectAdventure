@@ -25,8 +25,9 @@ public class StageManager : MonoBehaviour
 {
     //--- Components & Settings ---//
     [Header("Components")]
-    [SerializeField] 
+    [SerializeField]
     private PlayerController _playerController;
+    private MapManager _mapManager;
 
     [Header("Stage Settings")]
     [SerializeField] 
@@ -190,6 +191,15 @@ public class StageManager : MonoBehaviour
     }
 
     /// <summary>
+    /// MapManager 레퍼런스를 외부에서 주입합니다.
+    /// </summary>
+    /// <param name="mapManager">연결할 MapManager</param>
+    public void SetMapManager(MapManager mapManager)
+    {
+        _mapManager = mapManager;
+    }
+
+    /// <summary>
     /// 스테이지 상태를 초기화하고 게임을 일시정지 후 플레이어 조작을 비활성화합니다.
     /// StageLoader가 스테이지를 활성화할 때 호출됩니다.
     /// </summary>
@@ -310,26 +320,24 @@ public class StageManager : MonoBehaviour
 
     private void DisablePlayerControl()
     {
-        if (_playerController != null)
+        if(_playerController == null || _mapManager == null)
         {
-            _playerController.DisablePlayerControl();
+            CustomDebug.LogWarning("PlayerController or MapManager reference is missing in StageManager. Cannot disable player control.");
+            return;
         }
-        else
-        {
-            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
-        }
+        _playerController.DisablePlayerControl();
+        _mapManager.IsControlEnabled = false;
     }
 
     private void EnablePlayerControl()
     {
-        if (_playerController != null)
+        if (_playerController == null || _mapManager == null)
         {
-            _playerController.EnablePlayerControl();
+            CustomDebug.LogWarning("PlayerController or MapManager reference is missing in StageManager. Cannot enable player control.");
+            return;
         }
-        else
-        {
-            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
-        }
+        _playerController.EnablePlayerControl();
+        _mapManager.IsControlEnabled = true;
     }
 
     private void TimerTick()
