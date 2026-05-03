@@ -17,6 +17,7 @@ public class UI_OptionView : MonoBehaviour
     [SerializeField] private CanvasGroup _graphicTab;
     [SerializeField] private CanvasGroup _audioTab;
     [SerializeField] private CanvasGroup _keyBindTab;
+    [SerializeField] private UI_KeyBindTabView _keyBindTabView;
 
     [Header("Settings")]
     [SerializeField] private float _unselectedTabOpacity = 0.8f;
@@ -79,6 +80,23 @@ public class UI_OptionView : MonoBehaviour
     public void ShowKeyBindTab()
     {
         Assert.IsNotNull(_keyBindTab, "Key Bind Tab reference is not assigned in the inspector!");
+
+        if (_keyBindTabView != null)
+        {
+            GameControls controls = InputManager.Instance.GameControls;
+            if (controls != null)
+            {
+                _keyBindTabView.Initialize(controls);
+            }
+            else
+            {
+                Debug.LogError("[Options] ShowKeyBindTab: GameControls is null!");
+            }
+        }
+        else
+        {
+            Debug.LogError("[Options] ShowKeyBindTab: _keyBindTabView is not assigned in inspector!");
+        }
 
         HideAllTab();
         StartCoroutine(DoTransition(1f, _keyBindTab, _transitionDuration));

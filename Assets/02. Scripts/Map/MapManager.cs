@@ -74,7 +74,7 @@ public class MapManager : MonoBehaviour
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
 
-        _controls = new GameControls();
+        _controls = InputManager.Instance.GameControls;
         _onSelectMap = ctx => ChangeSelection(Mathf.RoundToInt(ctx.ReadValue<float>()));
         _onChangeMap = ctx => TryChangeMap(Mathf.RoundToInt(ctx.ReadValue<float>()));
     }
@@ -107,7 +107,6 @@ public class MapManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _controls?.Dispose();
     }
 
     /// <summary>
