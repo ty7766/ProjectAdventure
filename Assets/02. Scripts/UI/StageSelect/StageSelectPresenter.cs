@@ -38,9 +38,48 @@ public class StageSelectPresenter
     {
         int stageNumber = (_pageIndex * STAGES_PER_PAGE) + slotIndex + 1;
 
-        if (stageNumber <= GameSaveManager.Instance.GetTotalStageNumber())
+        if (stageNumber > GameSaveManager.Instance.GetTotalStageNumber())
+        {
+            return;
+        }
+
+        if (GameSaveManager.Instance.CheckStageUnlockRequirement(stageNumber))
         {
             GameSaveManager.Instance.LoadStage(stageNumber);
+        }
+        else
+        {
+            ShowUnlockConditionPopup(stageNumber);
+        }
+    }
+
+    private void ShowUnlockConditionPopup(int stageNumber)
+    {
+        var stageData = GameSaveManager.Instance.GetStageData(stageNumber);
+        if (stageData == null) return;
+
+        string message = GetUnlockConditionMessage(stageData);
+
+        GlobalUICanvasView.Instance.Presenter.ShowPopup(
+            "스테이지 미해금",
+            message,
+            ("확인", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+        );
+    }
+
+    private string GetUnlockConditionMessage(StageData stageData)
+    {
+        switch (stageData.RequiredCondition)
+        {
+            case RequiredStageCondition.MustClearPreviousStage:
+                return $"스테이지 {stageData.StageNumber - 1}을(를) 클리어해야 합니다.";
+
+            case RequiredStageCondition.MustHaveTotalClearStars:
+                int currentStars = GameSaveManager.Instance.GetTotalAcquiredStars();
+                return $"총 {stageData.RequiredStarsValue}개의 별을 모아야 합니다.\n(현재: {currentStars}개)";
+
+            default:
+                return "이 스테이지는 아직 해금되지 않았습니다.";
         }
     }
 
