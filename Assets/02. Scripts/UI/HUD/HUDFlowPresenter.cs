@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using GameManager.Singleton;
 
 [System.Serializable]
 public struct StageMissionData
@@ -181,6 +182,10 @@ public class HUDFlowPresenter : MonoBehaviour
         if (_stageManager != null)
         {
             _hudView.UpdateStageClearTimeRecordText(TimeSpan.FromSeconds(_stageManager.StageTimer));
+        }
+        if (GameSaveManager.Instance != null)
+        {
+            _hudView.UpdateStageClearStageNumberText(GameSaveManager.Instance.CurrentStageNumber);
         }
         _hudView.ShowStageClearPanel();
     }
