@@ -42,11 +42,20 @@ public class TitlePresenter
 
     void ExitGame()
     {
+        GlobalUICanvasView.Instance.Presenter.ShowPopup(
+            "경고",
+            "정말 게임을 종료하시겠습니까?",
+            ("확인", () =>
+            {
+                GlobalUICanvasView.Instance.Presenter.HidePopup();
+                Application.Quit();
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
+                UnityEditor.EditorApplication.isPlaying = false;
 #endif
+            }
+        ),
+            ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+        );
     }
 
 
