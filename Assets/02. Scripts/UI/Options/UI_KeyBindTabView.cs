@@ -16,6 +16,19 @@ public class UI_KeyBindTabView : MonoBehaviour
     private UI_KeyBindTabPresenter _presenter;
     private GameControls _gameControls;
 
+    private void Awake()
+    {
+        GameControls controls = InputManager.Instance.GameControls;
+        if (controls != null)
+        {
+            Initialize(controls);
+        }
+        else
+        {
+            Debug.LogError("[UI_KeyBindTabView] Awake: GameControls is null!");
+        }
+    }
+
     public void Initialize(GameControls gameControls)
     {
         _gameControls = gameControls;
@@ -24,12 +37,12 @@ public class UI_KeyBindTabView : MonoBehaviour
         BindButtonEvents();
     }
 
-    private void Awake()
+    public void RefreshKeyBindData()
     {
-    }
-
-    private void Start()
-    {
+        if (_presenter != null)
+        {
+            _presenter.Initialize();
+        }
     }
 
     private void BindButtonEvents()
@@ -44,8 +57,15 @@ public class UI_KeyBindTabView : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        _presenter?.CancelListening();
+    }
+
     private void OnDestroy()
     {
+        _presenter?.CancelListening();
+
         foreach (var keyBindButton in _keyBindButtons)
         {
             if (keyBindButton.button != null)

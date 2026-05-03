@@ -320,24 +320,42 @@ public class StageManager : MonoBehaviour
 
     private void DisablePlayerControl()
     {
-        if(_playerController == null || _mapManager == null)
+        if(_playerController == null)
         {
-            CustomDebug.LogWarning("PlayerController or MapManager reference is missing in StageManager. Cannot disable player control.");
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager. Cannot disable player control.");
             return;
         }
+
         _playerController.DisablePlayerControl();
-        _mapManager.IsControlEnabled = false;
+
+        if (_mapManager == null)
+        {
+            CustomDebug.LogWarning("MapManager reference is missing in StageManager. Map control may not be disabled.");
+        }
+        else
+        {
+            _mapManager.IsControlEnabled = false;
+        }
     }
 
     private void EnablePlayerControl()
     {
-        if (_playerController == null || _mapManager == null)
+        if (_playerController == null)
         {
-            CustomDebug.LogWarning("PlayerController or MapManager reference is missing in StageManager. Cannot enable player control.");
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager. Cannot enable player control.");
             return;
         }
+
         _playerController.EnablePlayerControl();
-        _mapManager.IsControlEnabled = true;
+
+        if (_mapManager == null)
+        {
+            CustomDebug.LogWarning("MapManager reference is missing in StageManager. Map control may not be enabled.");
+        }
+        else
+        {
+            _mapManager.IsControlEnabled = true;
+        }
     }
 
     private void TimerTick()

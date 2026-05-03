@@ -119,10 +119,16 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     public void SetBGMVolume(float volume)
     {
+        float clampedVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("BGMVolume", clampedVolume);
+
         if (_bgmSource != null)
         {
-            _bgmSource.volume = Mathf.Clamp01(volume);
-            PlayerPrefs.SetFloat("BGMVolume", _bgmSource.volume);
+            _bgmSource.volume = clampedVolume;
+        }
+        else
+        {
+            CustomDebug.LogWarning("[SoundManager] BGM AudioSource가 할당되지 않았습니다. 볼륨이 저장되었지만 적용되지 않았습니다.");
         }
     }
 
@@ -131,10 +137,16 @@ public class SoundManager : Singleton<SoundManager>
     /// </summary>
     public void SetSFXVolume(float volume)
     {
+        float clampedVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("SFXVolume", clampedVolume);
+
         if (_sfxSource != null)
         {
-            _sfxSource.volume = Mathf.Clamp01(volume);
-            PlayerPrefs.SetFloat("SFXVolume", _sfxSource.volume);
+            _sfxSource.volume = clampedVolume;
+        }
+        else
+        {
+            CustomDebug.LogWarning("[SoundManager] SFX AudioSource가 할당되지 않았습니다. 볼륨이 저장되었지만 적용되지 않았습니다.");
         }
     }
 

@@ -152,7 +152,7 @@ public class TitleFlowController : MonoBehaviour
         switch (_currentState)
         {
             case TitleState.Title:
-                TryQuitgame();
+                TryQuitGame();
                 break;
             case TitleState.StageSelect:
             case TitleState.Options:
@@ -161,7 +161,7 @@ public class TitleFlowController : MonoBehaviour
         }
     }
 
-    private static void TryQuitgame()
+    private static void TryQuitGame()
     {
         GlobalUICanvasView.Instance.Presenter.ShowPopup(
             "경고",

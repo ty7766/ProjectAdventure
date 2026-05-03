@@ -43,7 +43,12 @@ public class UI_OptionView : MonoBehaviour
 
     private void OnEnable()
     {
-        _presenter.Start();
+        _presenter.RefreshView();
+    }
+
+    private void OnDisable()
+    {
+        _presenter.Cleanup();
     }
 
     private void OnDestroy()
@@ -83,15 +88,7 @@ public class UI_OptionView : MonoBehaviour
 
         if (_keyBindTabView != null)
         {
-            GameControls controls = InputManager.Instance.GameControls;
-            if (controls != null)
-            {
-                _keyBindTabView.Initialize(controls);
-            }
-            else
-            {
-                Debug.LogError("[Options] ShowKeyBindTab: GameControls is null!");
-            }
+            _keyBindTabView.RefreshKeyBindData();
         }
         else
         {

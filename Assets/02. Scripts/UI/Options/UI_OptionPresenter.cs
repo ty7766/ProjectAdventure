@@ -24,9 +24,22 @@ public class UI_OptionPresenter
             string tabName = tabButton.TabName;
             tabButton.AddButtonListener(() => OnTabSelected(tabName));
         }
-        _currentTab = _tabButtons[0].TabName; // Default to the first tab
+        _currentTab = _tabButtons[0].TabName;
+        RefreshView();
+    }
+
+    public void RefreshView()
+    {
         UpdateTabView();
         UpdateTabButtonVisuals();
+    }
+
+    public void Cleanup()
+    {
+        foreach (var tabButton in _tabButtons)
+        {
+            tabButton.RemoveButtonListener();
+        }
     }
 
     //--- Button Handlers ---//

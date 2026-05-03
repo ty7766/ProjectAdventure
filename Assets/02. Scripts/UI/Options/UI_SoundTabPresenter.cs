@@ -13,12 +13,20 @@ public class UI_SoundTabPresenter
 
     public void Initialize()
     {
+        if (_model == null)
+        {
+            CustomDebug.LogWarning("[UI_SoundTabPresenter] SoundManager is not initialized.");
+            return;
+        }
+
         SyncViewWithModel();
         BindEvents();
     }
 
     private void SyncViewWithModel()
     {
+        if (_model == null) return;
+
         float bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 1f);
         float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
 
@@ -31,9 +39,11 @@ public class UI_SoundTabPresenter
 
     private void BindEvents()
     {
+        if (_model == null) return;
+
         _view.BindSoundSettings(
-            val => _model.SetBGMVolume(val),
-            val => _model.SetSFXVolume(val)
+            val => { if (_model != null) _model.SetBGMVolume(val); },
+            val => { if (_model != null) _model.SetSFXVolume(val); }
         );
 
         _view.BindSFXVolumeDragEnd(PlayClickSound);
@@ -41,6 +51,9 @@ public class UI_SoundTabPresenter
 
     private void PlayClickSound()
     {
-        _model.PlaySFX(SoundType.SFX_ButtonClick);
+        if (_model != null)
+        {
+            _model.PlaySFX(SoundType.SFX_ButtonClick);
+        }
     }
 }

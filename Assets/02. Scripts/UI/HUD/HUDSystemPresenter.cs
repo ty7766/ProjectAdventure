@@ -89,8 +89,6 @@ public class HUDSystemPresenter : MonoBehaviour
     {
         if (GameSaveManager.Instance == null) return;
 
-        Time.timeScale = 1f;
-
         int currentStageNumber = GameSaveManager.Instance.CurrentStageNumber;
         int totalStages = GameSaveManager.Instance.GetTotalStageNumber();
 
@@ -100,6 +98,7 @@ public class HUDSystemPresenter : MonoBehaviour
                 "축하합니다!",
                 "모든 스테이지를 클리어하셨습니다!",
                 ("타이틀로", () => {
+                    Time.timeScale = 1f;
                     GlobalUICanvasView.Instance.Presenter.HidePopup();
                     SceneManager.LoadScene("dev-title");
                 })
@@ -118,6 +117,7 @@ public class HUDSystemPresenter : MonoBehaviour
                 "스테이지 미해금",
                 "다음 스테이지는 아직 해금되지 않았습니다.",
                 ("타이틀로", () => {
+                    Time.timeScale = 1f;
                     GlobalUICanvasView.Instance.Presenter.HidePopup();
                     SceneManager.LoadScene("dev-title");
                 })

@@ -146,8 +146,13 @@ public class UI_KeyBindTabPresenter
         }
 
         var actionMap = _inputActionAsset.FindActionMap(mapName);
-        var action = actionMap.FindAction(actionName);
+        if (actionMap == null)
+        {
+            Debug.LogError($"ActionMap '{mapName}' not found");
+            return;
+        }
 
+        var action = actionMap.FindAction(actionName);
         if (action == null)
         {
             Debug.LogError($"Action '{actionName}' not found in map '{mapName}'");
@@ -227,6 +232,11 @@ public class UI_KeyBindTabPresenter
     {
         PlayerPrefs.SetString($"KeyBind_{actionIdentifier}", keyPath);
         PlayerPrefs.Save();
+    }
+
+    public void CancelListening()
+    {
+        EndKeyBinding(updateUI: false);
     }
 
     private void EndKeyBinding(bool updateUI = true)

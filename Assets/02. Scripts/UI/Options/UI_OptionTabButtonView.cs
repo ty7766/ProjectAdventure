@@ -35,6 +35,14 @@ public class UI_OptionTabButtonView : MonoBehaviour
         }
     }
 
+    public void RemoveButtonListener()
+    {
+        if(_button)
+        {
+            _button.onClick.RemoveAllListeners();
+        }
+    }
+
     public void SetGraphicOpacity(float opacity)
     {
         if(_graphicComponent)
