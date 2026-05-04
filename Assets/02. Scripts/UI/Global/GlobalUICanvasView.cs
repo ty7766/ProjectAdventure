@@ -107,6 +107,8 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
 
     private IEnumerator FadeInBgBlocker()
     {
+        _bgBlockerCanvasGroup.alpha = 0f;
+        _bgBlockerCanvasGroup.blocksRaycasts = true;
         float timer = 0f;
         while (timer < _fadeDuration)
         {
@@ -115,7 +117,6 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
             yield return null;
         }
         _bgBlockerCanvasGroup.alpha = 1f;
-        _bgBlockerCanvasGroup.blocksRaycasts = true;
     }
 
     private IEnumerator FadeOutBgBlocker()

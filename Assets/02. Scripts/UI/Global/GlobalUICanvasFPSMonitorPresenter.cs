@@ -77,7 +77,7 @@ public class GlobalUICanvasFPSMonitorPresenter
 
         _avgFps = sum / _fpsHistory.Count;
 
-        int lowIndex = Mathf.Max(0, sortedFps.Count - Mathf.CeilToInt(sortedFps.Count * 0.01f));
+        int lowIndex = Mathf.Max(0, Mathf.CeilToInt(sortedFps.Count * 0.01f) - 1);
         _lowFps = sortedFps[lowIndex];
     }
 
