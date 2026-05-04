@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class BuffSlotPool
@@ -29,6 +28,17 @@ public class BuffSlotPool
         EnsureCapacity(activeEffects.Count);
 
         for (int i = 0; i < activeEffects.Count; i++)
+        {
+            BuffSlotView slot = _slots[i];
+            
+            if (!slot.gameObject.activeSelf)
+            {
+                slot.gameObject.SetActive(true);
+            }
+            slot.Setup(activeEffects[i]);
+        }
+
+        for (int i = activeEffects.Count; i < _slots.Count; i++)
         {
             BuffSlotView slot = _slots[i];
             if (slot.gameObject.activeSelf)
