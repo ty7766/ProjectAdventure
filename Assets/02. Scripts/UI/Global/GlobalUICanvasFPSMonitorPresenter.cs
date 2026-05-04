@@ -33,9 +33,9 @@ public class GlobalUICanvasFPSMonitorPresenter
 
         _updateCounter++;
 
-        // 매 프레임: FPS와 Frame Time 수집 (매우 가벼움)
-        _frameTime = Time.deltaTime * 1000f;
-        _currentFps = Mathf.RoundToInt(1f / Time.deltaTime);
+        // 매 프레임: FPS와 Frame Time 수집 (Time.unscaledDeltaTime으로 TimeScale의 영향 제외)
+        _frameTime = Time.unscaledDeltaTime * 1000f;
+        _currentFps = Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
 
         _fpsHistory.Enqueue(_currentFps);
         if (_fpsHistory.Count > HISTORY_SIZE)
