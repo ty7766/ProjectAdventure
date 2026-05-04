@@ -64,11 +64,13 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
 
         // [3] 팝업 자동 감추기 (에디터에서 실수로 켜둔 것 방지)
         _popupCanvasGroup.alpha = 0f;
+        _popupCanvasGroup.blocksRaycasts = false;
 
         // [4] FPS 모니터 초기 상태 설정
         if (_fpsMonitorCanvasGroup != null)
         {
             _fpsMonitorCanvasGroup.alpha = 0f;
+            _fpsMonitorCanvasGroup.blocksRaycasts = false;
         }
 
         // [5] 저장된 FPS 모니터 설정에 따라 활성화/비활성화
@@ -187,6 +189,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
 
     private IEnumerator FadeInPopup()
     {
+        _popupCanvasGroup.blocksRaycasts = true;
         float timer = 0f;
         while (timer < _fadeDuration)
         {
@@ -207,6 +210,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
             yield return null;
         }
         _popupCanvasGroup.alpha = 0f;
+        _popupCanvasGroup.blocksRaycasts = false;
     }
     #endregion
 
@@ -253,6 +257,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
         // ⚠️ IMPORTANT: Canvas Group의 alpha로만 제어 (gameObject 절대 건드리지 말 것!)
         if (_fpsMonitorCanvasGroup != null)
         {
+            _fpsMonitorCanvasGroup.blocksRaycasts = false;
             _fpsMonitorCanvasGroup.alpha = 1f;
         }
     }
@@ -263,6 +268,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
         if (_fpsMonitorCanvasGroup != null)
         {
             _fpsMonitorCanvasGroup.alpha = 0f;
+            _fpsMonitorCanvasGroup.blocksRaycasts = false;
         }
     }
     #endregion
