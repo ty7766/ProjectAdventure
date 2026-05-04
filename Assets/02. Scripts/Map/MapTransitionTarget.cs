@@ -32,25 +32,25 @@ public class MapTransitionTarget
         _baseColors = new Color[total];
         _hasBaseColor = new bool[total];
 
-        int wirteIndex = 0;
+        int writeIndex = 0;
         for (int i = 0; i < renderers.Length; i++)
         {
             Material[] instanceMats = renderers[i].materials;
             for (int j = 0; j < instanceMats.Length; j++)
             {
                 Material mat = instanceMats[j];
-                _materials[wirteIndex] = mat;
+                _materials[writeIndex] = mat;
 
                 bool has = mat.HasProperty(BaseColorID);
-                _hasBaseColor[wirteIndex] = has;
+                _hasBaseColor[writeIndex] = has;
 
                 if (has)
                 {
                     Color c = mat.GetColor(BaseColorID);
                     c.a = 1f;
-                    _baseColors[wirteIndex] = c;
+                    _baseColors[writeIndex] = c;
                 }
-                wirteIndex++;
+                writeIndex++;
             }
         }
     }
@@ -58,7 +58,6 @@ public class MapTransitionTarget
     /// <summary>
     /// URP Lit 셰이더의 Surface 타입을 토글
     /// </summary>
-    /// <param name="materials"></param>
     /// <param name="isTransparent"></param>
     public void SetTransparent(bool isTransparent)
     {
