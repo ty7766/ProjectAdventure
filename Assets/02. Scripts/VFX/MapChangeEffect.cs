@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
+using Unity.Hierarchy;
 using UnityEngine;
 
 public class MapChangeEffect : MonoBehaviour
@@ -24,16 +24,12 @@ public class MapChangeEffect : MonoBehaviour
 
     private IEnumerator AnimateExit(GameObject map, float duration)
     {
-        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
-        {
-            handler.OnMapExitStart();
-        }
+        MapTransitionTarget target = new MapTransitionTarget(map);
+        NotifyExitStart(target);
 
         Vector3 startPosition = map.transform.position;
         Vector3 endPosition = startPosition + Vector3.down * _exitDropDistance;
-        Renderer[] renderers = map.GetComponentsInChildren<Renderer>();
-        Material[] materials = CollectMaterials(renderers);
-        SetMaterialsTransparent(materials, true);
+        target.SetTransparent(true);
 
         float elapsed = 0f;
         while (elapsed < duration)
@@ -46,7 +42,7 @@ public class MapChangeEffect : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
             map.transform.position = Vector3.Lerp(startPosition, endPosition, t);
-            SetRenderersAlpha(materials, 1f - t);
+            target.ApplyAlpha(1f - t);
             yield return null;
         }
 
@@ -55,18 +51,14 @@ public class MapChangeEffect : MonoBehaviour
 
     private IEnumerator AnimateEnter(GameObject map, Vector3 finalPosition, float duration)
     {
-        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
-        {
-            handler.OnMapEnterStart();
-        }
+        MapTransitionTarget target = new MapTransitionTarget(map);
+        NotifyEnterStart(target);
 
         Vector3 startPosition = finalPosition + Vector3.up * _enterDropDistance;
         map.transform.position = startPosition;
 
-        Renderer[] renderers = map.GetComponentsInChildren<Renderer>();
-        Material[] materials = CollectMaterials(renderers);
-        SetMaterialsTransparent(materials, true);
-        SetRenderersAlpha(materials, 0f);
+        target.SetTransparent(true);
+        target.ApplyAlpha(0f);
 
         float elapsed = 0f;
         while (elapsed < duration)
@@ -79,75 +71,41 @@ public class MapChangeEffect : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = Mathf.SmoothStep(0f, 1f, elapsed / duration);
             map.transform.position = Vector3.Lerp(startPosition, finalPosition, t);
-            SetRenderersAlpha(materials, t);
+            target.ApplyAlpha(t);
             yield return null;
         }
 
         map.transform.position = finalPosition;
-        SetRenderersAlpha(materials, 1f);
-        SetMaterialsTransparent(materials, false);
 
-        foreach (var handler in map.GetComponentsInChildren<IMapTransitionHandler>())
-            handler.OnMapEnterEnd();
+        target.ApplyAlpha(1f);
+        target.SetTransparent(false);
+        NotifyEnterEnd(target);
     }
 
-    private Material[] CollectMaterials(Renderer[] renderers)
+    private void NotifyExitStart(MapTransitionTarget target)
     {
-        var list = new List<Material>();
-        foreach (var renderer in renderers)
+        IMapTransitionHandler[] handlers = target.Handlers;
+        for (int i = 0; i < handlers.Length; i++)
         {
-            list.AddRange(renderer.materials);
-        }
-        return list.ToArray();
-    }
-
-    private void SetMaterialsTransparent(Material[] materials, bool isTransparent)
-    {
-        foreach (var mat in materials)
-        {
-            if (!mat.HasProperty("_Surface"))
-            {
-                continue;
-            }
-
-            if (isTransparent)
-            {
-                mat.SetFloat("_Surface", 1f);
-                mat.SetFloat("_Blend", 0f);
-                mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                mat.renderQueue = 3000;
-                mat.SetFloat("_ZWrite", 1f);
-                mat.SetFloat("_SrcBlend", 5f);
-                mat.SetFloat("_DstBlend", 10f);
-            }
-            else
-            {
-                mat.SetFloat("_Surface", 0f);
-                mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
-                mat.renderQueue = 2000;
-                mat.SetFloat("_ZWrite", 1f);
-                mat.SetFloat("_SrcBlend", 1f);
-                mat.SetFloat("_DstBlend", 0f);
-                if (mat.HasProperty("_BaseColor"))
-                {
-                    Color c = mat.GetColor("_BaseColor");
-                    c.a = 1f;
-                    mat.SetColor("_BaseColor", c);
-                }
-            }
+            handlers[i].OnMapExitStart();
         }
     }
 
-    private void SetRenderersAlpha(Material[] materials, float alpha)
+    private void NotifyEnterStart(MapTransitionTarget target)
     {
-        foreach (var mat in materials)
+        IMapTransitionHandler[] handlers = target.Handlers;
+        for (int i = 0; i < handlers.Length; i++)
         {
-            if (mat.HasProperty("_BaseColor"))
-            {
-                Color c = mat.GetColor("_BaseColor");
-                c.a = alpha;
-                mat.SetColor("_BaseColor", c);
-            }
+            handlers[i].OnMapEnterStart();
+        }
+    }
+
+    private void NotifyEnterEnd(MapTransitionTarget target)
+    {
+        IMapTransitionHandler[] handlers = target.Handlers;
+        for (int i = 0; i < handlers.Length; i++)
+        {
+            handlers[i].OnMapEnterEnd();
         }
     }
 }
