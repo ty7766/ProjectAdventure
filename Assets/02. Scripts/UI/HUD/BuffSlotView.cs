@@ -1,13 +1,15 @@
-﻿using Unity.VisualScripting;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class BuffSlotView : MonoBehaviour
 {
     //--- Settings ---//
     [Header("References")]
-    [SerializeField] private UnityEngine.UI.Image _iconImage;
-    [SerializeField] private UnityEngine.UI.Image _durationFillImage;
-    [SerializeField] private TMPro.TextMeshProUGUI _descriptionText;
+    [SerializeField] 
+    private UnityEngine.UI.Image _iconImage;
+    [SerializeField] 
+    private UnityEngine.UI.Image _durationFillImage;
+    [SerializeField] 
+    private TMPro.TextMeshProUGUI _descriptionText;
 
     //--- Fields ---//
     private ActiveEffect _targetEffect;
@@ -16,6 +18,10 @@ public class BuffSlotView : MonoBehaviour
     private void Update()
     {
         if (_targetEffect is null)
+        {
+            return;
+        }
+        if(_targetEffect.IsPermanent)
         {
             return;
         }
@@ -47,6 +53,14 @@ public class BuffSlotView : MonoBehaviour
         {
             UpdateDurationFill();
         }
+    }
+
+    /// <summary>
+    /// 풀에 의해 비활성화될 때 ActiveEffect 참조를 끊어 다음 활성화 시 stale 상태가 남지 않도록 함
+    /// </summary>
+    public void Clear()
+    {
+        _targetEffect = null;
     }
 
     private void UpdateDurationFill()

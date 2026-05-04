@@ -33,6 +33,8 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private BuffSlotView _buffItemPrefab;
 
+    private BuffSlotPool _buffSlotPool;
+
     [Header("Timer")]
     [SerializeField]
     private TextMeshProUGUI _timerText;
@@ -118,6 +120,7 @@ public class HUDView : MonoBehaviour
     private void Awake()
     {
         AddButtonListeners();
+        _buffSlotPool = new BuffSlotPool(_contentParent, _buffItemPrefab);
     }
 
     private void Update()
@@ -167,19 +170,7 @@ public class HUDView : MonoBehaviour
     /// <param name="activeEffects"></param>
     public void RefreshBuffs(List<ActiveEffect> activeEffects)
     {
-        // TODO : 성능면에서 조금 아쉬울것 같은데
-        // 1. 기존 아이콘 싹 청소
-        foreach (Transform child in _contentParent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // 2. 새 리스트대로 생성
-        foreach (var effect in activeEffects)
-        {
-            BuffSlotView newItem = Instantiate(_buffItemPrefab, _contentParent);
-            newItem.Setup(effect);
-        }
+        _buffSlotPool.Refresh(activeEffects);
     }
 
     /// <summary>
