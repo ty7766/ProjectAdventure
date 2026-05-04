@@ -1,6 +1,7 @@
 ﻿using GameManager.Singleton;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class HUDSystemPresenter : MonoBehaviour
 {
@@ -72,10 +73,32 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleQuitGame()
     {
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.Presenter != null)
+        {
+            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+                "경고",
+                "정말 게임을 종료하시겠습니까?",
+                ("확인", () =>
+                {
+                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    PerformQuit();
+                }
+            ),
+                ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+            );
+        }
+        else
+        {
+            PerformQuit();
+        }
+    }
+
+    private void PerformQuit()
+    {
+        Application.Quit();
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
-        Application.Quit();
     }
 
     private void HandleRetryStage()
@@ -87,10 +110,40 @@ public class HUDSystemPresenter : MonoBehaviour
     private void HandleGoToNextStage()
     {
         if (GameSaveManager.Instance == null) return;
-        int nextStageNumber = GameSaveManager.Instance.CurrentStageNumber + 1;
+
+        int currentStageNumber = GameSaveManager.Instance.CurrentStageNumber;
+        int totalStages = GameSaveManager.Instance.GetTotalStageNumber();
+
+        if (currentStageNumber >= totalStages)
+        {
+            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+                "축하합니다!",
+                "모든 스테이지를 클리어하셨습니다!",
+                ("타이틀로", () => {
+                    Time.timeScale = 1f;
+                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    SceneManager.LoadScene("dev-title");
+                })
+            );
+            return;
+        }
+
+        int nextStageNumber = currentStageNumber + 1;
         if (GameSaveManager.Instance.CheckStageUnlockRequirement(nextStageNumber))
         {
             GameSaveManager.Instance.LoadStage(nextStageNumber);
+        }
+        else
+        {
+            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+                "스테이지 미해금",
+                "다음 스테이지는 아직 해금되지 않았습니다.",
+                ("타이틀로", () => {
+                    Time.timeScale = 1f;
+                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    SceneManager.LoadScene("dev-title");
+                })
+            );
         }
     }
 }

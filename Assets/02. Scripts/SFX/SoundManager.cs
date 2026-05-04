@@ -114,6 +114,58 @@ public class SoundManager : Singleton<SoundManager>
         }
     }
 
+    /// <summary>
+    /// BGM 볼륨을 설정하는 메서드 (0~1)
+    /// </summary>
+    public void SetBGMVolume(float volume)
+    {
+        float clampedVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("BGMVolume", clampedVolume);
+
+        if (_bgmSource != null)
+        {
+            _bgmSource.volume = clampedVolume;
+        }
+        else
+        {
+            CustomDebug.LogWarning("[SoundManager] BGM AudioSource가 할당되지 않았습니다. 볼륨이 저장되었지만 적용되지 않았습니다.");
+        }
+    }
+
+    /// <summary>
+    /// SFX 볼륨을 설정하는 메서드 (0~1)
+    /// </summary>
+    public void SetSFXVolume(float volume)
+    {
+        float clampedVolume = Mathf.Clamp01(volume);
+        PlayerPrefs.SetFloat("SFXVolume", clampedVolume);
+
+        if (_sfxSource != null)
+        {
+            _sfxSource.volume = clampedVolume;
+        }
+        else
+        {
+            CustomDebug.LogWarning("[SoundManager] SFX AudioSource가 할당되지 않았습니다. 볼륨이 저장되었지만 적용되지 않았습니다.");
+        }
+    }
+
+    /// <summary>
+    /// BGM 볼륨을 가져오는 메서드
+    /// </summary>
+    public float GetBGMVolume()
+    {
+        return _bgmSource != null ? _bgmSource.volume : 0f;
+    }
+
+    /// <summary>
+    /// SFX 볼륨을 가져오는 메서드
+    /// </summary>
+    public float GetSFXVolume()
+    {
+        return _sfxSource != null ? _sfxSource.volume : 0f;
+    }
+
     //구현부
     private void InitializeAudioDictionary()
     {

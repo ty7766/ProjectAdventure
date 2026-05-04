@@ -124,7 +124,12 @@ public class StageLoader : Singleton<StageLoader>
         stageManager.SetPlayerController(_playerController);
 
         var mapManager = stageRoot.GetComponentInChildren<MapManager>(true);
-        mapManager?.SetMapChangeEffect(_mapChangeEffect);
+        if (mapManager != null)
+        {
+            stageManager.SetMapManager(mapManager);
+            mapManager.SetMapChangeEffect(_mapChangeEffect);
+            mapManager.ResetState();
+        }
 
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
         if (_hudStatusPresenter != null) _hudStatusPresenter.Setup(stageManager);

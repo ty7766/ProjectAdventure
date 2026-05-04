@@ -3,6 +3,13 @@ using UnityEngine;
 
 public class TitleFlowController : MonoBehaviour
 {
+    enum TitleState
+    {
+        Title,
+        StageSelect,
+        Options
+    }
+
     [Header("Components")]
     [SerializeField]
     private TitleCameraController _titleCameraController;
@@ -21,10 +28,19 @@ public class TitleFlowController : MonoBehaviour
 
     private Coroutine _fadeCoroutine;
     private CanvasGroup _currentActiveCanvas;
+    private TitleState _currentState = TitleState.Title;
 
     private void Start()
     {
        InitializeTitleView();
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            HandleEscapeInput();
+        }
     }
 
     public void GoToTitle()
@@ -36,6 +52,7 @@ public class TitleFlowController : MonoBehaviour
         _titleCameraController.DoTransition("Title");
         _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _titleCanvas));
         _currentActiveCanvas = _titleCanvas;
+        _currentState = TitleState.Title;
     }
 
     public void GoToStageSelect()
@@ -44,9 +61,10 @@ public class TitleFlowController : MonoBehaviour
         {
             StopCoroutine(_fadeCoroutine);
         }
-            _titleCameraController.DoTransition("StageSelect");
+        _titleCameraController.DoTransition("StageSelect");
         _fadeCoroutine = StartCoroutine(SequentialFade(_currentActiveCanvas, _stageSelectCanvas));
         _currentActiveCanvas = _stageSelectCanvas;
+        _currentState = TitleState.StageSelect;
     }
 
     public void GoToOptions()
@@ -60,6 +78,7 @@ public class TitleFlowController : MonoBehaviour
         _optionsCanvas.alpha = 0f;
         _currentActiveCanvas = _optionsCanvas;
         _fadeCoroutine = StartCoroutine(SequentialFade(_titleCanvas, _optionsCanvas));
+        _currentState = TitleState.Options;
     }
 
     private void InitializeTitleView()
@@ -73,6 +92,7 @@ public class TitleFlowController : MonoBehaviour
         _titleCanvas.alpha = 0.0f;
         _stageSelectCanvas.alpha = 0.0f;
         _optionsCanvas.gameObject.SetActive(false);
+        _titleCanvas.gameObject.SetActive(true);
         StartCoroutine(FadeIn(_titleCanvas, _introDuration));
     }
 
@@ -125,5 +145,49 @@ public class TitleFlowController : MonoBehaviour
         }
         target.alpha = 1f;
         target.blocksRaycasts = true;
+    }
+
+    private void HandleEscapeInput()
+    {
+        switch (_currentState)
+        {
+            case TitleState.Title:
+                TryQuitGame();
+                break;
+            case TitleState.StageSelect:
+            case TitleState.Options:
+                GoToTitle();
+                break;
+        }
+    }
+
+    private void TryQuitGame()
+    {
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.Presenter != null)
+        {
+            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+                "경고",
+                "정말 게임을 종료하시겠습니까?",
+                ("확인", () =>
+                {
+                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    PerformQuit();
+                }
+            ),
+                ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+            );
+        }
+        else
+        {
+            PerformQuit();
+        }
+    }
+
+    private void PerformQuit()
+    {
+        Application.Quit();
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#endif
     }
 }

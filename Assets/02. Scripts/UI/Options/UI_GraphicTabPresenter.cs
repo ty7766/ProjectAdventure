@@ -97,7 +97,7 @@ public class UI_GraphicTabPresenter
                 );
 
         _view.BindQualitySettings(
-                val => _model.SetRenderScale(val),
+                val => { }, // 렌더링 스케일은 드래그 종료 시에만 적용
                 index => _model.SetTextureQuality(index), // 0:저(1/4), 1:중(1/2), 2:고(Full) 로 GraphicManager 내부에서 처리됨
                 index => {
                     // 드롭다운 index를 실제 배율로 변환 (0, 2, 4, 8, 16)
@@ -106,6 +106,8 @@ public class UI_GraphicTabPresenter
                 },
                 index => _model.SetShadowQuality(index)
             );
+
+        _view.BindRenderScaleDragEnd(val => _model.SetRenderScale(val));
 
         _view.BindPostProcessSettings(
             index => _model.SetBloom(index == 1),

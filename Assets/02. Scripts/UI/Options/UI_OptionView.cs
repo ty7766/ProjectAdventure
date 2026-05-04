@@ -17,6 +17,7 @@ public class UI_OptionView : MonoBehaviour
     [SerializeField] private CanvasGroup _graphicTab;
     [SerializeField] private CanvasGroup _audioTab;
     [SerializeField] private CanvasGroup _keyBindTab;
+    [SerializeField] private UI_KeyBindTabView _keyBindTabView;
 
     [Header("Settings")]
     [SerializeField] private float _unselectedTabOpacity = 0.8f;
@@ -40,8 +41,14 @@ public class UI_OptionView : MonoBehaviour
         }
     }
 
+    private void OnEnable()
+    {
+        _presenter.RefreshView();
+    }
+
     private void OnDestroy()
     {
+        _presenter.Cleanup();
         if(_backButton)
         {
             _backButton.onClick.RemoveListener(_presenter.OnBackButtonClicked);
@@ -75,6 +82,15 @@ public class UI_OptionView : MonoBehaviour
     {
         Assert.IsNotNull(_keyBindTab, "Key Bind Tab reference is not assigned in the inspector!");
 
+        if (_keyBindTabView != null)
+        {
+            _keyBindTabView.RefreshKeyBindData();
+        }
+        else
+        {
+            Debug.LogError("[Options] ShowKeyBindTab: _keyBindTabView is not assigned in inspector!");
+        }
+
         HideAllTab();
         StartCoroutine(DoTransition(1f, _keyBindTab, _transitionDuration));
     }
@@ -104,6 +120,7 @@ public class UI_OptionView : MonoBehaviour
             yield return null;
         }
         canvasGroup.alpha = targetAlpha;
-        canvasGroup.blocksRaycasts = targetAlpha > 0.1f;
+        canvasGroup.blocksRaycasts = targetAlpha > 0.05f;
+        canvasGroup.interactable = targetAlpha > 0.05f;
     }
 }

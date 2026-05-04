@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using GameManager.Singleton;
 
 [System.Serializable]
 public struct StageMissionData
@@ -35,6 +36,7 @@ public class HUDFlowPresenter : MonoBehaviour
     public static Dictionary<StageObjectType, string> MissionTextDict = new Dictionary<StageObjectType, string>();
 
     private Coroutine _countDownCoroutine;
+    private Coroutine _deathSequenceCoroutine;
     private bool _isSetupCalled = false;
     
 
@@ -96,6 +98,13 @@ public class HUDFlowPresenter : MonoBehaviour
     // --- Start Sequence ---
     private void HandleStageStart()
     {
+        if (_deathSequenceCoroutine != null)
+        {
+            StopCoroutine(_deathSequenceCoroutine);
+            _deathSequenceCoroutine = null;
+        }
+        NotificationPresenter.Reset();
+
         SoundManager.Instance?.PlayBGM(SoundType.None);
 
         _hudView.HideStageFailPanel();
@@ -156,7 +165,11 @@ public class HUDFlowPresenter : MonoBehaviour
     }
 
     // --- Death Sequence ---
-    private void HandlePlayerDeath() => StartCoroutine(PlayerDeathSequence());
+    private void HandlePlayerDeath()
+    {
+        if (_deathSequenceCoroutine != null) StopCoroutine(_deathSequenceCoroutine);
+        _deathSequenceCoroutine = StartCoroutine(PlayerDeathSequence());
+    }
 
     private IEnumerator PlayerDeathSequence()
     {
@@ -181,6 +194,10 @@ public class HUDFlowPresenter : MonoBehaviour
         if (_stageManager != null)
         {
             _hudView.UpdateStageClearTimeRecordText(TimeSpan.FromSeconds(_stageManager.StageTimer));
+        }
+        if (GameSaveManager.Instance != null)
+        {
+            _hudView.UpdateStageClearStageNumberText(GameSaveManager.Instance.CurrentStageNumber);
         }
         _hudView.ShowStageClearPanel();
     }

@@ -25,8 +25,9 @@ public class StageManager : MonoBehaviour
 {
     //--- Components & Settings ---//
     [Header("Components")]
-    [SerializeField] 
+    [SerializeField]
     private PlayerController _playerController;
+    private MapManager _mapManager;
 
     [Header("Stage Settings")]
     [SerializeField] 
@@ -190,6 +191,15 @@ public class StageManager : MonoBehaviour
     }
 
     /// <summary>
+    /// MapManager 레퍼런스를 외부에서 주입합니다.
+    /// </summary>
+    /// <param name="mapManager">연결할 MapManager</param>
+    public void SetMapManager(MapManager mapManager)
+    {
+        _mapManager = mapManager;
+    }
+
+    /// <summary>
     /// 스테이지 상태를 초기화하고 게임을 일시정지 후 플레이어 조작을 비활성화합니다.
     /// StageLoader가 스테이지를 활성화할 때 호출됩니다.
     /// </summary>
@@ -310,25 +320,41 @@ public class StageManager : MonoBehaviour
 
     private void DisablePlayerControl()
     {
-        if (_playerController != null)
+        if(_playerController == null)
         {
-            _playerController.DisablePlayerControl();
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager. Cannot disable player control.");
+            return;
+        }
+
+        _playerController.DisablePlayerControl();
+
+        if (_mapManager == null)
+        {
+            CustomDebug.LogWarning("MapManager reference is missing in StageManager. Map control may not be disabled.");
         }
         else
         {
-            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
+            _mapManager.IsControlEnabled = false;
         }
     }
 
     private void EnablePlayerControl()
     {
-        if (_playerController != null)
+        if (_playerController == null)
         {
-            _playerController.EnablePlayerControl();
+            CustomDebug.LogWarning("PlayerController reference is missing in StageManager. Cannot enable player control.");
+            return;
+        }
+
+        _playerController.EnablePlayerControl();
+
+        if (_mapManager == null)
+        {
+            CustomDebug.LogWarning("MapManager reference is missing in StageManager. Map control may not be enabled.");
         }
         else
         {
-            CustomDebug.LogWarning("PlayerController reference is missing in StageManager.");
+            _mapManager.IsControlEnabled = true;
         }
     }
 

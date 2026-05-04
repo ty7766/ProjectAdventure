@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         GetPlayerComponents();
-        _controls = new GameControls();
+        _controls = InputManager.Instance.GameControls;
     }
 
     private void Start()
@@ -101,7 +101,6 @@ public class PlayerController : MonoBehaviour
 
     private void OnDestroy()
     {
-        _controls?.Dispose();
     }
 
     //지속 장판 관련
@@ -177,6 +176,9 @@ public class PlayerController : MonoBehaviour
         _isAlive = true;
         _isMovable = true;
         _invTimer = _invincibleTime;
+        _properties.ResetHealth();
+        _animator.Rebind();
+        _animator.Update(0f);
         _movement.TeleportTo(position);
         _respawnPoint = position;
     }

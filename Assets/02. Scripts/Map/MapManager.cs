@@ -60,6 +60,16 @@ public class MapManager : MonoBehaviour
     private GameControls _controls;
     private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onSelectMap;
     private System.Action<UnityEngine.InputSystem.InputAction.CallbackContext> _onChangeMap;
+    private bool _isControlEnabled = false;
+
+    public bool IsControlEnabled
+    {
+        get => _isControlEnabled;
+        set
+        {
+            _isControlEnabled = value;
+        }
+    }
 
     private void Awake()
     {
@@ -74,7 +84,7 @@ public class MapManager : MonoBehaviour
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
 
-        _controls = new GameControls();
+        _controls = InputManager.Instance.GameControls;
         _onSelectMap = ctx => ChangeSelection(Mathf.RoundToInt(ctx.ReadValue<float>()));
         _onChangeMap = ctx => TryChangeMap(Mathf.RoundToInt(ctx.ReadValue<float>()));
     }
@@ -107,7 +117,6 @@ public class MapManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        _controls?.Dispose();
     }
 
     /// <summary>
@@ -116,6 +125,27 @@ public class MapManager : MonoBehaviour
     public void SetMapChangeEffect(MapChangeEffect effect)
     {
         _mapChangeEffect = effect;
+    }
+
+    /// <summary>
+    /// 스테이지 재시작 시 맵 선택 상태를 초기화합니다.
+    /// </summary>
+    public void ResetState()
+    {
+        _selectedSlotIndex = 0;
+        _nextAllowedMapChangeTime = 0f;
+        foreach (PathGroup group in _pathGroups)
+        {
+            if (group.CurrentPathIndex != 0)
+            {
+                group.CurrentPathIndex = 0;
+                if (group.Maps != null && group.Maps.Length > 0 && group.SpawnPoint != null)
+                {
+                    SpawnPath(group, 0);
+                }
+            }
+        }
+        UpdateCursorPosition();
     }
 
     /// <summary>
@@ -148,6 +178,11 @@ public class MapManager : MonoBehaviour
     //direction이 -1이면 왼쪽, 1이면 오른쪽
     private void ChangeSelection(int direction)
     {
+        if (!_isControlEnabled)
+        {
+            return;
+        }
+
         _selectedSlotIndex += direction;
 
         // 인덱스 순환 처리 (Wrap around)
@@ -192,6 +227,11 @@ public class MapManager : MonoBehaviour
 
     private void TryChangeMap(int direction)
     {
+        if (!_isControlEnabled)
+        {
+            return;
+        }
+
         if (Time.time < _nextAllowedMapChangeTime)
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
