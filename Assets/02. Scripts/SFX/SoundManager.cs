@@ -114,6 +114,7 @@ public class SoundManager : Singleton<SoundManager>
         source.clip = audioClip;
         source.minDistance = minDistance;
         source.maxDistance = maxDistance;
+        source.volume = _sfxSource != null ? _sfxSource.volume : 1f;
         source.Play();
     }
 
