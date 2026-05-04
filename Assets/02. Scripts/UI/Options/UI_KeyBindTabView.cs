@@ -15,19 +15,29 @@ public class UI_KeyBindTabView : MonoBehaviour
     [SerializeField] private KeyBindButton[] _keyBindButtons;
     private UI_KeyBindTabPresenter _presenter;
     private GameControls _gameControls;
+    private bool _isInitialized = false;
 
-    private void Awake()
+    private void Start()
     {
+        TryInitialize();
+    }
+
+    private bool TryInitialize()
+    {
+        if (_isInitialized) return true;
+
         var inputManager = InputManager.Instance;
         GameControls controls = inputManager?.GameControls;
+
         if (inputManager != null && controls != null)
         {
             Initialize(controls);
+            _isInitialized = true;
+            return true;
         }
-        else
-        {
-            Debug.LogError("[UI_KeyBindTabView] Awake: GameControls is null!");
-        }
+
+        Debug.LogWarning("[UI_KeyBindTabView] InputManager.GameControls is not ready yet. Initialization deferred.");
+        return false;
     }
 
     public void Initialize(GameControls gameControls)
@@ -40,6 +50,12 @@ public class UI_KeyBindTabView : MonoBehaviour
 
     public void RefreshKeyBindData()
     {
+        // 아직 초기화되지 않았으면 시도
+        if (!_isInitialized)
+        {
+            TryInitialize();
+        }
+
         if (_presenter != null)
         {
             _presenter.Initialize();
@@ -48,6 +64,12 @@ public class UI_KeyBindTabView : MonoBehaviour
 
     private void BindButtonEvents()
     {
+        if (_presenter == null)
+        {
+            Debug.LogWarning("[UI_KeyBindTabView] Presenter is not initialized yet. Button events binding deferred.");
+            return;
+        }
+
         foreach (var keyBindButton in _keyBindButtons)
         {
             if (keyBindButton.button != null)
