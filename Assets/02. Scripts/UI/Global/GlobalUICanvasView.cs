@@ -41,9 +41,6 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     public GlobalUICanvasPopupPresenter PopupPresenter => _popupPresenter;
     public GlobalUICanvasFPSMonitorPresenter FPSMonitorPresenter => _fpsMonitorPresenter;
 
-    [System.Obsolete("Use PopupPresenter instead")]
-    public GlobalUICanvasPopupPresenter Presenter => _popupPresenter;
-
     protected override void Awake()
     {
         base.Awake();
@@ -186,6 +183,11 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
         HideBgBlocker();
         _popupFadeCoroutine = StartCoroutine(FadeOutPopup());
         ClearButtons();
+    }
+
+    public bool IsPopupShown()
+    {
+        return _popupCanvasGroup.alpha > 0f;
     }
 
     private IEnumerator FadeInPopup()

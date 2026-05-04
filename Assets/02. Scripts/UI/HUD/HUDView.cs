@@ -122,7 +122,7 @@ public class HUDView : MonoBehaviour
 
     private void Update()
     {
-        HandlePauseKeyInput();
+        HandleInput();
     }
 
     private void OnDestroy()
@@ -441,14 +441,25 @@ public class HUDView : MonoBehaviour
         _returnToMainMenuButtonStageFail?.onClick.RemoveAllListeners();
     }
 
-    private void HandlePauseKeyInput()
-    {
+    private void HandleInput()
+    {   
         if (TutorialManager.IsActive)
         {
             return;
         }
+
+        HandlePauseKey();
+    }
+
+    private void HandlePauseKey()
+    {
         if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
         {
+            if (GlobalUICanvasView.Instance.IsPopupShown())
+            {
+                GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
+                return;
+            }
             TogglePauseMenu();
         }
     }

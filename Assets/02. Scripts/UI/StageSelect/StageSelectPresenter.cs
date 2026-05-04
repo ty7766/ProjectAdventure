@@ -60,10 +60,10 @@ public class StageSelectPresenter
 
         string message = GetUnlockConditionMessage(stageData);
 
-        GlobalUICanvasView.Instance.Presenter.ShowPopup(
+        GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
             "스테이지 미해금",
             message,
-            ("확인", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+            ("확인", () => GlobalUICanvasView.Instance.PopupPresenter.HidePopup())
         );
     }
 

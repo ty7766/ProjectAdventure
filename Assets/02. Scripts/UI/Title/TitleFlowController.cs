@@ -149,6 +149,12 @@ public class TitleFlowController : MonoBehaviour
 
     private void HandleEscapeInput()
     {
+        if(GlobalUICanvasView.Instance.IsPopupShown())
+        {
+            GlobalUICanvasView.Instance.HidePopup();
+            return;
+        }
+
         switch (_currentState)
         {
             case TitleState.Title:
@@ -163,18 +169,18 @@ public class TitleFlowController : MonoBehaviour
 
     private void TryQuitGame()
     {
-        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.Presenter != null)
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
         {
-            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+            GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
                 "경고",
                 "정말 게임을 종료하시겠습니까?",
                 ("확인", () =>
                 {
-                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                     PerformQuit();
                 }
             ),
-                ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+                ("취소", () => GlobalUICanvasView.Instance.PopupPresenter.HidePopup())
             );
         }
         else
