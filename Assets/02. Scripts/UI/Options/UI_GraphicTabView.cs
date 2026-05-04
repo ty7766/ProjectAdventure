@@ -26,6 +26,9 @@ public class UI_GraphicTabView : MonoBehaviour
     [SerializeField] private TMP_Dropdown _dropDownChromaticAberration;
     [SerializeField] private TMP_Dropdown _dropDownDepthOfField;
 
+    [Header("Performance Monitor Settings")]
+    [SerializeField] private TMP_Dropdown _dropDownFpsMonitor;
+
     private UI_GraphicTabPresenter _presenter;
 
     private void Awake()
@@ -79,6 +82,7 @@ public class UI_GraphicTabView : MonoBehaviour
         if (_dropDownBloom != null) _dropDownBloom.onValueChanged.RemoveAllListeners();
         if (_dropDownChromaticAberration != null) _dropDownChromaticAberration.onValueChanged.RemoveAllListeners();
         if (_dropDownDepthOfField != null) _dropDownDepthOfField.onValueChanged.RemoveAllListeners();
+        if (_dropDownFpsMonitor != null) _dropDownFpsMonitor.onValueChanged.RemoveAllListeners();
     }
 
     public void BindDisplaySettings(UnityAction<int> onDisplayMode, UnityAction<int> onRes, UnityAction<int> onAA, UnityAction<int> onVSync, UnityAction<float> onGamma)
@@ -103,6 +107,11 @@ public class UI_GraphicTabView : MonoBehaviour
         if (onBloom != null) _dropDownBloom?.onValueChanged.AddListener(onBloom);
         if (onCA != null) _dropDownChromaticAberration?.onValueChanged.AddListener(onCA);
         if (onDOF != null) _dropDownDepthOfField?.onValueChanged.AddListener(onDOF);
+    }
+
+    public void BindPerformanceMonitorSettings(UnityAction<int> onFpsMonitorDropdown)
+    {
+        if (onFpsMonitorDropdown != null) _dropDownFpsMonitor?.onValueChanged.AddListener(onFpsMonitorDropdown);
     }
 
     public void UpdateResolutionOptions(System.Collections.Generic.List<string> options)
@@ -183,6 +192,12 @@ public class UI_GraphicTabView : MonoBehaviour
     {
         get => _dropDownDepthOfField != null ? _dropDownDepthOfField.value : 0;
         set { if (_dropDownDepthOfField != null) _dropDownDepthOfField.value = value; }
+    }
+
+    public int FpsMonitorIndex
+    {
+        get => _dropDownFpsMonitor != null ? _dropDownFpsMonitor.value : 0;
+        set { if (_dropDownFpsMonitor != null) _dropDownFpsMonitor.value = value; }
     }
 
     private void OnValidate()
