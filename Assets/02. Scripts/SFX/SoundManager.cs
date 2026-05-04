@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
+[RequireComponent(typeof(Audio3DSourcePool))]
 public class SoundManager : Singleton<SoundManager>
 {
     [System.Serializable]
@@ -21,6 +22,7 @@ public class SoundManager : Singleton<SoundManager>
     private List<SoundData> _soundDataList;
 
     private Dictionary<SoundType, AudioClip> _soundDictionary = new Dictionary<SoundType, AudioClip>();
+    private Audio3DSourcePool _audio3DPool;
 
     protected override void Awake()
     {
@@ -31,6 +33,7 @@ public class SoundManager : Singleton<SoundManager>
         }
 
         InitializeAudioDictionary();
+        _audio3DPool = GetComponent<Audio3DSourcePool>();
     }
 
     /// <summary>
@@ -90,28 +93,28 @@ public class SoundManager : Singleton<SoundManager>
     /// <param name="position">사운드를 실행할 위치</param>
     public void PlaySFX_3D(SoundType soundType, Vector3 position, float minDistance = 15f, float maxDistance = 50f)
     {
-        if (soundType == SoundType.None) return;
-
-        if (_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
+        if (soundType == SoundType.None)
         {
-            GameObject tempAudioHost = new GameObject($"Temp3DAudio_{soundType}");
-            tempAudioHost.transform.position = position;
-
-            AudioSource audioSource = tempAudioHost.AddComponent<AudioSource>();
-            audioSource.clip = audioClip;
-            audioSource.spatialBlend = 1.0f;
-
-            audioSource.minDistance = minDistance;
-            audioSource.maxDistance = maxDistance;
-            audioSource.rolloffMode = AudioRolloffMode.Linear;
-
-            audioSource.Play();
-            Destroy(tempAudioHost, audioClip.length);
+            return;
         }
-        else
+
+        if (!_soundDictionary.TryGetValue(soundType, out AudioClip audioClip))
         {
             CustomDebug.LogWarning("해당 사운드 타입이 없습니다.");
+            return;
         }
+
+        AudioSource source = _audio3DPool.Acquire();
+        if (source == null)
+        {
+            return;
+        }
+
+        source.transform.position = position;
+        source.clip = audioClip;
+        source.minDistance = minDistance;
+        source.maxDistance = maxDistance;
+        source.Play();
     }
 
     /// <summary>
