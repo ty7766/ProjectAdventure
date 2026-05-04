@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class MapTransitionTarget : MonoBehaviour
+public class MapTransitionTarget
 {
     private static readonly int BaseColorID = Shader.PropertyToID("_BaseColor");
     private static readonly int SurfaceID = Shader.PropertyToID("_Surface");
@@ -72,27 +72,27 @@ public class MapTransitionTarget : MonoBehaviour
 
             if (isTransparent)
             {
-                mat.SetFloat("_Surface", 1f);
-                mat.SetFloat("_Blend", 0f);
-                mat.EnableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                mat.SetFloat(SurfaceID, 1f);
+                mat.SetFloat(BlendID, 0f);
+                mat.EnableKeyword(TransparentKeyword);
                 mat.renderQueue = 3000;
-                mat.SetFloat("_ZWrite", 1f);
-                mat.SetFloat("_SrcBlend", 5f);
-                mat.SetFloat("_DstBlend", 10f);
+                mat.SetFloat(ZWriteID, 1f);
+                mat.SetFloat(SrcBlendID, 5f);
+                mat.SetFloat(DstBlendID, 10f);
             }
             else
             {
-                mat.SetFloat("_Surface", 0f);
-                mat.DisableKeyword("_SURFACE_TYPE_TRANSPARENT");
+                mat.SetFloat(SurfaceID, 0f);
+                mat.DisableKeyword(TransparentKeyword);
                 mat.renderQueue = 2000;
-                mat.SetFloat("_ZWrite", 1f);
-                mat.SetFloat("_SrcBlend", 1f);
-                mat.SetFloat("_DstBlend", 0f);
-                if (mat.HasProperty("_BaseColor"))
+                mat.SetFloat(ZWriteID, 1f);
+                mat.SetFloat(SrcBlendID, 1f);
+                mat.SetFloat(DstBlendID, 0f);
+                if (mat.HasProperty(BaseColorID))
                 {
-                    Color c = mat.GetColor("_BaseColor");
+                    Color c = mat.GetColor(BaseColorID);
                     c.a = 1f;
-                    mat.SetColor("_BaseColor", c);
+                    mat.SetColor(BaseColorID, c);
                 }
             }
         }     
