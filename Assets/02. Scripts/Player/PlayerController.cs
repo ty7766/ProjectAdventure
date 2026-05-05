@@ -1,7 +1,6 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.InputSystem.Processors;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerProperties))]
@@ -9,6 +8,11 @@ using UnityEngine.InputSystem.Processors;
 [RequireComponent(typeof(PlayerHitEffect))]
 public class PlayerController : MonoBehaviour
 {
+    //Animator parameter hashes
+    private static readonly int DamageHash = Animator.StringToHash("Damage");
+    private static readonly int DeadHash = Animator.StringToHash("Dead");
+    private static readonly int GetUpHash = Animator.StringToHash("GetUp");
+
     //--- Components ---//
     private PlayerMovement _movement;
     private PlayerProperties _properties;
@@ -37,6 +41,8 @@ public class PlayerController : MonoBehaviour
     //--- Private Fields ---//
     private float _invTimer;
     private WaitForSeconds _stunDelay;
+    private WaitForSeconds _respawnDelayWait;
+    private Quaternion _cameraRotation;
     private Vector3 _respawnPoint;
     private GameControls _controls;
     private bool _isAlive = true;
@@ -54,6 +60,7 @@ public class PlayerController : MonoBehaviour
     {
         GetPlayerComponents();
         _controls = InputManager.Instance.GameControls;
+        _cameraRotation = Quaternion.Euler(0, _cameraAngleOffset, 0);
     }
 
     private void Start()
@@ -80,13 +87,8 @@ public class PlayerController : MonoBehaviour
             RespawnWithDamagePenalty();
         }
 
-        if (_movement != null)
-        {
-            HandleInputs();
-        }
-
+        HandleInputs();
         UpdateTimer();
-
     }
 
     private void OnEnable()
@@ -97,10 +99,6 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         _controls?.Player.Disable();
-    }
-
-    private void OnDestroy()
-    {
     }
 
     //지속 장판 관련
@@ -211,6 +209,7 @@ public class PlayerController : MonoBehaviour
     private void InitializeTimer()
     {
         _stunDelay = new WaitForSeconds(_stunTime);
+        _respawnDelayWait = new WaitForSeconds(_respawnDelay);
         _invTimer = _invincibleTime;
     }
 
