@@ -51,10 +51,7 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour, IMapTransitionHan
 
     protected void UnregisterObject(T spawnedObject)
     {
-        if (_spawnedObjects.Contains(spawnedObject))
-        {
-            _spawnedObjects.Remove(spawnedObject);
-        }
+        _spawnedObjects.Remove(spawnedObject);
     }
 
     // IMapTransitionHandler
