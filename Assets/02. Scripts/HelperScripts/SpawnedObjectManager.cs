@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class SpawnedObjectManager<T> : MonoBehaviour, IMapTransitionHandler where T : Component
