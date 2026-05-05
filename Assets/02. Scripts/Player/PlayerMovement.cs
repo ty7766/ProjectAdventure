@@ -124,7 +124,7 @@ public class PlayerMovement : MonoBehaviour
         rayOrigin = _col.bounds.center;
         rayLength = _col.bounds.extents.y + _groundCheckDist;
         isGrounded = Physics.SphereCast(rayOrigin, _radius, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
-        _animator?.SetBool(IsGroundHash, isGrounded);
+        _animator.SetBool(IsGroundHash, isGrounded);
     }
 
     [Conditional("UNITY_EDITOR")]

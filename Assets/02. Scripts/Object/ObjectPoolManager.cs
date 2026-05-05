@@ -16,6 +16,7 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
     private List<PoolInfo> _poolList;
 
     private Dictionary<PoolObjectType, Queue<GameObject>> _poolDictionary = new Dictionary<PoolObjectType, Queue<GameObject>>();
+    private Dictionary<PoolObjectType, GameObject> _prefabDictionary = new Dictionary<PoolObjectType, GameObject>();
 
     protected override void Awake()
     {
@@ -36,26 +37,16 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
     /// <returns></returns>
     public GameObject SpawnObject(PoolObjectType type, Vector3 position, Quaternion rotation)
     {
-        if (!_poolDictionary.ContainsKey(type))
+        if (!_poolDictionary.TryGetValue(type, out Queue<GameObject> pool))
         {
             CustomDebug.LogWarning($"[ObjectPoolManager] {type} 타입의 풀이 없습니다.");
             return null;
         }
 
-        if (_poolDictionary[type].Count == 0)
-        {
-            CreateNewObject(type);
-            if (_poolDictionary[type].Count == 0)
-            {
-                CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능).");
-                return null;
-            }
-        }
-
-        GameObject spawnedObject = _poolDictionary[type].Dequeue();
+        GameObject spawnedObject = AcquireFromPool(type, pool);
         if (spawnedObject == null)
         {
-            return SpawnObject(type, position, rotation);
+            return null;
         }
         spawnedObject.transform.position = position;
         spawnedObject.transform.rotation = rotation;
@@ -75,13 +66,13 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
         {
             return;
         }
-        if (!_poolDictionary.ContainsKey(type))
+        if (!_poolDictionary.TryGetValue(type, out Queue<GameObject> pool))
         {
             CustomDebug.LogWarning($"[ObjectPoolManager] {type} 타입의 풀이 없습니다.");
             return;
         }
         obj.SetActive(false);
-        _poolDictionary[type].Enqueue(obj);
+        pool.Enqueue(obj);
     }
 
     private void InitializePool()
@@ -91,6 +82,7 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
             if (!_poolDictionary.ContainsKey(poolInfo.Type))
             {
                 _poolDictionary.Add(poolInfo.Type, new Queue<GameObject>());
+                _prefabDictionary.Add(poolInfo.Type, poolInfo.Prefab);
             }
 
             for (int i = 0; i < poolInfo.PoolSize; i++)
@@ -102,11 +94,9 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
 
     private void CreateNewObject(PoolObjectType type, GameObject prefab = null)
     {
-        // prefab이 null이면 리스트에서 찾음
         if (prefab == null)
         {
-            var info = _poolList.Find(x => x.Type == type);
-            prefab = info.Prefab;
+            _prefabDictionary.TryGetValue(type, out prefab);
         }
 
         if (prefab != null)
@@ -119,5 +109,27 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
         {
             CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능).");
         }
+    }
+
+    private GameObject AcquireFromPool(PoolObjectType type, Queue<GameObject> pool)
+    {
+        while (pool.Count > 0)
+        {
+            GameObject candidate = pool.Dequeue();
+            if (candidate != null)
+            {
+                return candidate;
+            }
+            //state null은 버리고 다음항목 시도
+        }
+
+        //풀이 비어 있으면 1개 새로 생성
+        CreateNewObject(type);
+        if (pool.Count == 0)
+        {
+            CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능)");
+            return null;
+        }
+        return pool.Dequeue();
     }
 }
