@@ -1,6 +1,7 @@
 ﻿using System;
 using GameManager.Singleton;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class TutorialManager : MonoBehaviour
         {
             return;
         }
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             AdvanceStep();
         }

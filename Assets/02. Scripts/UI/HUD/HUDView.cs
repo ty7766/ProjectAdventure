@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class HUDView : MonoBehaviour
 {
@@ -40,8 +41,6 @@ public class HUDView : MonoBehaviour
     private TextMeshProUGUI _timerText;
 
     [Header("Pause Menu")]
-    [SerializeField]
-    private KeyCode _pauseKey = KeyCode.Escape;
     [SerializeField]
     private GameObject _pauseMenu;
     [SerializeField]
@@ -438,7 +437,7 @@ public class HUDView : MonoBehaviour
         {
             return;
         }
-        if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && IsPauseMenuActive)
         {
             TogglePauseMenu();
         }
