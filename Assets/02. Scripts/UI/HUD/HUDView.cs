@@ -159,7 +159,10 @@ public class HUDView : MonoBehaviour
         }
         for (int i = safeRequired; i< _gemImages.Count; i++)
         {
-            _gemImages[i].gameObject.SetActive(false);
+            if (_gemImages[i].gameObject.activeSelf)
+            {
+                _gemImages[i].gameObject.SetActive(false);
+            }
         }
     }
 
