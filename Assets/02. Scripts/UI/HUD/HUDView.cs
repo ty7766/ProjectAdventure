@@ -247,14 +247,9 @@ public class HUDView : MonoBehaviour
     /// <param name="text"></param>
     public void UpdateStageObjectUI(int index, string text, bool isCleared)
     {
-        if(index < 0 || index >= _stageObjectTexts.Count)
+        if(index < 0 || index >= _stageObjectTexts.Count || index >= _stageObjectStarImages.Count)
         {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range.");
-            return;
-        }
-        if(index < 0 || index >= _stageObjectStarImages.Count)
-        {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range for star images.");
+            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range");
             return;
         }
 
