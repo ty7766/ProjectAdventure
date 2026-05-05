@@ -172,6 +172,51 @@ Transform:
   - {fileID: 5181733837925816227}
   m_Father: {fileID: 2856172634502646723}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &4066471936599863096
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8581330553968054316}
+  - component: {fileID: 703355251405977392}
+  m_Layer: 0
+  m_Name: TutorialAnchor_Gem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8581330553968054316
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4066471936599863096}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6.93, y: 2.79, z: -1.53}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2856172634502646723}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &703355251405977392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4066471936599863096}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e2cc8ee4a0ed4cb0bff4d3412b5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialAnchor
+  _anchorID: Gem
 --- !u!1 &6030567321395189058
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,6 +275,51 @@ MonoBehaviour:
   - stageObjectType: 3
     value: 2
     isCleared: 0
+--- !u!1 &6330967192236014318
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7656870276314495618}
+  - component: {fileID: 8789683619453294901}
+  m_Layer: 0
+  m_Name: TutorialAnchor_Map
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7656870276314495618
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6330967192236014318}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 1.99, y: 2.689, z: 10.89}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2856172634502646723}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8789683619453294901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6330967192236014318}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e2cc8ee4a0ed4cb0bff4d3412b5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialAnchor
+  _anchorID: Map
 --- !u!1 &6437644210894056342
 GameObject:
   m_ObjectHideFlags: 0
@@ -264,6 +354,9 @@ Transform:
   - {fileID: 7864627832512130165}
   - {fileID: 4245029901202372288}
   - {fileID: 6188402793901487264}
+  - {fileID: 5761842158728424104}
+  - {fileID: 7656870276314495618}
+  - {fileID: 8581330553968054316}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6504782558646273330
@@ -330,6 +423,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7864627832512130165}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8213795780492488559
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5761842158728424104}
+  - component: {fileID: 955902416764693974}
+  m_Layer: 0
+  m_Name: TutorialAnchor_Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5761842158728424104
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8213795780492488559}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 4.856, y: 2.689, z: 16.842}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2856172634502646723}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &955902416764693974
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8213795780492488559}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e2cc8ee4a0ed4cb0bff4d3412b5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialAnchor
+  _anchorID: Player
 --- !u!1001 &554116654252016362
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -393,8 +531,29 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 103928585787357585, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4143866992439145018}
   m_SourcePrefab: {fileID: 100100000, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
+--- !u!1 &486850927245720443 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 103928585787357585, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
+  m_PrefabInstance: {fileID: 554116654252016362}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4143866992439145018
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 486850927245720443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e2cc8ee4a0ed4cb0bff4d3412b5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialAnchor
+  _anchorID: Cursor
 --- !u!4 &4245029901202372288 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4420843911875261482, guid: 5228ddc5b8cacbc4aa3b4eaade12a47a, type: 3}
@@ -521,10 +680,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4342189676927334685, guid: 870cd4a0ab7c63b4293b32fcd01f1162, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7626308865884297612}
   m_SourcePrefab: {fileID: 100100000, guid: 870cd4a0ab7c63b4293b32fcd01f1162, type: 3}
 --- !u!4 &5181733837925816227 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1408384158528334785, guid: 870cd4a0ab7c63b4293b32fcd01f1162, type: 3}
   m_PrefabInstance: {fileID: 6080601214690458722}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7503045459832849791 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4342189676927334685, guid: 870cd4a0ab7c63b4293b32fcd01f1162, type: 3}
+  m_PrefabInstance: {fileID: 6080601214690458722}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7626308865884297612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7503045459832849791}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d8e2cc8ee4a0ed4cb0bff4d3412b5c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TutorialAnchor
+  _anchorID: EndPoint
