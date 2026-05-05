@@ -117,24 +117,10 @@ namespace GameManager.Singleton
                     return true;
 
                 case RequiredStageCondition.MustClearPreviousStage:
-                    if (GetSaveRecord(stageNumber - 1)?.IsCleared == true)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return GetSaveRecord(stageNumber - 1)?.IsCleared == true;
 
                 case RequiredStageCondition.MustHaveTotalClearStars:
-                    if (GetTotalAcquiredStars() >= stageData.RequiredStarsValue)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return GetTotalAcquiredStars() >= stageData.RequiredStarsValue;
                 default:
                     CustomDebug.LogError($"구현되지 않은 스테이지 해금 조건");
                     return false;
