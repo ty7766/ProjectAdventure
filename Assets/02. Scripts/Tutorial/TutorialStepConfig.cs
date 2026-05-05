@@ -13,7 +13,7 @@ public class TutorialStepConfig
     [SerializeField]
     private TargetType _targetType;
     [SerializeField]
-    private Transform _worldTarget;
+    private string _worldAnchorID;
     [SerializeField]
     private RectTransform _uiTarget;
 
@@ -35,7 +35,7 @@ public class TutorialStepConfig
     private string _descriptionText;
 
     public TargetType Target => _targetType;
-    public Transform WorldTarget => _worldTarget;
+    public string WorldAnchorID => _worldAnchorID;
     public RectTransform UiTarget => _uiTarget;
     public Vector2 HoleSize => _holeSize;
     public Vector2 SpotlightOffset => _spotlightOffset;
