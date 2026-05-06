@@ -455,10 +455,17 @@ public class HUDView : MonoBehaviour
     {
         if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
         {
-            if (GlobalUICanvasView.Instance.IsPopupShown())
+            if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
             {
-                GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
-                return;
+                if (GlobalUICanvasView.Instance.IsPopupShown())
+                {
+                    GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
+                    return;
+                }
+            }
+            else
+            {
+                Debug.LogWarning("[HUDView] GlobalUICanvasView.Instance or PopupPresenter is not initialized.");
             }
             TogglePauseMenu();
         }

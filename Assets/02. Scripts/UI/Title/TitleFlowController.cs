@@ -149,10 +149,17 @@ public class TitleFlowController : MonoBehaviour
 
     private void HandleEscapeInput()
     {
-        if(GlobalUICanvasView.Instance.IsPopupShown())
+        if (GlobalUICanvasView.Instance != null)
         {
-            GlobalUICanvasView.Instance.HidePopup();
-            return;
+            if (GlobalUICanvasView.Instance.IsPopupShown())
+            {
+                GlobalUICanvasView.Instance.HidePopup();
+                return;
+            }
+        }
+        else
+        {
+            Debug.LogWarning("[TitleFlowController] GlobalUICanvasView.Instance is not initialized.");
         }
 
         switch (_currentState)
