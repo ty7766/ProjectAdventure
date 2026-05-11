@@ -60,11 +60,23 @@ public class StageSelectPresenter
 
         string message = GetUnlockConditionMessage(stageData);
 
-        GlobalUICanvasView.Instance.Presenter.ShowPopup(
-            "스테이지 미해금",
-            message,
-            ("확인", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
-        );
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+        {
+            GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
+                "스테이지 미해금",
+                message,
+                ("확인", () => {
+                    if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+                    {
+                        GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
+                    }
+                })
+            );
+        }
+        else
+        {
+            Debug.LogWarning("[StageSelectPresenter] GlobalUICanvasView.Instance or PopupPresenter is not initialized.");
+        }
     }
 
     private string GetUnlockConditionMessage(StageData stageData)

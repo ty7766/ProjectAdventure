@@ -33,7 +33,7 @@ public class SoundManager : Singleton<SoundManager>
         }
 
         InitializeAudioDictionary();
-        _audio3DPool = GetComponent<Audio3DSourcePool>();
+        LoadSettings();
     }
 
     /// <summary>
@@ -168,6 +168,18 @@ public class SoundManager : Singleton<SoundManager>
     public float GetSFXVolume()
     {
         return _sfxSource != null ? _sfxSource.volume : 0f;
+    }
+
+    /// <summary>
+    /// 저장된 사운드 설정을 불러와 게임 시작 시 적용합니다.
+    /// </summary>
+    private void LoadSettings()
+    {
+        float bgmVolume = PlayerPrefs.GetFloat("BGMVolume", 1f);
+        float sfxVolume = PlayerPrefs.GetFloat("SFXVolume", 1f);
+
+        SetBGMVolume(bgmVolume);
+        SetSFXVolume(sfxVolume);
     }
 
     //구현부

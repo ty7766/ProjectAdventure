@@ -73,18 +73,18 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleQuitGame()
     {
-        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.Presenter != null)
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
         {
-            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+            GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
                 "경고",
                 "정말 게임을 종료하시겠습니까?",
                 ("확인", () =>
                 {
-                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                     PerformQuit();
                 }
             ),
-                ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+                ("취소", () => GlobalUICanvasView.Instance.PopupPresenter.HidePopup())
             );
         }
         else
@@ -116,15 +116,25 @@ public class HUDSystemPresenter : MonoBehaviour
 
         if (currentStageNumber >= totalStages)
         {
-            GlobalUICanvasView.Instance.Presenter.ShowPopup(
-                "축하합니다!",
-                "모든 스테이지를 클리어하셨습니다!",
-                ("타이틀로", () => {
-                    Time.timeScale = 1f;
-                    GlobalUICanvasView.Instance.Presenter.HidePopup();
-                    SceneManager.LoadScene("dev-title");
-                })
-            );
+            if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+            {
+                GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
+                    "축하합니다!",
+                    "모든 스테이지를 클리어하셨습니다!",
+                    ("타이틀로", () => {
+                        Time.timeScale = 1f;
+                        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+                        {
+                            GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
+                        }
+                        SceneManager.LoadScene("dev-title");
+                    })
+                );
+            }
+            else
+            {
+                CustomDebug.LogWarning("[HUDSystemPresenter] GlobalUICanvasView.Instance or PopupPresenter is not initialized.");
+            }
             return;
         }
 
@@ -135,15 +145,25 @@ public class HUDSystemPresenter : MonoBehaviour
         }
         else
         {
-            GlobalUICanvasView.Instance.Presenter.ShowPopup(
-                "스테이지 미해금",
-                "다음 스테이지는 아직 해금되지 않았습니다.",
-                ("타이틀로", () => {
-                    Time.timeScale = 1f;
-                    GlobalUICanvasView.Instance.Presenter.HidePopup();
-                    SceneManager.LoadScene("dev-title");
-                })
-            );
+            if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+            {
+                GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
+                    "스테이지 미해금",
+                    "다음 스테이지는 아직 해금되지 않았습니다.",
+                    ("타이틀로", () => {
+                        Time.timeScale = 1f;
+                        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
+                        {
+                            GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
+                        }
+                        SceneManager.LoadScene("dev-title");
+                    })
+                );
+            }
+            else
+            {
+                CustomDebug.LogWarning("[HUDSystemPresenter] GlobalUICanvasView.Instance or PopupPresenter is not initialized.");
+            }
         }
     }
 }
