@@ -92,7 +92,7 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
         }
     }
 
-    private void CreateNewObject(PoolObjectType type, GameObject prefab = null)
+    private bool CreateNewObject(PoolObjectType type, GameObject prefab = null)
     {
         if (prefab == null)
         {
@@ -104,10 +104,12 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
             GameObject obj = Instantiate(prefab, transform);
             obj.SetActive(false);
             _poolDictionary[type].Enqueue(obj);
+            return true;
         }
         else
         {
             CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능).");
+            return false;
         }
     }
 
@@ -124,10 +126,8 @@ public class ObjectPoolManager : Singleton<ObjectPoolManager>
         }
 
         //풀이 비어 있으면 1개 새로 생성
-        CreateNewObject(type);
-        if (pool.Count == 0)
+        if(!CreateNewObject(type))
         {
-            CustomDebug.LogWarning($"[ObjectPoolManager] {type} 생성 실패(프리팹 누락 가능)");
             return null;
         }
         return pool.Dequeue();
