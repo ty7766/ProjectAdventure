@@ -80,6 +80,9 @@ public class UI_GraphicTabPresenter
         _view.BloomIndex = PlayerPrefs.GetInt("BloomOn", 1);
         _view.ChromaticAberrationIndex = PlayerPrefs.GetInt("CAOn", 0);
         _view.DepthOfFieldIndex = PlayerPrefs.GetInt("DOFOn", 1);
+
+        // 4. 성능 모니터 설정 (0: 끄기, 1: 켜기)
+        _view.FpsMonitorIndex = PlayerPrefs.GetInt("FpsMonitorEnabled", 0);
     }
 
     private void BindEvents()
@@ -114,6 +117,25 @@ public class UI_GraphicTabPresenter
             index => _model.SetChromaticAberration(index == 1),
             index => _model.SetDepthOfField(index == 1)
         );
+
+        _view.BindPerformanceMonitorSettings(
+            index => SetFpsMonitor(index)
+        );
+    }
+
+    private void SetFpsMonitor(int index)
+    {
+        bool enabled = index == 1;
+        PlayerPrefs.SetInt("FpsMonitorEnabled", enabled ? 1 : 0);
+        PlayerPrefs.Save();
+
+        if (GlobalUICanvasView.Instance != null)
+        {
+            if (enabled)
+                GlobalUICanvasView.Instance.FPSMonitorPresenter.ShowMonitor();
+            else
+                GlobalUICanvasView.Instance.FPSMonitorPresenter.HideMonitor();
+        }
     }
 
     /// <summary>

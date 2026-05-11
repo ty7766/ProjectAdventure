@@ -42,18 +42,18 @@ public class TitlePresenter
 
     void ExitGame()
     {
-        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.Presenter != null)
+        if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
         {
-            GlobalUICanvasView.Instance.Presenter.ShowPopup(
+            GlobalUICanvasView.Instance.PopupPresenter.ShowPopup(
                 "경고",
                 "정말 게임을 종료하시겠습니까?",
                 ("확인", () =>
                 {
-                    GlobalUICanvasView.Instance.Presenter.HidePopup();
+                    GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                     PerformQuit();
                 }
             ),
-                ("취소", () => GlobalUICanvasView.Instance.Presenter.HidePopup())
+                ("취소", () => GlobalUICanvasView.Instance.PopupPresenter.HidePopup())
             );
         }
         else
