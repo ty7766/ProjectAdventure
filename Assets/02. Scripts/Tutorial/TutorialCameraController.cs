@@ -49,7 +49,9 @@ public class TutorialCameraController : MonoBehaviour
     {
         _cameraFollow.enabled = false;
 
-        Vector3 targetPos = target.position + _cameraFollow.PlayerOffset;
+        Vector3 targetPos = _camera.transform.position;
+        targetPos.z = target.position.z + _cameraFollow.PlayerOffset.z;
+
         Vector3 velocity = Vector3.zero;
 
         while (Vector3.Distance(_camera.transform.position, targetPos) > _smoothDampthreshold)

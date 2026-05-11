@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public abstract class SpawnedObjectManager<T> : MonoBehaviour, IMapTransitionHandler where T : Component
@@ -51,10 +50,7 @@ public abstract class SpawnedObjectManager<T> : MonoBehaviour, IMapTransitionHan
 
     protected void UnregisterObject(T spawnedObject)
     {
-        if (_spawnedObjects.Contains(spawnedObject))
-        {
-            _spawnedObjects.Remove(spawnedObject);
-        }
+        _spawnedObjects.Remove(spawnedObject);
     }
 
     // IMapTransitionHandler

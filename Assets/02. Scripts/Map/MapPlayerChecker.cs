@@ -10,7 +10,7 @@ public class MapPlayerChecker : MonoBehaviour
     [SerializeField]
     private float _detectionHeight = 200;       //체크할 높이
 
-    private Collider[] _hitBuffer = new Collider[100];
+    private readonly Collider[] _hitBuffer = new Collider[8];
 
     /// <summary>
     /// 플레이어가 맵 위에 올라가 있는지 체크하는 메소드

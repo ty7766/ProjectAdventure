@@ -1,7 +1,5 @@
 ﻿using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem.Processors;
 
 [RequireComponent(typeof(PlayerMovement))]
 [RequireComponent(typeof(PlayerProperties))]
@@ -9,6 +7,11 @@ using UnityEngine.InputSystem.Processors;
 [RequireComponent(typeof(PlayerHitEffect))]
 public class PlayerController : MonoBehaviour
 {
+    //Animator parameter hashes
+    private static readonly int DamageHash = Animator.StringToHash("Damage");
+    private static readonly int DeadHash = Animator.StringToHash("Dead");
+    private static readonly int GetUpHash = Animator.StringToHash("GetUp");
+
     //--- Components ---//
     private PlayerMovement _movement;
     private PlayerProperties _properties;
@@ -37,6 +40,8 @@ public class PlayerController : MonoBehaviour
     //--- Private Fields ---//
     private float _invTimer;
     private WaitForSeconds _stunDelay;
+    private WaitForSeconds _respawnDelayWait;
+    private Quaternion _cameraRotation;
     private Vector3 _respawnPoint;
     private GameControls _controls;
     private bool _isAlive = true;
@@ -54,6 +59,7 @@ public class PlayerController : MonoBehaviour
     {
         GetPlayerComponents();
         _controls = InputManager.Instance.GameControls;
+        _cameraRotation = Quaternion.Euler(0, _cameraAngleOffset, 0);
     }
 
     private void Start()
@@ -80,13 +86,8 @@ public class PlayerController : MonoBehaviour
             RespawnWithDamagePenalty();
         }
 
-        if (_movement != null)
-        {
-            HandleInputs();
-        }
-
+        HandleInputs();
         UpdateTimer();
-
     }
 
     private void OnEnable()
@@ -97,10 +98,6 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         _controls?.Player.Disable();
-    }
-
-    private void OnDestroy()
-    {
     }
 
     //지속 장판 관련
@@ -142,7 +139,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerDamaged);
-            _animator.SetTrigger("Damage");
+            _animator.SetTrigger(DamageHash);
             if(applyStun)
             {
                 _isMovable = false;
@@ -211,6 +208,7 @@ public class PlayerController : MonoBehaviour
     private void InitializeTimer()
     {
         _stunDelay = new WaitForSeconds(_stunTime);
+        _respawnDelayWait = new WaitForSeconds(_respawnDelay);
         _invTimer = _invincibleTime;
     }
 
@@ -222,7 +220,7 @@ public class PlayerController : MonoBehaviour
         _isAlive = false;
         _isMovable = false;
         _movement.ResetMovements();
-        _animator.SetTrigger("Dead");
+        _animator.SetTrigger(DeadHash);
     }
 
     private void StopPlayer()
@@ -238,11 +236,11 @@ public class PlayerController : MonoBehaviour
         TakeDamage(damage, false); //리스폰 경직 적용을 위해 데미지 경직은 적용하지 않음.
         if (_isAlive)
         {
-            _animator.SetTrigger("GetUp");
+            _animator.SetTrigger(GetUpHash);
         }
 
         //Disable Player Movement for a short duration
-        StartCoroutine(EnableMovementAfterDelay(_respawnDelay));
+        StartCoroutine(EnableMovementAfterDelay(_respawnDelayWait));
     }
 
     private void HandleInputs()
@@ -254,8 +252,7 @@ public class PlayerController : MonoBehaviour
 
         Vector2 moveInput = _controls.Player.Move.ReadValue<Vector2>();
         Vector3 inputDirection = new Vector3(-moveInput.x, 0, -moveInput.y);
-        Quaternion camRotation = Quaternion.Euler(0, _cameraAngleOffset, 0);
-        _movement.Move(camRotation * inputDirection, _properties.Speed, _properties.TurnSpeed);
+        _movement.Move(_cameraRotation * inputDirection, _properties.Speed, _properties.TurnSpeed);
     }
 
     private void UpdateTimer()
@@ -270,12 +267,6 @@ public class PlayerController : MonoBehaviour
 
 
     //--- Coroutines ---//
-    private IEnumerator EnableMovementAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        _isMovable = true;
-    }
-
     private IEnumerator EnableMovementAfterDelay(WaitForSeconds wfs)
     {
         yield return wfs;

@@ -98,12 +98,13 @@ public class TutorialView : MonoBehaviour
     {
         if (config.Target == TutorialStepConfig.TargetType.WorldObject)
         {
-            if (config.WorldTarget == null)
+            Transform anchor = TutorialAnchorRegistry.GetTransform(config.WorldAnchorID);
+            if(anchor == null)
             {
-                CustomDebug.LogWarning("TutorialView: WorldTarget이 null입니다.");
+                CustomDebug.LogWarning($"TutorialView: AnchorId'{config.WorldAnchorID}'를 찾을 수 없습니다.스테이지 프리팹의 TutorialAnchor 셋업을 확인하세요.");
                 return Vector2.zero;
             }
-            return _mainCamera.WorldToScreenPoint(config.WorldTarget.position);
+            return _mainCamera.WorldToScreenPoint(anchor.position);
         }
 
         if (config.UiTarget == null)

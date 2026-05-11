@@ -294,25 +294,11 @@ public class StageManager : MonoBehaviour
                     break;
 
                 case StageObjectType.RemainHealthClear:
-                    if (_playerController != null && _playerController.Health >= obj.value)
-                    {
-                        obj.isCleared = true;
-                    }
-                    else
-                    {
-                        obj.isCleared = false;
-                    }
+                    obj.isCleared = _playerController != null && _playerController.Health >= obj.value;
                     break;
 
                 case StageObjectType.CollectGemsClear:
-                    if(_collectedGems >= obj.value)
-                    {
-                        obj.isCleared = true;
-                    }
-                    else
-                    {
-                        obj.isCleared = false;
-                    }
+                    obj.isCleared = _collectedGems >= obj.value;
                     break;
             }
         }

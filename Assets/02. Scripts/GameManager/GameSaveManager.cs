@@ -7,11 +7,12 @@ using UnityEngine.SceneManagement;
 
 namespace GameManager.Singleton
 {
-
     public class GameSaveManager : Singleton<GameSaveManager>
     {
-        [SerializeField] private List<StageData> _stageDataBase;
-        [SerializeField] private List<StageSaveRecord> _saveData;
+        [SerializeField] 
+        private List<StageData> _stageDataBase;
+        [SerializeField] 
+        private List<StageSaveRecord> _saveData;
 
         private bool _hasCompletedTutorial;
 
@@ -44,6 +45,21 @@ namespace GameManager.Singleton
             Save();
         }
 
+#if UNITY_EDITOR
+        [ContextMenu("디버그 : 세이브 파일 초기화 (튜토리얼 다시보기용)")]
+        private void DebugResetSave()
+        {
+            if(File.Exists(SavePath))
+            {
+                File.Delete(SavePath);
+                CustomDebug.Log("세이브 파일 삭제");
+
+                _hasCompletedTutorial = false;  
+                InitializeSaveData();
+                CustomDebug.Log("[GameSaveManager] 세이브 데이터 초기화 완료");
+            }
+        }
+#endif
         //--- Public Methods ---//
         public void RecordStageClear(int acquiredStars)
         {
@@ -117,24 +133,10 @@ namespace GameManager.Singleton
                     return true;
 
                 case RequiredStageCondition.MustClearPreviousStage:
-                    if (GetSaveRecord(stageNumber - 1)?.IsCleared == true)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return GetSaveRecord(stageNumber - 1)?.IsCleared == true;
 
                 case RequiredStageCondition.MustHaveTotalClearStars:
-                    if (GetTotalAcquiredStars() >= stageData.RequiredStarsValue)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return GetTotalAcquiredStars() >= stageData.RequiredStarsValue;
                 default:
                     CustomDebug.LogError($"구현되지 않은 스테이지 해금 조건");
                     return false;

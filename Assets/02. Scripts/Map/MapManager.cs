@@ -115,10 +115,6 @@ public class MapManager : MonoBehaviour
         }
     }
 
-    private void OnDestroy()
-    {
-    }
-
     /// <summary>
     /// 외부(StageLoader 등)에서 MapChangeEffect 레퍼런스를 주입합니다.
     /// </summary>

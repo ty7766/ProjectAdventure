@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerProperties))]
@@ -127,16 +126,28 @@ public class PlayerEffectController : MonoBehaviour
 
     private void CalculateSpeed()
     {
-        float totalMultiplier = _activeEffects
-            .Where(e => e.Data.Type == EffectType.Speed)
-            .Sum(e => e.Data.MultiplierValue);
+        (float multiplier, float additive) = AggregateModifiers(EffectType.Speed);
 
-        float totalAdditive = _activeEffects
-            .Where(e => e.Data.Type == EffectType.Speed)
-            .Sum(e => e.Data.AdditiveValue);
+        //최종 이동속도 계산
+        _properties.Speed = (_baseSpeed * (1.0f + multiplier)) + additive;
+    }
 
-        // 최종 이동 속도 계산 수식 : (기본속도 * (1 + 증가율 효과 합)) + 고정증가량 합
-        _properties.Speed = (_baseSpeed * (1.0f + totalMultiplier)) + totalAdditive;
+    private (float multiplier, float additive) AggregateModifiers(EffectType type)
+    {
+        float multiplier = 0f;
+        float additive = 0f;
+
+        for (int i = 0; i < _activeEffects.Count; i++)
+        {
+            StatusEffect data = _activeEffects[i].Data;
+            if (data.Type != type)
+            {
+                continue;
+            }
+            multiplier += data.MultiplierValue;
+            additive += data.AdditiveValue;
+        }
+        return (multiplier, additive);
     }
 
     private void UpdateFinalStats()

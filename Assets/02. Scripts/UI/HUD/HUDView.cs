@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class HUDView : MonoBehaviour
 {
@@ -33,13 +34,13 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private BuffSlotView _buffItemPrefab;
 
+    private BuffSlotPool _buffSlotPool;
+
     [Header("Timer")]
     [SerializeField]
     private TextMeshProUGUI _timerText;
 
     [Header("Pause Menu")]
-    [SerializeField]
-    private KeyCode _pauseKey = KeyCode.Escape;
     [SerializeField]
     private GameObject _pauseMenu;
     [SerializeField]
@@ -118,6 +119,7 @@ public class HUDView : MonoBehaviour
     private void Awake()
     {
         AddButtonListeners();
+        _buffSlotPool = new BuffSlotPool(_contentParent, _buffItemPrefab);
     }
 
     private void Update()
@@ -157,7 +159,10 @@ public class HUDView : MonoBehaviour
         }
         for (int i = safeRequired; i< _gemImages.Count; i++)
         {
-            _gemImages[i].gameObject.SetActive(false);
+            if (_gemImages[i].gameObject.activeSelf)
+            {
+                _gemImages[i].gameObject.SetActive(false);
+            }
         }
     }
 
@@ -167,19 +172,7 @@ public class HUDView : MonoBehaviour
     /// <param name="activeEffects"></param>
     public void RefreshBuffs(List<ActiveEffect> activeEffects)
     {
-        // TODO : 성능면에서 조금 아쉬울것 같은데
-        // 1. 기존 아이콘 싹 청소
-        foreach (Transform child in _contentParent)
-        {
-            Destroy(child.gameObject);
-        }
-
-        // 2. 새 리스트대로 생성
-        foreach (var effect in activeEffects)
-        {
-            BuffSlotView newItem = Instantiate(_buffItemPrefab, _contentParent);
-            newItem.Setup(effect);
-        }
+        _buffSlotPool.Refresh(activeEffects);
     }
 
     /// <summary>
@@ -254,14 +247,9 @@ public class HUDView : MonoBehaviour
     /// <param name="text"></param>
     public void UpdateStageObjectUI(int index, string text, bool isCleared)
     {
-        if(index < 0 || index >= _stageObjectTexts.Count)
+        if(index < 0 || index >= _stageObjectTexts.Count || index >= _stageObjectStarImages.Count)
         {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range.");
-            return;
-        }
-        if(index < 0 || index >= _stageObjectStarImages.Count)
-        {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range for star images.");
+            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range");
             return;
         }
 

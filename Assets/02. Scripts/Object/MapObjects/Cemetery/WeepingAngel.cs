@@ -23,6 +23,10 @@ public class WeepingAngel : MonoBehaviour
     [SerializeField]
     private Transform _mapCenterTransform;
 
+    [Header("플레이어 - Angel 간 거리 보정")]
+    [SerializeField]
+    private float _angleDistanceMin = 0.0001f;
+
     private Vector3 _initialPosition;
     private Quaternion _initialRotation;
     private Transform _playerTransform;
@@ -57,11 +61,7 @@ public class WeepingAngel : MonoBehaviour
 
         if (_playerTransform == null)
         {
-            FindPlayer();
-            if (_playerTransform == null)
-            {
-                return;
-            }
+            return;
         }
         if (_mapCenterTransform == null)
         {
@@ -95,14 +95,19 @@ public class WeepingAngel : MonoBehaviour
 
     private void FindPlayer()
     {
-        if (_playerTransform == null)
+        if (_playerTransform != null)
         {
-            GameObject player = GameObject.FindGameObjectWithTag("Player");
-            if (player != null)
-            {
-                _playerTransform = player.transform;
-            }
+            return;
         }
+
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        if (player != null)
+        {
+            _playerTransform = player.transform;
+            return;
+        }
+
+        Debug.LogError("[WeepingAngel] Player를 찾지 못했습니다.");
     }
     private bool IsPlayerInMap()
     {
@@ -128,9 +133,10 @@ public class WeepingAngel : MonoBehaviour
     private void ChasePlayer()
     {
         Vector3 targetPosition = new Vector3(_playerTransform.position.x, transform.position.y, _playerTransform.position.z);
-        Vector3 direction = (targetPosition - transform.position).normalized;
-        if (direction != Vector3.zero)
+        Vector3 toTargetDirection = targetPosition - transform.position;
+        if (toTargetDirection.sqrMagnitude > _angleDistanceMin)
         {
+            Vector3 direction = toTargetDirection.normalized;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _angelRotationSpeed * Time.fixedDeltaTime);
         }

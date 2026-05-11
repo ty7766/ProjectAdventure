@@ -7,6 +7,10 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class PlayerMovement : MonoBehaviour
 {
+    private static readonly int IsGroundHash = Animator.StringToHash("isGround");
+    private static readonly int SpeedHash = Animator.StringToHash("Speed");
+    private static readonly int JumpHash = Animator.StringToHash("Jump");
+
     //--- Components ---//
     private Rigidbody _rb;
     private Animator _animator;
@@ -40,11 +44,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_col == null || _animator == null || _rb == null)
-        {
-            return;
-        }
-
         ApplyMovement();
     }
 
@@ -60,7 +59,7 @@ public class PlayerMovement : MonoBehaviour
     public void ResetMovements()
     {
         _rb.linearVelocity = Vector3.zero;
-        _animator.SetFloat("Speed", 1);
+        _animator.SetFloat(SpeedHash, 1);
         _isJumping = false;
     }
 
@@ -125,7 +124,7 @@ public class PlayerMovement : MonoBehaviour
         rayOrigin = _col.bounds.center;
         rayLength = _col.bounds.extents.y + _groundCheckDist;
         isGrounded = Physics.SphereCast(rayOrigin, _radius, Vector3.down, out RaycastHit hit, rayLength, _groundLayer);
-        _animator?.SetBool("isGround", isGrounded);
+        _animator.SetBool(IsGroundHash, isGrounded);
     }
 
     [Conditional("UNITY_EDITOR")]
@@ -142,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (!_isJumping)
         {
-            _animator.SetTrigger("Jump");
+            _animator.SetTrigger(JumpHash);
             _isJumping = true;
         }
     }
@@ -157,7 +156,7 @@ public class PlayerMovement : MonoBehaviour
     private void SetAnimationSpeed()
     {
         float animSpeed = _rb.linearVelocity.magnitude;
-        _animator.SetFloat("Speed", Mathf.Clamp(animSpeed, 1f, _speed));
+        _animator.SetFloat(SpeedHash, Mathf.Clamp(animSpeed, 1f, _speed));
     }
 
     private void ApplyTargetVelocity()

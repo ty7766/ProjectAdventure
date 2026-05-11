@@ -288,7 +288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -77, y: 221}
+  m_AnchoredPosition: {x: -145, y: -33}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &275002493
@@ -325,7 +325,7 @@ MonoBehaviour:
   _steps:
   - _stepName: Player
     _targetType: 0
-    _worldTarget: {fileID: 595027232}
+    _worldAnchorID: Player
     _uiTarget: {fileID: 0}
     _holeSize: {x: 150, y: 200}
     _spotlightOffset: {x: 0, y: 0}
@@ -334,9 +334,9 @@ MonoBehaviour:
     _descriptionText: "[W A S D]\uB85C \uC6C0\uC9C1\uC77C \uC218 \uC788\uB294 \uD50C\uB808\uC774\uC5B4\uC785\uB2C8\uB2E4."
   - _stepName: Map
     _targetType: 0
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: Map
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 1300, y: 900}
+    _holeSize: {x: 1000, y: 700}
     _spotlightOffset: {x: -30, y: 80}
     _moveCameraToTarget: 0
     _tipTarget: {fileID: 710716547}
@@ -344,7 +344,7 @@ MonoBehaviour:
       \uD0A4\uB85C \uD574\uB2F9 \uB9F5\uC744 \uBC14\uAFC0 \uC218 \uC788\uC2B5\uB2C8\uB2E4.  "
   - _stepName: MapCursor
     _targetType: 0
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: Cursor
     _uiTarget: {fileID: 0}
     _holeSize: {x: 100, y: 100}
     _spotlightOffset: {x: 0, y: 0}
@@ -355,19 +355,19 @@ MonoBehaviour:
       \uC2F6\uC740 \uB9F5\uC744 \uC120\uD0DD\uD560 \uC218 \uC788\uC2B5\uB2C8\uB2E4."
   - _stepName: Gem
     _targetType: 0
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: Gem
     _uiTarget: {fileID: 0}
     _holeSize: {x: 100, y: 100}
-    _spotlightOffset: {x: -30, y: 350}
+    _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 1
     _tipTarget: {fileID: 265501962}
     _descriptionText: "\uBAA9\uD45C\uB97C \uB2EC\uC131\uD558\uAE30 \uC704\uD574\uC11C\uB294
       \uB9F5\uC5D0 \uC788\uB294 \uBCF4\uC11D\uC744 \uC218\uC9D1\uD574\uC57C \uD569\uB2C8\uB2E4."
   - _stepName: Destination
     _targetType: 0
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: EndPoint
     _uiTarget: {fileID: 0}
-    _holeSize: {x: 300, y: 400}
+    _holeSize: {x: 300, y: 300}
     _spotlightOffset: {x: 0, y: 0}
     _moveCameraToTarget: 0
     _tipTarget: {fileID: 1920908434}
@@ -376,7 +376,7 @@ MonoBehaviour:
       \uACBD\uB85C\uB97C \uB9CC\uB4E4\uC5B4\uC57C \uD569\uB2C8\uB2E4."
   - _stepName: HPUI
     _targetType: 1
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: 
     _uiTarget: {fileID: 901033791}
     _holeSize: {x: 200, y: 100}
     _spotlightOffset: {x: 0, y: 0}
@@ -385,7 +385,7 @@ MonoBehaviour:
     _descriptionText: "HP\uAC00 0\uC774\uB418\uBA74 Game Over\uAC00 \uB429\uB2C8\uB2E4."
   - _stepName: GemUI
     _targetType: 1
-    _worldTarget: {fileID: 0}
+    _worldAnchorID: 
     _uiTarget: {fileID: 325598391}
     _holeSize: {x: 100, y: 100}
     _spotlightOffset: {x: 0, y: 0}
@@ -699,7 +699,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0.13692404, y: 0.82450587, z: -0.22552837, w: 0.5005786}
-  m_LocalPosition: {x: -6.4374514, y: 10, z: 18.373531}
+  m_LocalPosition: {x: -6.61, y: 10, z: 18.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -816,6 +816,42 @@ PrefabInstance:
       propertyPath: _currentStage
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.size
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[0].StageNumber
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[1].StageNumber
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[2].StageNumber
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[3].StageNumber
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[4].StageNumber
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[5].StageNumber
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[6].StageNumber
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4097495897553737165, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
+      propertyPath: _saveData.Array.data[7].StageNumber
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 6222324454460586025, guid: badfbf5611ce58c47bcdb5010c7a2175, type: 3}
       propertyPath: m_Name
       value: GameSaveManager
@@ -888,7 +924,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 564, y: 435}
+  m_AnchoredPosition: {x: 564, y: 335}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &410087039
@@ -1309,7 +1345,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -465, y: 462}
+  m_AnchoredPosition: {x: -456, y: 350}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &787260871
@@ -2035,7 +2071,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -698, y: -136}
+  m_AnchoredPosition: {x: -627, y: -91}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1630382101
@@ -2201,7 +2237,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -69, y: -124}
+  m_AnchoredPosition: {x: -281, y: -124}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &2038438889

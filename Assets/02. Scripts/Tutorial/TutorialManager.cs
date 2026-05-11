@@ -1,6 +1,7 @@
 ﻿using System;
 using GameManager.Singleton;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class TutorialManager : MonoBehaviour
 {
@@ -29,7 +30,7 @@ public class TutorialManager : MonoBehaviour
         {
             return;
         }
-        if (Input.GetMouseButtonDown(0))
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
         {
             AdvanceStep();
         }
@@ -76,15 +77,18 @@ public class TutorialManager : MonoBehaviour
     {
         TutorialStepConfig config = _steps[_currentStepIndex];
 
-        if (config.MoveCameraToTarget && config.WorldTarget != null)
+        if (config.MoveCameraToTarget)
         {
-            _tutorialView.HideCurrentStep();
-            _cameraController.MoveToTarget(config.WorldTarget, () => _tutorialView.ShowStep(config));
+            Transform anchor = TutorialAnchorRegistry.GetTransform(config.WorldAnchorID);
+            if (anchor != null)
+            {
+                _tutorialView.HideCurrentStep();
+                _cameraController.MoveToTarget(anchor, () => _tutorialView.ShowStep(config));
+                return;
+            }
+            CustomDebug.LogWarning($"TutorialManager: '{config.WorldAnchorID}'를 찾지 못하여 카메라 이동 없이 진행합니다");
         }
-        else
-        {
-            _tutorialView.ShowStep(config);
-        }
+        _tutorialView.ShowStep(config);
     }
 
     private void AdvanceStep()
