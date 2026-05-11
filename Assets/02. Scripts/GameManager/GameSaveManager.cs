@@ -9,8 +9,10 @@ namespace GameManager.Singleton
 {
     public class GameSaveManager : Singleton<GameSaveManager>
     {
-        [SerializeField] private List<StageData> _stageDataBase;
-        [SerializeField] private List<StageSaveRecord> _saveData;
+        [SerializeField] 
+        private List<StageData> _stageDataBase;
+        [SerializeField] 
+        private List<StageSaveRecord> _saveData;
 
         private bool _hasCompletedTutorial;
 
@@ -44,17 +46,17 @@ namespace GameManager.Singleton
         }
 
 #if UNITY_EDITOR
-        [ContextMenu("디버그 : 세이브 파일 초기화 (튜토리얼 다시보기용")]
+        [ContextMenu("디버그 : 세이브 파일 초기화 (튜토리얼 다시보기용)")]
         private void DebugResetSave()
         {
             if(File.Exists(SavePath))
             {
                 File.Delete(SavePath);
-                Debug.Log("세이브 파일 삭제");
+                CustomDebug.Log("세이브 파일 삭제");
 
-                _hasCompletedTutorial = false;
+                _hasCompletedTutorial = false;  
                 InitializeSaveData();
-                Debug.Log("[GameSaveManager] 세이브 데이터 초기화 완료");
+                CustomDebug.Log("[GameSaveManager] 세이브 데이터 초기화 완료");
             }
         }
 #endif
