@@ -441,7 +441,7 @@ public class HUDView : MonoBehaviour
 
     private void HandlePauseKey()
     {
-        if (Input.GetKeyDown(_pauseKey) && IsPauseMenuActive)
+        if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame && IsPauseMenuActive)
         {
             if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
             {
