@@ -133,13 +133,13 @@ MonoBehaviour:
     m_Value: 1
   threshold:
     m_OverrideState: 1
-    m_Value: 0.8
+    m_Value: 0.7
   intensity:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.3
   scatter:
     m_OverrideState: 1
-    m_Value: 0.801
+    m_Value: 0.7
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -150,8 +150,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   filter:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   downscale:
     m_OverrideState: 0
     m_Value: 0
@@ -282,7 +282,7 @@ MonoBehaviour:
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 1
+          value: 0.99622643
           inSlope: 1
           outSlope: 1
           tangentMode: 0
@@ -313,7 +313,7 @@ MonoBehaviour:
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 1
+          value: 0.9169811
           inSlope: 1
           outSlope: 1
           tangentMode: 0
