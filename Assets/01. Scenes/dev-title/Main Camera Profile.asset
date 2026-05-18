@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81180773991d8724ab7f2d216912b564, type: 3}
   m_Name: ChromaticAberration
   m_EditorClassIdentifier: 
-  active: 1
+  active: 0
   intensity:
     m_OverrideState: 1
     m_Value: 0.075
@@ -136,10 +136,10 @@ MonoBehaviour:
     m_Value: 0.8
   intensity:
     m_OverrideState: 1
-    m_Value: 0.5
+    m_Value: 0.3
   scatter:
     m_OverrideState: 1
-    m_Value: 0.801
+    m_Value: 0.7
   clamp:
     m_OverrideState: 1
     m_Value: 65472
@@ -150,8 +150,8 @@ MonoBehaviour:
     m_OverrideState: 1
     m_Value: 0
   filter:
-    m_OverrideState: 0
-    m_Value: 0
+    m_OverrideState: 1
+    m_Value: 1
   downscale:
     m_OverrideState: 0
     m_Value: 0
@@ -241,19 +241,19 @@ MonoBehaviour:
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
-          time: 0.87295824
-          value: 0.754717
-          inSlope: 0.91276747
-          outSlope: 0.91276747
+          time: 0.46098003
+          value: 0.34339625
+          inSlope: 0.4950588
+          outSlope: 0.4950588
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.7773585
-          inSlope: -0.445553
-          outSlope: -0.445553
+          value: 0.99245286
+          inSlope: 0.49245235
+          outSlope: 0.49245235
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
@@ -283,8 +283,8 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 1
-          outSlope: 1
+          inSlope: 0.13861655
+          outSlope: 0.13861655
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
@@ -345,7 +345,7 @@ MonoBehaviour:
         - serializedVersion: 3
           time: 1
           value: 1
-          inSlope: 1
+          inSlope: 0.806238
           outSlope: 0
           tangentMode: 0
           weightedMode: 0
@@ -379,7 +379,7 @@ MonoBehaviour:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 0.35471696
+          value: 0.38867927
           inSlope: 0
           outSlope: 0
           tangentMode: 0
@@ -482,7 +482,7 @@ MonoBehaviour:
           outWeight: 0
         - serializedVersion: 3
           time: 1
-          value: 0.56981134
+          value: 0.53207546
           inSlope: 0
           outSlope: 0
           tangentMode: 0
