@@ -308,6 +308,7 @@ public class MapManager : MonoBehaviour
         group.CurrentActivePath.transform.SetParent(transform);
 
         // PlayEnter 내부에서 위로 올린 뒤 내려오는 애니메이션 처리
-        _mapChangeEffect?.PlayEnter(group.CurrentActivePath, finalPosition);
+        if (_mapChangeEffect != null)
+            _mapChangeEffect.PlayEnter(group.CurrentActivePath, finalPosition);
     }
 }
