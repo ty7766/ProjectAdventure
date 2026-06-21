@@ -17,8 +17,6 @@ public class StageLoader : Singleton<StageLoader>
     private PlayerController _playerController;
     [SerializeField]
     private PlayerProperties _playerProperties;
-    [SerializeField]
-    private MapChangeEffect _mapChangeEffect;
 
     // stageNumber(1-based) -> pre-instantiated stage instance
     private Dictionary<int, GameObject> _stageInstances = new Dictionary<int, GameObject>();
@@ -127,7 +125,11 @@ public class StageLoader : Singleton<StageLoader>
         if (mapManager != null)
         {
             stageManager.SetMapManager(mapManager);
-            mapManager.SetMapChangeEffect(_mapChangeEffect);
+            // VFXManager는 DontDestroyOnLoad 싱글톤이므로, 씬 재로드 시 PlayStage에서
+            // 새로 생성된 VFXManager 복사본이 즉시 파괴됨. 인스펙터 참조(_mapChangeEffect)는
+            // 파괴된 복사본을 가리키게 되므로, 살아있는 싱글톤에서 직접 가져옴.
+            MapChangeEffect effect = VFXManager.Instance?.GetComponentInChildren<MapChangeEffect>(true);
+            mapManager.SetMapChangeEffect(effect);
             mapManager.ResetState();
         }
 
