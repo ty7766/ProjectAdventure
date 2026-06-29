@@ -12,13 +12,20 @@ public class HUDView : MonoBehaviour
     [Header("UI Components")]
     [SerializeField] private GameObject _hudPanel;
 
+    [Header("Sprites")]
+    [SerializeField]
+    private Sprite _starFilledSprite;
+    [SerializeField]
+    private Sprite _starEmptySprite;
+    [SerializeField]
+    private Sprite _fullHeart;
+    [SerializeField]
+    private Sprite _emptyHeart;
+
     [Header("Health UI")]
     [SerializeField]
     private List<Image> _heartImages;
-    [SerializeField]
-    private Sprite _fullHeart; 
-    [SerializeField]
-    private Sprite _emptyHeart;
+
 
     [Header("Gem UI")]
     [SerializeField] 
@@ -62,15 +69,7 @@ public class HUDView : MonoBehaviour
 
     [Header("Stage Object UI")]
     [SerializeField]
-    private GameObject _stageObjectPanel;
-    [SerializeField]
-    private List<TextMeshProUGUI> _stageObjectTexts;
-    [SerializeField]
-    private List<Image> _stageObjectStarImages;
-    [SerializeField]
-    private Sprite _starFilledSprite;
-    [SerializeField]
-    private Sprite _starEmptySprite;
+    private List<StageObjectUIView> _stageObjectViews;
 
     [Header("StageClearUI")]
     [SerializeField]
@@ -247,14 +246,10 @@ public class HUDView : MonoBehaviour
     /// <param name="text"></param>
     public void UpdateStageObjectUI(int index, string text, bool isCleared)
     {
-        if(index < 0 || index >= _stageObjectTexts.Count || index >= _stageObjectStarImages.Count)
+        foreach(var item in _stageObjectViews)
         {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range");
-            return;
+            item.UpdateStageObjectUI(index, text, isCleared, _starFilledSprite, _starEmptySprite);
         }
-
-        _stageObjectTexts[index].text = text;
-        _stageObjectStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
     }
 
     /// <summary>
@@ -305,22 +300,6 @@ public class HUDView : MonoBehaviour
         if (_stageStartPanel != null)
         {
             _stageStartPanel.SetActive(false);
-        }
-    }
-
-    public void ShowStageObjectView()
-    {
-        if(_stageObjectPanel != null)
-        {
-            _stageObjectPanel.SetActive(true);
-        }
-    }
-
-    public void HideStageObjectView()
-    {
-        if (_stageObjectPanel != null)
-        {
-            _stageObjectPanel.SetActive(false);
         }
     }
 
