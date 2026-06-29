@@ -531,10 +531,6 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1435260847}
     - target: {fileID: 3863874594044101346, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-      propertyPath: _stageManager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3863874594044101346, guid: be66360aa35981147a78907d7129fb4c, type: 3}
       propertyPath: _effectController
       value: 
       objectReference: {fileID: 1435260844}
@@ -543,28 +539,12 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1435260847}
     - target: {fileID: 5588261144679708998, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-      propertyPath: _stageManager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5588261144679708998, guid: be66360aa35981147a78907d7129fb4c, type: 3}
       propertyPath: _tutorialManager
       value: 
       objectReference: {fileID: 275002494}
-    - target: {fileID: 5588261144679708998, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-      propertyPath: _stageObjectObserver
-      value: 
-      objectReference: {fileID: 325598394}
     - target: {fileID: 7364052008053566843, guid: be66360aa35981147a78907d7129fb4c, type: 3}
       propertyPath: m_Name
       value: HUD
-      objectReference: {fileID: 0}
-    - target: {fileID: 8392730427458882404, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-      propertyPath: _stageManager
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8754395311709732651, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-      propertyPath: _stageManager
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -596,17 +576,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 186743a51a99ecd4bb1d6737a341e28f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &325598394 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8754395311709732651, guid: be66360aa35981147a78907d7129fb4c, type: 3}
-  m_PrefabInstance: {fileID: 325598390}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c86c7ad16f7b904b9397dd94232cf18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &325598395 stripped
@@ -1728,7 +1697,6 @@ MonoBehaviour:
   _cameraFollow: {fileID: 330585548}
   _playerController: {fileID: 1435260843}
   _playerProperties: {fileID: 1435260847}
-  _mapChangeEffect: {fileID: 1684966194}
 --- !u!4 &1630382103
 Transform:
   m_ObjectHideFlags: 0
@@ -1813,17 +1781,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b516266fd780155408f7eb865c09999d, type: 3}
---- !u!114 &1684966194 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4852398430870279020, guid: b516266fd780155408f7eb865c09999d, type: 3}
-  m_PrefabInstance: {fileID: 1684966193}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f7cea3e16856614e986c3829056ebe1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::MapChangeEffect
 --- !u!1 &1920908433
 GameObject:
   m_ObjectHideFlags: 0
