@@ -44,17 +44,6 @@ public class NotificationPresenter : MonoBehaviour
         _view = GetComponent<NotificationView>();
     }
 
-    public static void Reset()
-    {
-        _popupQueue.Clear();
-        if (_instance != null)
-        {
-            _instance.StopAllCoroutines();
-            _instance._view?.HidePopup();
-        }
-        _isShowingPopup = false;
-    }
-
     private void Start()
     {
         _view.HidePopup();
@@ -66,6 +55,24 @@ public class NotificationPresenter : MonoBehaviour
         {
             StartCoroutine(ShowPopupRoutine());
         }
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        _isShowingPopup = false;
+        _view.HidePopup();
+    }
+
+    public static void Reset()
+    {
+        _popupQueue.Clear();
+        if (_instance != null)
+        {
+            _instance.StopAllCoroutines();
+            _instance._view?.HidePopup();
+        }
+        _isShowingPopup = false;
     }
 
     /// <summary>
