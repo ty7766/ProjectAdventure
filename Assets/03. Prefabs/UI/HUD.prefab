@@ -1845,7 +1845,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3914924639117088213
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5077,6 +5077,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _hudPanel: {fileID: 8929378661652658027}
+  _showHideDuration: 0.2
   _starFilledSprite: {fileID: -885489514, guid: a5e645d0b2507ac42807ef8e886f7d45, type: 3}
   _starEmptySprite: {fileID: 910685963, guid: a5e645d0b2507ac42807ef8e886f7d45, type: 3}
   _fullHeart: {fileID: 1596636647, guid: a5e645d0b2507ac42807ef8e886f7d45, type: 3}
@@ -5706,7 +5707,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2721291772671318457
 RectTransform:
   m_ObjectHideFlags: 0
