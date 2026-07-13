@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using DG.Tweening;
 
 public class HUDView : MonoBehaviour
 {
@@ -12,13 +13,23 @@ public class HUDView : MonoBehaviour
     [Header("UI Components")]
     [SerializeField] private GameObject _hudPanel;
 
+    [Header("Show/Hide Animation")]
+    [SerializeField] private float _showHideDuration = 0.2f;
+
+    [Header("Sprites")]
+    [SerializeField]
+    private Sprite _starFilledSprite;
+    [SerializeField]
+    private Sprite _starEmptySprite;
+    [SerializeField]
+    private Sprite _fullHeart;
+    [SerializeField]
+    private Sprite _emptyHeart;
+
     [Header("Health UI")]
     [SerializeField]
     private List<Image> _heartImages;
-    [SerializeField]
-    private Sprite _fullHeart; 
-    [SerializeField]
-    private Sprite _emptyHeart;
+
 
     [Header("Gem UI")]
     [SerializeField] 
@@ -62,15 +73,7 @@ public class HUDView : MonoBehaviour
 
     [Header("Stage Object UI")]
     [SerializeField]
-    private GameObject _stageObjectPanel;
-    [SerializeField]
-    private List<TextMeshProUGUI> _stageObjectTexts;
-    [SerializeField]
-    private List<Image> _stageObjectStarImages;
-    [SerializeField]
-    private Sprite _starFilledSprite;
-    [SerializeField]
-    private Sprite _starEmptySprite;
+    private List<StageObjectUIView> _stageObjectViews;
 
     [Header("StageClearUI")]
     [SerializeField]
@@ -180,10 +183,7 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void ShowHUD()
     {
-        if( _hudPanel != null)
-        {
-            _hudPanel.SetActive(true);
-        }
+        FadePanel(_hudPanel, true);
     }
 
     /// <summary>
@@ -191,10 +191,7 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void HideHUD()
     {
-        if (_hudPanel != null)
-        {
-            _hudPanel.SetActive(false);
-        }
+        FadePanel(_hudPanel, false);
     }
 
     /// <summary>
@@ -206,7 +203,7 @@ public class HUDView : MonoBehaviour
         {
             return;
         }
-        _pauseMenu.SetActive(true);
+        FadePanel(_pauseMenu, true);
     }
 
     /// <summary>
@@ -218,7 +215,7 @@ public class HUDView : MonoBehaviour
         {
             return;
         }
-        _pauseMenu.SetActive(false);
+        FadePanel(_pauseMenu, false);
     }
 
     /// <summary>
@@ -247,14 +244,10 @@ public class HUDView : MonoBehaviour
     /// <param name="text"></param>
     public void UpdateStageObjectUI(int index, string text, bool isCleared)
     {
-        if(index < 0 || index >= _stageObjectTexts.Count || index >= _stageObjectStarImages.Count)
+        foreach(var item in _stageObjectViews)
         {
-            CustomDebug.LogWarning("UpdateStageObjectUI: Index out of range");
-            return;
+            item.UpdateStageObjectUI(index, text, isCleared, _starFilledSprite, _starEmptySprite);
         }
-
-        _stageObjectTexts[index].text = text;
-        _stageObjectStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
     }
 
     /// <summary>
@@ -294,66 +287,32 @@ public class HUDView : MonoBehaviour
 
     public void ShowStageStartPanel()
     {
-        if(_stageStartPanel != null)
-        {
-            _stageStartPanel.SetActive(true);
-        }
+        FadePanel(_stageStartPanel, true);
     }
 
     public void HideStageStartPanel()
     {
-        if (_stageStartPanel != null)
-        {
-            _stageStartPanel.SetActive(false);
-        }
-    }
-
-    public void ShowStageObjectView()
-    {
-        if(_stageObjectPanel != null)
-        {
-            _stageObjectPanel.SetActive(true);
-        }
-    }
-
-    public void HideStageObjectView()
-    {
-        if (_stageObjectPanel != null)
-        {
-            _stageObjectPanel.SetActive(false);
-        }
+        FadePanel(_stageStartPanel, false);
     }
 
     public void ShowStageClearPanel()
     {
-        if(_stageClearPanel != null)
-        {
-            _stageClearPanel.SetActive(true);
-        }
+        FadePanel(_stageClearPanel, true);
     }
 
     public void HideStageClearPanel()
     {
-        if (_stageClearPanel != null)
-        {
-            _stageClearPanel.SetActive(false);
-        }
+        FadePanel(_stageClearPanel, false);
     }
 
     public void ShowStageFailPanel()
     {
-        if(_stageFailPanel != null)
-        {
-            _stageFailPanel.SetActive(true);
-        }
+        FadePanel(_stageFailPanel, true);
     }
 
     public void HideStageFailPanel()
     {
-        if (_stageFailPanel != null)
-        {
-            _stageFailPanel.SetActive(false);
-        }
+        FadePanel(_stageFailPanel, false);
     }
 
     public void UpdateStageClearStageNumberText(int number)
@@ -386,6 +345,41 @@ public class HUDView : MonoBehaviour
     }
 
     //--- Private Methods ---//
+    private void FadePanel(GameObject panel, bool show)
+    {
+        if (panel == null)
+        {
+            return;
+        }
+
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.AddComponent<CanvasGroup>();
+        }
+
+        DOTween.Kill(canvasGroup);
+        canvasGroup.interactable = show;
+        canvasGroup.blocksRaycasts = show;
+
+        if (show)
+        {
+            panel.SetActive(true);
+            canvasGroup.alpha = 0f;
+        }
+
+        canvasGroup.DOFade(show ? 1f : 0f, _showHideDuration)
+            .SetUpdate(true)
+            .SetEase(show ? Ease.OutQuad : Ease.InQuad)
+            .OnComplete(() =>
+            {
+                if (!show)
+                {
+                    panel.SetActive(false);
+                }
+            });
+    }
+
     private IEnumerator AnimateFontSize(float targetSize, float time)
     {
         float startSize = _stageCountDownText.fontSize;

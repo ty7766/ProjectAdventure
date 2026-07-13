@@ -115,7 +115,6 @@ public class HUDFlowPresenter : MonoBehaviour
 
         UpdateStageObjectText();
         _hudView.ShowStageStartPanel();
-        _hudView.ShowStageObjectView();
 
         if (_countDownCoroutine != null)
         {
@@ -149,7 +148,6 @@ public class HUDFlowPresenter : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.5f);
 
         _hudView.HideStageStartPanel();
-        _hudView.HideStageObjectView();
         _hudView.ShowHUD();
         _hudView.IsPauseMenuActive = true;
 
