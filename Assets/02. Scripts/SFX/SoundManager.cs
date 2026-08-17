@@ -32,6 +32,7 @@ public class SoundManager : Singleton<SoundManager>
             return;
         }
 
+        _audio3DPool = GetComponent<Audio3DSourcePool>();
         InitializeAudioDictionary();
         LoadSettings();
     }
