@@ -129,6 +129,51 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4429682454667611938, guid: a133e3174402f244180a60cb0fdadf3d, type: 3}
   m_PrefabInstance: {fileID: 1207672185}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &151826684
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 151826686}
+  - component: {fileID: 151826685}
+  m_Layer: 0
+  m_Name: IssueTracker
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &151826685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151826684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f6a3afc70c67734488bbfccc703f56b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IssueTracker.IssueTrackerIntegration
+  logBufferSize: 200
+--- !u!4 &151826686
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151826684}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.21197, y: 1.26798, z: -11.44983}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &191625117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -271,6 +316,52 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5345981825447384336, guid: e3b9192c12807d54893e65f9efb403a3, type: 3}
   m_PrefabInstance: {fileID: 2058040335}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &597266000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 597266002}
+  - component: {fileID: 597266001}
+  m_Layer: 0
+  m_Name: ArcadeSdk
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &597266001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597266000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6367089ef957e2c48b0b7bebafcc7d03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ArcadeBackend.ArcadeSdk
+  editorDevToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YTExODZkM2NkYjhjMzUwY2JhYjY1ZGMiLCJnaWQiOiI2YTExOGUzNGNkYjhjMzUwY2JhYjY2MzciLCJuYW1lIjoi7KCc7IS47ZiVIiwidHlwIjoiZ2FtZSIsImRldiI6dHJ1ZSwiaWF0IjoxNzg2NTQ3MDIzLCJleHAiOjE3ODcxNTE4MjN9.z9uVp6wQW35usn7QWY0dNHHVfiJNd3u3dOAqL-O5XHw
+  apiBaseUrlOverride: 
+--- !u!4 &597266002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 597266000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.21197, y: 1.26798, z: -11.44983}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &631701747
 GameObject:
   m_ObjectHideFlags: 0
@@ -4107,6 +4198,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 48422985276176587, guid: bab820f4cc06eb54590ad0678925e5ea, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 117480913226191231, guid: bab820f4cc06eb54590ad0678925e5ea, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4159,10 +4254,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3940240910231169212, guid: bab820f4cc06eb54590ad0678925e5ea, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 1943680293}
     - target: {fileID: 3975953775642400651, guid: bab820f4cc06eb54590ad0678925e5ea, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -4366,3 +4457,5 @@ SceneRoots:
   - {fileID: 1718326503}
   - {fileID: 631701750}
   - {fileID: 3565371771835006743}
+  - {fileID: 151826686}
+  - {fileID: 597266002}

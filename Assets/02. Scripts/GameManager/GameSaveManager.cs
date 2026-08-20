@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Collections;
 using System.IO;
 using Utils.IO;
 using UnityEngine;
-using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
+
+#if UNITY_WEBGL || UNITY_EDITOR
+using ArcadeBackend;
+#endif
 
 namespace GameManager.Singleton
 {
@@ -20,6 +24,11 @@ namespace GameManager.Singleton
         [SerializeField] private int _currentStage;
 
         private string SavePath => Path.Combine(Application.persistentDataPath, "savefile.json");
+        private bool _saveDataInitialized;
+
+#if UNITY_WEBGL || UNITY_EDITOR
+        private bool _saveQueuedUntilCloudLoad;
+#endif
         
         public int CurrentStageNumber => _currentStage;
 
@@ -31,9 +40,43 @@ namespace GameManager.Singleton
             {
                 return;
             }
+#if UNITY_WEBGL || UNITY_EDITOR
+            InitializeDefaultSaveData();
+#else
             InitializeSaveData();
+#endif
             CustomDebug.Log($"세이브 데이터 초기화 완료, 총 수집 클별 : {GetTotalAcquiredStars()}");
         }
+
+#if UNITY_WEBGL || UNITY_EDITOR
+        private void Start()
+        {
+            if (Instance != this)
+            {
+                return;
+            }
+
+            StartCoroutine(LoadCloudSaveDataRoutine());
+        }
+
+        private IEnumerator LoadCloudSaveDataRoutine()
+        {
+#if UNITY_EDITOR
+            float deadline = Time.realtimeSinceStartup + 10f;
+            while (ArcadeSdk.Instance != null
+                && !ArcadeSdk.Instance.IsReady
+                && Time.realtimeSinceStartup < deadline)
+            {
+                yield return null;
+            }
+#endif
+
+            // WebGL waits inside ArcadeSdk; the editor waits above because its
+            // developer token is hydrated asynchronously during startup.
+            SaveSystem.LoadGameDataAsync(SavePath, HandleCloudSaveLoaded);
+            yield break;
+        }
+#endif
 
         private void OnApplicationPause(bool pauseStatus)
         {
@@ -49,6 +92,21 @@ namespace GameManager.Singleton
         [ContextMenu("디버그 : 세이브 파일 초기화 (튜토리얼 다시보기용)")]
         private void DebugResetSave()
         {
+#if UNITY_WEBGL || UNITY_EDITOR
+            SaveSystem.DeleteGameData(SavePath, ok =>
+            {
+                if (!ok)
+                {
+                    CustomDebug.LogWarning("[GameSaveManager] 클라우드 세이브 삭제에 실패했습니다.");
+                }
+
+                InitializeDefaultSaveData();
+                _saveDataInitialized = true;
+                _saveQueuedUntilCloudLoad = false;
+                Save();
+                CustomDebug.Log("[GameSaveManager] 클라우드 세이브 데이터 초기화 완료");
+            });
+#else
             if(File.Exists(SavePath))
             {
                 File.Delete(SavePath);
@@ -58,6 +116,7 @@ namespace GameManager.Singleton
                 InitializeSaveData();
                 CustomDebug.Log("[GameSaveManager] 세이브 데이터 초기화 완료");
             }
+#endif
         }
 #endif
         //--- Public Methods ---//
@@ -185,6 +244,14 @@ namespace GameManager.Singleton
         //--- Private Methods ---//
         private void Save()
         {
+#if UNITY_WEBGL || UNITY_EDITOR
+            if (!_saveDataInitialized)
+            {
+                _saveQueuedUntilCloudLoad = true;
+                return;
+            }
+#endif
+
             SaveSystem.SaveGameData(SavePath, new GameSaveData
             {
                 HasCompletedTutorial = _hasCompletedTutorial,
@@ -192,33 +259,81 @@ namespace GameManager.Singleton
             });
         }
 
-        private void InitializeSaveData()
+        private void InitializeDefaultSaveData()
         {
+            _hasCompletedTutorial = false;
             _saveData = new List<StageSaveRecord>();
+
             foreach (var stage in _stageDataBase)
             {
                 if (stage == null) continue;
                 _saveData.Add(new StageSaveRecord(stage.StageNumber, false, 0));
             }
+        }
+
+        private void MergeLoadedData(GameSaveData loadedData)
+        {
+            if (loadedData == null)
+            {
+                return;
+            }
+
+            _hasCompletedTutorial = loadedData.HasCompletedTutorial;
+            if (loadedData.StageRecords == null)
+            {
+                return;
+            }
+
+            foreach (var record in loadedData.StageRecords)
+            {
+                if (record == null)
+                {
+                    continue;
+                }
+
+                var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
+                if (target != null)
+                {
+                    target.IsCleared = record.IsCleared;
+                    target.AcquiredStars = record.AcquiredStars;
+                }
+            }
+        }
+
+#if UNITY_WEBGL || UNITY_EDITOR
+        private void HandleCloudSaveLoaded(bool ok, GameSaveData loadedData)
+        {
+            if (ok && loadedData != null)
+            {
+                MergeLoadedData(loadedData);
+                CustomDebug.Log("클라우드 세이브 데이터를 성공적으로 병합했습니다.");
+            }
+            else
+            {
+                // 네트워크/인증 실패 시 기존 클라우드 데이터를 기본값으로 덮어쓰지 않습니다.
+                // 이후 실제 게임 데이터가 변경될 때 Save()가 재시도합니다.
+                CustomDebug.LogWarning("클라우드 세이브를 사용할 수 없어 새 세이브 데이터로 시작합니다.");
+            }
+
+            _saveDataInitialized = true;
+            if (_saveQueuedUntilCloudLoad)
+            {
+                _saveQueuedUntilCloudLoad = false;
+                Save();
+            }
+        }
+#endif
+
+        private void InitializeSaveData()
+        {
+            InitializeDefaultSaveData();
 
             if (File.Exists(SavePath))
             {
                 var loadedData = SaveSystem.LoadGameData(SavePath);
                 if (loadedData != null)
                 {
-                    _hasCompletedTutorial = loadedData.HasCompletedTutorial;
-                    if (loadedData.StageRecords != null)
-                    {
-                        foreach (var record in loadedData.StageRecords)
-                        {
-                            var target = _saveData.Find(s => s.StageNumber == record.StageNumber);
-                            if (target != null)
-                            {
-                                target.IsCleared = record.IsCleared;
-                                target.AcquiredStars = record.AcquiredStars;
-                            }
-                        }
-                    }
+                    MergeLoadedData(loadedData);
                     CustomDebug.Log("세이브 데이터를 성공적으로 병합했습니다.");
                 }
             }
@@ -227,6 +342,7 @@ namespace GameManager.Singleton
                 CustomDebug.Log("새 세이브 파일을 생성합니다.");
             }
 
+            _saveDataInitialized = true;
             Save();
         }
 
