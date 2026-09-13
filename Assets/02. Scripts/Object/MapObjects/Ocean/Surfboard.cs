@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 
 public class Surfboard : MonoBehaviour, IMapTransitionHandler
 {
@@ -15,6 +14,12 @@ public class Surfboard : MonoBehaviour, IMapTransitionHandler
     private float _turnSpeed = 2.0f;
     [SerializeField]
     private float _reachThreshold = 0.1f;   //도착 판정 거리
+
+    [Header("종점 감속 설정")]
+    [SerializeField, Tooltip("양 끝 지점으로부터 이 거리 안에 들어오면 감속을 시작합니다. 0이면 감속하지 않습니다.")]
+    private float _easeDistance = 3.0f;
+    [SerializeField, Range(0.05f, 1f), Tooltip("양 끝 지점에서의 최저 속도 비율")]
+    private float _minSpeedRatio = 0.25f;
 
     private int _currentIndex = 0;
     private bool _isMovingForward = true;
@@ -91,7 +96,50 @@ public class Surfboard : MonoBehaviour, IMapTransitionHandler
     }
     private void MoveTowardsTarget(Transform targetPoint)
     {
-        transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, _moveSpeed * Time.fixedDeltaTime);
+        float currentSpeed = CalculateEasedSpeed();
+        transform.position = Vector3.MoveTowards(transform.position, targetPoint.position, currentSpeed * Time.fixedDeltaTime);
+    }
+
+    //양 끝 지점에 가까울수록 감속하고, 멀어질수록 원래 속도로 복구
+    private float CalculateEasedSpeed()
+    {
+        if (_easeDistance <= 0f)
+        {
+            return _moveSpeed;
+        }
+
+        float sqrDistance = GetSqrDistanceToNearestEndPoint();
+        if (sqrDistance < 0f)
+        {
+            return _moveSpeed;
+        }
+
+        float ratio = Mathf.Clamp01(Mathf.Sqrt(sqrDistance) / _easeDistance);
+        return _moveSpeed * Mathf.Lerp(_minSpeedRatio, 1f, Mathf.SmoothStep(0f, 1f, ratio));
+    }
+
+    //양 끝 웨이포인트 중 가까운 쪽까지의 제곱 거리, 둘 다 유효하지 않으면 -1
+    private float GetSqrDistanceToNearestEndPoint()
+    {
+        float nearestSqrDistance = -1f;
+
+        Transform firstPoint = _wayPoints[0];
+        if (firstPoint != null)
+        {
+            nearestSqrDistance = (transform.position - firstPoint.position).sqrMagnitude;
+        }
+
+        Transform lastPoint = _wayPoints[_wayPoints.Length - 1];
+        if (lastPoint != null)
+        {
+            float sqrDistance = (transform.position - lastPoint.position).sqrMagnitude;
+            if (nearestSqrDistance < 0f || sqrDistance < nearestSqrDistance)
+            {
+                nearestSqrDistance = sqrDistance;
+            }
+        }
+
+        return nearestSqrDistance;
     }
 
     private void RotateTowardsTarget(Transform targetPoint)
@@ -121,15 +169,18 @@ public class Surfboard : MonoBehaviour, IMapTransitionHandler
     //플레이어가 순간이동하는 것을 방지하기 위함
     private void SnapRotationWithPlayerDetachment(Quaternion targetRotation)
     {
-        transform.rotation = targetRotation;
         _shouldSnapRotation = false;
 
         if (_attachedPlayer == null)
         {
+            transform.rotation = targetRotation;
             return;
         }
 
+        //회전 전에 플레이어를 분리해야 보드 중심을 기준으로 플레이어 위치가 반전되지 않음
+        //SetParent는 월드 좌표를 유지하므로 재부착 후에도 플레이어는 서 있던 자리를 지킴
         _attachedPlayer.SetParent(null);
+        transform.rotation = targetRotation;
         _attachedPlayer.SetParent(transform);
     }
 

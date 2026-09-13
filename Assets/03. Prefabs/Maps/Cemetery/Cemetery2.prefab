@@ -4046,7 +4046,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 123df262a7a539d4d9d0193667ca0ad5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _changeInterval: 5
+  _changeInterval: 5.2
   _runeSequence: 010000000300000007000000
   _prefabDatabase:
   - type: 1

@@ -6,7 +6,9 @@
       "Bash(python3:*)",
       "Bash(python:*)",
       "Bash(xargs grep:*)",
-      "Bash(done)"
+      "Bash(done)",
+      "PowerShell(git branch *)",
+      "Bash(grep -iE \"\\\\.\\(md|txt|pdf|docx|xlsx|csv\\)$\")"
     ]
   }
 }

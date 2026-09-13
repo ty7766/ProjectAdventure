@@ -1587,7 +1587,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Grass_04
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 9163430786946739040, guid: db59c03ba867aa846b34b5a5f4c4a5fe, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -1649,7 +1650,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: PP_Grass_02
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5579368979909609887, guid: 64ef054adc4f2ae42947fa1934d78dca, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
