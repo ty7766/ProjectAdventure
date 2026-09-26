@@ -102,6 +102,7 @@ public class MapManager : MonoBehaviour
             _selectionBeam = _selectionCursor.GetComponentInChildren<MapSelectionBeam>(true);
             if (_selectionBeam != null)
             {
+                // 초기 기본 규격 (첫 FitToBounds 전까지의 폴백)
                 _selectionBeam.SetTileSize(_tileSize);
             }
         }
@@ -267,13 +268,64 @@ public class MapManager : MonoBehaviour
             _selectionCursor.position = targetBasePos;
         }
 
-        // 빔 바닥을 타일 하단에 고정 (커서 오프셋/보빙의 영향을 받지 않도록)
-        if (_selectionBeam != null)
-        {
-            _selectionBeam.GroundY = finalPos.y - _tileSize.y * 0.5f;
-        }
+        // 선택된 맵의 실제 크기를 측정해 빔을 맵에 꼭 맞게 적응시킴
+        UpdateSelectionBeamFit(currentGroup);
 
         RefreshSelectionBeamState();
+    }
+
+    /// <summary>
+    /// 그룹의 현재 활성 맵 인스턴스를 빔에 적용합니다.
+    /// 콜라이더 footprint(마칭 스퀘어)를 따라가며, 실패 시 렌더러 AABB로 폴백합니다.
+    /// </summary>
+    private void UpdateSelectionBeamFit(PathGroup group)
+    {
+        if (_selectionBeam == null)
+        {
+            return;
+        }
+
+        if (group.CurrentActivePath == null)
+        {
+            // 맵이 아직 없으면 SpawnPoint 중심의 기본 타일 규격으로 폴백
+            Vector3 fallbackCenter = group.SpawnPoint.position - Vector3.up * (_tileSize.y * 0.5f);
+            var fallbackBounds = new Bounds(fallbackCenter, _tileSize);
+            _selectionBeam.FitToBounds(fallbackBounds);
+            return;
+        }
+
+        // 맵 전체의 월드 바운딩 박스를 수집 (파티클 등 과대 바운드 제외)
+        var renderers = group.CurrentActivePath.GetComponentsInChildren<Renderer>();
+        Bounds bounds = default;
+        bool hasBounds = false;
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            // 파티클/트레일 렌더러는 이펙트 재생 상태에 따라 바운드가 크게 변하므로 제외
+            if (renderers[i] is UnityEngine.ParticleSystemRenderer)
+            {
+                continue;
+            }
+
+            if (!hasBounds)
+            {
+                bounds = renderers[i].bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(renderers[i].bounds);
+            }
+        }
+
+        if (!hasBounds)
+        {
+            Vector3 fallbackCenter = group.SpawnPoint.position - Vector3.up * (_tileSize.y * 0.5f);
+            var fallbackBounds = new Bounds(fallbackCenter, _tileSize);
+            _selectionBeam.FitToBounds(fallbackBounds);
+            return;
+        }
+
+        _selectionBeam.FitToMap(group.CurrentActivePath, bounds);
     }
 
     /// <summary>
@@ -329,12 +381,36 @@ public class MapManager : MonoBehaviour
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
+        // 교체 시작: 빔을 페이드아웃 (맵 낙하 애니메이션과 겹치는 글리치 방지)
+        _selectionBeam?.FadeOut();
+        StopCoroutine(RefitBeamIdle());
+
         TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
         UpdateCursorPosition();
+        // 새 맵 인스턴스의 실제 크기에 빔 재적응 (페이드아웃 중이므로 보이지 않음)
+        UpdateSelectionBeamFit(targetGroup);
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
 
         _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
+
+        // 쿨타임이 끝나는 시점에 맞춰 빔을 페이드인
+        StartCoroutine(RefitBeamIdle());
+    }
+
+    /// <summary>
+    /// 쿨타임이 끝나 빔이 다시 보여도 되는 시점까지 대기한 뒤, 최종 맵 위치로 재적응하고 페이드인합니다.
+    /// </summary>
+    private System.Collections.IEnumerator RefitBeamIdle()
+    {
+        yield return new WaitForSeconds(_mapChangeCooldownTime);
+
+        // 낙하 애니메이션 완료 후 최종 위치 기준으로 재측정한 뒤 페이드인
+        if (_selectedSlotIndex < _pathGroups.Length)
+        {
+            UpdateSelectionBeamFit(_pathGroups[_selectedSlotIndex]);
+        }
+        _selectionBeam?.FadeIn();
     }
 
     private void SpawnPath(PathGroup group, int index)

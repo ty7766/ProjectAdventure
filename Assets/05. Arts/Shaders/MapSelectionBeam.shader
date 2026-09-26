@@ -5,6 +5,7 @@ Shader "Custom/MapSelectionBeam"
         [HDR] _BaseColor ("Beam Color (RGB)", Color)      = (0.3, 1.0, 0.8, 1.0)
         _BlockedColor    ("Blocked Color (RGB)", Color)   = (1.0, 0.12, 0.1, 1.0)
         _Blocked         ("Blocked", Range(0, 1))         = 0.0
+        _Fade            ("Fade", Range(0, 1))            = 1.0
 
         [Header(Wall Beams)]
         _BaseGlow        ("Base Glow", Range(0, 4))       = 1.6
@@ -70,6 +71,7 @@ Shader "Custom/MapSelectionBeam"
                 half4 _BaseColor;
                 half4 _BlockedColor;
                 half  _Blocked;
+                half  _Fade;
                 half  _BaseGlow;
                 half  _FalloffPower;
                 half  _CornerBoost;
@@ -150,7 +152,7 @@ Shader "Custom/MapSelectionBeam"
                 }
 
                 half3 rgb = col * shape * _Intensity;
-                half  a   = shape;
+                half  a   = shape * saturate(_Fade);
 
                 return half4(rgb, a);
             }
