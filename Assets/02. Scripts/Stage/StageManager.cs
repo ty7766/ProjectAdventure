@@ -48,6 +48,7 @@ public class StageManager : MonoBehaviour
     private float _stageTimer = 0f;
     private bool _isTimerRunning = true;
     private bool _isInitialized = false;
+    private bool _isStageCleared = false;
 
     private HashSet<string> _collectedGemIDs = new HashSet<string>();
 
@@ -115,6 +116,13 @@ public class StageManager : MonoBehaviour
 
     public void StageClear()
     {
+        // 중복 클리어 방지 (튜토리얼 종료 시 자동 클리어 + 골대 재접촉 트리거 등)
+        if (_isStageCleared)
+        {
+            return;
+        }
+        _isStageCleared = true;
+
         ClearStage();
     }
 
@@ -206,6 +214,7 @@ public class StageManager : MonoBehaviour
     public void InitializeStage()
     {
         _isInitialized = true;
+        _isStageCleared = false;
 
         _collectedGems = 0;
         _collectedGemIDs.Clear();

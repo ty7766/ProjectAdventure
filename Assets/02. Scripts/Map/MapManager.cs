@@ -54,6 +54,12 @@ public class MapManager : MonoBehaviour
     private MapChangeEffect _mapChangeEffect;
     private MapSelectionBeam _selectionBeam;
 
+    //--- Events ---//
+    /// <summary>맵 선택 커서가 이동했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
+    public event System.Action<int> OnSelectionChanged;
+    /// <summary>맵 교체가 성공했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
+    public event System.Action<int> OnMapSwapped;
+
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
     private FloatingCursor _cursorScript;
@@ -241,6 +247,7 @@ public class MapManager : MonoBehaviour
 
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapSwitch);
         UpdateCursorPosition();
+        OnSelectionChanged?.Invoke(direction);
     }
 
     private void UpdateCursorPosition()
@@ -396,6 +403,8 @@ public class MapManager : MonoBehaviour
 
         // 쿨타임이 끝나는 시점에 맞춰 빔을 페이드인
         StartCoroutine(RefitBeamIdle());
+
+        OnMapSwapped?.Invoke(direction);
     }
 
     /// <summary>
