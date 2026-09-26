@@ -97,7 +97,11 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private Button _returnToMainMenuButtonStageFail;
 
+    [Header("Platform Specific")]
+    [SerializeField] private GameObject _touchControlsRoot; // TouchControls 오브젝트
 
+    public void SetTouchControlsVisible(bool visible)
+        => _touchControlsRoot?.SetActive(visible);
 
     //--- Button Events ---//
     public event Action OnResumeButtonClicked;

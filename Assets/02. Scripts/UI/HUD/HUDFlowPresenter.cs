@@ -54,6 +54,7 @@ public class HUDFlowPresenter : MonoBehaviour
         if (_hudView == null) _hudView = GetComponent<HUDView>();
         if (_stageManager != null) _stageManager.OnStageCleared += HandleStageClear;
         if (_playerModel != null) _playerModel.OnPlayerDeath += HandlePlayerDeath;
+        _hudView.SetTouchControlsVisible(PlatformCapability.UseTouchUI);
     }
 
     private void Start()
