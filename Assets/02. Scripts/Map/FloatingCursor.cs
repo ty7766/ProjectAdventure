@@ -8,6 +8,9 @@ public class FloatingCursor : MonoBehaviour
     [SerializeField]
     private float _cursorBobbingHeight = 0.5f;
 
+    /// <summary>커서 보빙 최대 진폭 (외부 참조용).</summary>
+    public float BobbingHeight => _cursorBobbingHeight;
+
     private Vector3 _basePosition;
     private bool _isInitialized = false;
 

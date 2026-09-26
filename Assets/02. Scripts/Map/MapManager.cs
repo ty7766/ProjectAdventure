@@ -52,6 +52,7 @@ public class MapManager : MonoBehaviour
     private float _mapChangeCooldownTime = 1.0f;
 
     private MapChangeEffect _mapChangeEffect;
+    private MapSelectionBeam _selectionBeam;
 
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
@@ -98,6 +99,11 @@ public class MapManager : MonoBehaviour
         if (_selectionCursor != null)
         {
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
+            _selectionBeam = _selectionCursor.GetComponentInChildren<MapSelectionBeam>(true);
+            if (_selectionBeam != null)
+            {
+                _selectionBeam.SetTileSize(_tileSize);
+            }
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
 
@@ -110,6 +116,12 @@ public class MapManager : MonoBehaviour
     {
         MapGeneration();
         UpdateCursorPosition();
+    }
+
+    private void Update()
+    {
+        // 플레이어가 맵에 오르거나 내리는 동안에도 빔 색상 피드백이 갱신되도록 주기적으로 체크
+        RefreshSelectionBeamState();
     }
 
     private void OnEnable()
@@ -254,6 +266,34 @@ public class MapManager : MonoBehaviour
         {
             _selectionCursor.position = targetBasePos;
         }
+
+        // 빔 바닥을 타일 하단에 고정 (커서 오프셋/보빙의 영향을 받지 않도록)
+        if (_selectionBeam != null)
+        {
+            _selectionBeam.GroundY = finalPos.y - _tileSize.y * 0.5f;
+        }
+
+        RefreshSelectionBeamState();
+    }
+
+    /// <summary>
+    /// 선택된 맵 위에 플레이어가 올라가 있어 교체가 불가능한 경우 빔을 붉게 표시합니다.
+    /// </summary>
+    private void RefreshSelectionBeamState()
+    {
+        if (_selectionBeam == null || _playerCheckerScript == null)
+        {
+            return;
+        }
+
+        PathGroup currentGroup = _pathGroups[_selectedSlotIndex];
+        if (currentGroup == null || currentGroup.SpawnPoint == null)
+        {
+            return;
+        }
+
+        bool playerOnMap = _playerCheckerScript.CheckPlayerOnThisMap(currentGroup, _tileSize);
+        _selectionBeam.SetBlocked(playerOnMap);
     }
 
     private void TryChangeMap(int direction)
@@ -281,6 +321,7 @@ public class MapManager : MonoBehaviour
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
+            _selectionBeam?.SetBlocked(true);
             return;
         }
 
