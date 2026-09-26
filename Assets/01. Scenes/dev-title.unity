@@ -885,6 +885,7 @@ GameObject:
   - component: {fileID: 1546778417}
   - component: {fileID: 1546778416}
   - component: {fileID: 1546778415}
+  - component: {fileID: 1546778418}
   m_Layer: 0
   m_Name: GraphicManager
   m_TagString: Untagged
@@ -946,6 +947,20 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1546778418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546778414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 492a19679f92b1c49be33d3a723ce35e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FPSLimitter
+  _isLimitFPS: 1
+  _maxFPS: 15
 --- !u!1001 &1677837263
 PrefabInstance:
   m_ObjectHideFlags: 0
