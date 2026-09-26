@@ -71,6 +71,23 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 맵 교체 쿨다운 잔여 비율(1 = 방금 교체됨, 0 = 사용 가능).
+    /// HUD(모바일 터치 UI)의 쿨다운 Fill 연출에 사용합니다.
+    /// </summary>
+    public float MapChangeCooldownRemaining01
+    {
+        get
+        {
+            float remaining = _nextAllowedMapChangeTime - Time.time;
+            if (remaining <= 0f)
+            {
+                return 0f;
+            }
+            return Mathf.Clamp01(remaining / _mapChangeCooldownTime);
+        }
+    }
+
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
@@ -169,6 +186,24 @@ public class MapManager : MonoBehaviour
                 SpawnPath(group, group.CurrentPathIndex);
             }
         }
+    }
+
+    /// <summary>
+    /// 키보드 입력 외(터치 UI 등)에서 맵 선택 커서를 이동시키는 public 진입점.
+    /// direction: -1 = 왼쪽, 1 = 오른쪽
+    /// </summary>
+    public void SelectMap(int direction)
+    {
+        ChangeSelection(direction);
+    }
+
+    /// <summary>
+    /// 키보드 입력 외(터치 UI 등)에서 선택된 맵 그룹의 맵을 교체하는 public 진입점.
+    /// direction: -1 = 이전 맵, 1 = 다음 맵
+    /// </summary>
+    public void SwapMap(int direction)
+    {
+        TryChangeMap(direction);
     }
 
     //direction이 -1이면 왼쪽, 1이면 오른쪽

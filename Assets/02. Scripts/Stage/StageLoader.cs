@@ -158,5 +158,10 @@ public class StageLoader : Singleton<StageLoader>
         {
             CustomDebug.LogError("[StageLoader] HUDSystemPresenter is not assigned.");
         }
+
+        if (_hudSystemPresenter != null && mapManager != null)
+        {
+            _hudSystemPresenter.Setup(mapManager);
+        }
     }
 }

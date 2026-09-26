@@ -8,6 +8,7 @@ public class HUDSystemPresenter : MonoBehaviour
     [Header("References")]
     [SerializeField] private HUDView _hudView;
     [SerializeField] private StageManager _stageManager;
+    [SerializeField] private MapManager _mapManager;
 
     private void Awake()
     {
@@ -29,6 +30,23 @@ public class HUDSystemPresenter : MonoBehaviour
         _stageManager = stageManager;
     }
 
+    /// <summary>
+    /// 스테이지 전환 시 MapManager 레퍼런스를 재연결합니다.
+    /// </summary>
+    /// <param name="mapManager">현재 활성화된 스테이지의 MapManager</param>
+    public void Setup(MapManager mapManager)
+    {
+        _mapManager = mapManager;
+        if (_mapManager != null)
+        {
+            _hudView.StartMapSwapCooldownWatch(() => _mapManager.MapChangeCooldownRemaining01);
+        }
+        else
+        {
+            _hudView.StopMapSwapCooldownWatch();
+        }
+    }
+
     private void SubscribeButtonEvents()
     {
         if (_hudView == null) return;
@@ -38,6 +56,9 @@ public class HUDSystemPresenter : MonoBehaviour
         _hudView.OnQuitGameButtonClicked += HandleQuitGame;
         _hudView.OnRetryButtonClicked += HandleRetryStage;
         _hudView.OnGoToNextStageButtonClicked += HandleGoToNextStage;
+        _hudView.OnMapSelectLeftClicked += HandleMapSelectLeft;
+        _hudView.OnMapSelectRightClicked += HandleMapSelectRight;
+        _hudView.OnMapSwapClicked += HandleMapSwap;
     }
 
     private void UnsubscribeButtonEvents()
@@ -49,6 +70,24 @@ public class HUDSystemPresenter : MonoBehaviour
         _hudView.OnQuitGameButtonClicked -= HandleQuitGame;
         _hudView.OnRetryButtonClicked -= HandleRetryStage;
         _hudView.OnGoToNextStageButtonClicked -= HandleGoToNextStage;
+        _hudView.OnMapSelectLeftClicked -= HandleMapSelectLeft;
+        _hudView.OnMapSelectRightClicked -= HandleMapSelectRight;
+        _hudView.OnMapSwapClicked -= HandleMapSwap;
+    }
+
+    private void HandleMapSelectLeft()
+    {
+        _mapManager?.SelectMap(-1);
+    }
+
+    private void HandleMapSelectRight()
+    {
+        _mapManager?.SelectMap(1);
+    }
+
+    private void HandleMapSwap()
+    {
+        _mapManager?.SwapMap(1);
     }
 
     private void HandlePause()

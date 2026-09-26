@@ -19,7 +19,7 @@ public static class PlatformCapability
 
         
 #if UNITY_EDITOR
-        if (EditorForceTouchUI) return true;
+        return true;
 #endif
 
 #if UNITY_ANDROID && !UNITY_EDITOR

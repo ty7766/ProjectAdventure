@@ -100,6 +100,12 @@ public class HUDView : MonoBehaviour
     [Header("Platform Specific")]
     [SerializeField] private GameObject _touchControlsRoot; // TouchControls 오브젝트
 
+    [Header("Map Control Buttons (Touch)")]
+    [SerializeField] private Button _mapSelectLeftButton;
+    [SerializeField] private Button _mapSelectRightButton;
+    [SerializeField] private Button _mapSwapButton;
+    [SerializeField] private Image _mapSwapCooldownImage; // Fill 1->0 연출용 이미지 (Filled)
+
     public void SetTouchControlsVisible(bool visible)
         => _touchControlsRoot?.SetActive(visible);
 
@@ -110,10 +116,14 @@ public class HUDView : MonoBehaviour
     public event Action OnQuitGameButtonClicked;
     public event Action OnRetryButtonClicked;
     public event Action OnGoToNextStageButtonClicked;
+    public event Action OnMapSelectLeftClicked;
+    public event Action OnMapSelectRightClicked;
+    public event Action OnMapSwapClicked;
 
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
     private Coroutine _fontSizeCoroutine;
+    private Func<float> _mapChangeCooldownProvider;
 
     //--- Properties ---//
     public bool IsPauseMenuActive
@@ -132,6 +142,50 @@ public class HUDView : MonoBehaviour
     private void Update()
     {
         HandleInput();
+        UpdateMapSwapCooldownUI();
+    }
+
+    private void UpdateMapSwapCooldownUI()
+    {
+        if (_mapSwapCooldownImage == null || _mapChangeCooldownProvider == null)
+        {
+            return;
+        }
+
+        float remaining01 = _mapChangeCooldownProvider();
+        if (remaining01 <= 0f)
+        {
+            if (_mapSwapCooldownImage.enabled)
+            {
+                _mapSwapCooldownImage.fillAmount = 0f;
+                _mapSwapCooldownImage.enabled = false;
+            }
+            return;
+        }
+
+        _mapSwapCooldownImage.enabled = true;
+        _mapSwapCooldownImage.fillAmount = remaining01;
+    }
+
+    /// <summary>
+    /// 맵 교체 쿨다운 UI를 활성화합니다. 이후 터치 쿨다운 UI는 뷰가 매 프레임 갱신합니다.
+    /// </summary>
+    /// <param name="remainingProvider">쿨다운 잔여 비율(0~1, 1 = 방금 교체됨)를 반환하는 함수</param>
+    public void StartMapSwapCooldownWatch(Func<float> remainingProvider)
+    {
+        _mapChangeCooldownProvider = remainingProvider;
+    }
+
+    /// <summary>
+    /// 맵 교체 쿨다운 UI 표시를 중단합니다.
+    /// </summary>
+    public void StopMapSwapCooldownWatch()
+    {
+        _mapChangeCooldownProvider = null;
+        if (_mapSwapCooldownImage != null)
+        {
+            _mapSwapCooldownImage.enabled = false;
+        }
     }
 
     private void OnDestroy()
@@ -412,6 +466,9 @@ public class HUDView : MonoBehaviour
         _retryButtonPauseMenu?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
         _retryButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
         _returnToMainMenuButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnReturnToMainMenuButtonClicked?.Invoke(); });
+        _mapSelectLeftButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSelectLeftClicked?.Invoke(); });
+        _mapSelectRightButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSelectRightClicked?.Invoke(); });
+        _mapSwapButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSwapClicked?.Invoke(); });
     }
 
     private void RemoveAllButtonListeners()
@@ -425,6 +482,9 @@ public class HUDView : MonoBehaviour
         _retryButtonPauseMenu?.onClick.RemoveAllListeners();
         _retryButtonStageFail?.onClick.RemoveAllListeners();
         _returnToMainMenuButtonStageFail?.onClick.RemoveAllListeners();
+        _mapSelectLeftButton?.onClick.RemoveAllListeners();
+        _mapSelectRightButton?.onClick.RemoveAllListeners();
+        _mapSwapButton?.onClick.RemoveAllListeners();
     }
 
     private void HandleInput()

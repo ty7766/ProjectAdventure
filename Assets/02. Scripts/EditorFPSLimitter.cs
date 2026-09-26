@@ -12,6 +12,10 @@ public class EditorFPSLimitter : MonoBehaviour
         {
             Application.targetFrameRate = _maxFPS;
         }
+        else
+        {
+            Application.targetFrameRate = -1;
+        }
     }
 
     private void OnValidate()
@@ -20,9 +24,14 @@ public class EditorFPSLimitter : MonoBehaviour
         {
             _maxFPS = 1;
         }
+
         if (_isLimitFPS)
         {
             Application.targetFrameRate = _maxFPS;
+        }
+        else
+        {
+            Application.targetFrameRate = -1;
         }
     }
 #endif
