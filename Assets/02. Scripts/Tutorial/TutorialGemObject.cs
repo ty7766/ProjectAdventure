@@ -1,14 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// 튜토리얼 전용 보석. StageManager에 기록하지 않고 이벤트 버스로만 통보한다.
-/// (HUD 미션 카운트 오염 방지 + 튜토리얼 종료 후 잔여 해제 불필요)
+/// 튜토리얼 전용 보석. 이벤트 버스로 튜토리얼 진행을 통보하고,
+/// StageManager에도 기록해 스테이지 부가 목표(보석 수집) 달성에 반영한다.
 /// </summary>
 [RequireComponent(typeof(Collider))]
 public class TutorialGemObject : MonoBehaviour
 {
     //--- Fields ---//
     private TutorialEventBus _eventBus;
+    private StageManager _stageManager;
     private bool _collected;
 
     //--- Properties ---//
@@ -28,6 +29,11 @@ public class TutorialGemObject : MonoBehaviour
         {
             _eventBus.RaiseGemCollected();
         }
+        // 튜토리얼 보석도 스테이지 미션에 그대로 반영한다 (튜토리얼 = 스테이지 1의 실제 플레이).
+        if (_stageManager != null)
+        {
+            _stageManager.CollectGem($"{name}_Gem");
+        }
         gameObject.SetActive(false);
     }
 
@@ -36,6 +42,12 @@ public class TutorialGemObject : MonoBehaviour
     public void Setup(TutorialEventBus eventBus)
     {
         _eventBus = eventBus;
+    }
+
+    /// <summary>StageManager를 주입해 부가 목표(보석 수집) 판정에 반영되도록 합니다.</summary>
+    public void SetStageManager(StageManager stageManager)
+    {
+        _stageManager = stageManager;
     }
 
     /// <summary>플레이어가 근접했을 때 발견 처리를 위해 Manager에서 호출합니다.</summary>

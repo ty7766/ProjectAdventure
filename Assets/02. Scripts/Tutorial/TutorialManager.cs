@@ -25,6 +25,8 @@ public class TutorialManager : MonoBehaviour
     private float _gemFindRadius = 4f;
     [SerializeField, Tooltip("섹션 완료 후 다음 섹션 전환 대기 시간(초)")]
     private float _sectionTransitionDelay = 0.9f;
+    [SerializeField, Tooltip("패널 슬라이드 아웃 후 다음 섹션 표시까지 추가 대기 시간(초)")]
+    private float _transitionGap = 0.1f;
 
     //--- Fields ---//
     private int _sectionIndex;
@@ -128,6 +130,9 @@ public class TutorialManager : MonoBehaviour
 
         if (_stageManager != null)
         {
+            // 튜토리얼은 스테이지 1의 실제 플레이 구간이다.
+            // 시간이 흐르도록 타이머를 가동해 시간 제한 등 부가 목표 판정이 유효해진다.
+            _stageManager.StartStageTimer();
             _stageManager.ResumeGameSmoothly();
             _stageManager.PlayerController?.EnablePlayerControl();
             _playerTransform = _stageManager.PlayerController != null
@@ -144,6 +149,7 @@ public class TutorialManager : MonoBehaviour
         if (_spawnManager != null && _stageManager != null)
         {
             _spawnManager.Setup(_eventBus);
+            _spawnManager.SetStageManager(_stageManager);
             Transform stageRoot = _stageManager.transform.root;
             _spawnManager.BindStageObjects(stageRoot);
         }
@@ -274,6 +280,16 @@ public class TutorialManager : MonoBehaviour
 
         if (_sectionIndex + 1 < _sections.Length)
         {
+            // 먼저 패널 전체를 화면 밖으로 슬라이드 아웃 → 완료 후 다음 섹션 표시
+            bool slideOutDone = false;
+            _tutorialView.HidePanel(() => slideOutDone = true);
+            while (!slideOutDone)
+            {
+                yield return null;
+            }
+
+            yield return new WaitForSecondsRealtime(_transitionGap);
+
             ShowSection(_sectionIndex + 1);
         }
         else
@@ -462,14 +478,8 @@ public class TutorialManager : MonoBehaviour
         // (스테이지 1은 튜토리얼과 동일 스테이지이므로 골인 지점이 곧 스테이지 완주 판정이다)
         if (_spawnManager != null)
         {
-            bool gemCollectedDuringTutorial = _spawnManager.WasGemCollected;
-            _spawnManager.DespawnAll(); // 보석은 획득됐으니 비활성 유지, 골대는 활성으로 복구
-
-            // 튜토리얼 동안 보석을 스테이지 미션에 반영
-            if (!gemCollectedDuringTutorial && _stageManager != null)
-            {
-                // 정상 경로라면 보석 획득이 이미 일어났을 것이므로 이 분기는 안전망
-            }
+            // 보석은 획득 시 StageManager.CollectGem()으로 미션에 반영되므로 비활성 유지.
+            _spawnManager.DespawnAll();
         }
 
         GameSaveManager.Instance.SetTutorialCompleted();

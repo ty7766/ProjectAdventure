@@ -17,6 +17,8 @@ public class StageLoader : Singleton<StageLoader>
     private PlayerController _playerController;
     [SerializeField]
     private PlayerProperties _playerProperties;
+    [SerializeField]
+    private PlayerEffectController _playerEffectController;
 
     // stageNumber(1-based) -> pre-instantiated stage instance
     private Dictionary<int, GameObject> _stageInstances = new Dictionary<int, GameObject>();
@@ -134,12 +136,21 @@ public class StageLoader : Singleton<StageLoader>
         }
 
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
-        if (_hudStatusPresenter != null) _hudStatusPresenter.Setup(stageManager);
+        if (_hudStatusPresenter != null)
+        {
+            _hudStatusPresenter.Setup(stageManager, _playerProperties, _playerEffectController);
+        }
         else CustomDebug.LogError("[StageLoader] HUDStatusPresenter is not assigned.");
 
         stageManager.InitializeStage();
 
         _cameraFollow?.SnapToTarget();
+
+        // _playerEffectController가 비어있으면 플레이어에서 자동 탐색 (RequireComponent로 PlayerProperties와 같은 오브젝트)
+        if (_playerEffectController == null && _playerController != null)
+        {
+            _playerEffectController = _playerController.GetComponent<PlayerEffectController>();
+        }
 
         if (_hudFlowPresenter != null)
         {

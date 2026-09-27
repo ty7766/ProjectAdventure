@@ -11,6 +11,7 @@ public class TutorialSpawnManager : MonoBehaviour
     private TutorialGemObject _gem;
     private TutorialGoalObject _goal;
     private TutorialEventBus _eventBus;
+    private StageManager _stageManager;
 
     //--- Properties ---//
     /// <summary>튜토리얼 동안 보석이 획득됐는지 여부</summary>
@@ -21,6 +22,12 @@ public class TutorialSpawnManager : MonoBehaviour
     public void Setup(TutorialEventBus eventBus)
     {
         _eventBus = eventBus;
+    }
+
+    /// <summary>스테이지 미션 기록에 사용할 StageManager를 주입합니다.</summary>
+    public void SetStageManager(StageManager stageManager)
+    {
+        _stageManager = stageManager;
     }
 
     /// <summary>
@@ -128,6 +135,7 @@ public class TutorialSpawnManager : MonoBehaviour
             return;
         }
         _gem.Setup(_eventBus);
+        _gem.SetStageManager(_stageManager);
         _gem.gameObject.SetActive(true);
     }
 
