@@ -42,7 +42,8 @@ public class TutorialGoalItem : MonoBehaviour
     private Vector2 _contentAnchoredPosition;
     private Color _backgroundColor;
     private Tween _slideTween;
-    private Tween _checkTween;
+    private Tween _checkPopTween;
+    private Tween _checkPunchTween;
 
     /// <summary>완료 여부</summary>
     public bool IsCompleted { get; private set; }
@@ -151,8 +152,8 @@ public class TutorialGoalItem : MonoBehaviour
         {
             _checkedImage.gameObject.SetActive(true);
             _checkedImage.transform.localScale = Vector3.one * 0.3f;
-            _checkTween?.Kill();
-            _checkTween = _checkedImage.transform.DOScale(Vector3.one, _checkPopDuration)
+            _checkPopTween?.Kill();
+            _checkPopTween = _checkedImage.transform.DOScale(Vector3.one, _checkPopDuration)
                 .SetEase(Ease.OutBack)
                 .SetUpdate(true);
         }
@@ -160,8 +161,8 @@ public class TutorialGoalItem : MonoBehaviour
         // 2) 체크박스 프레임 펀치
         if (_checkboxRect != null)
         {
-            _checkTween?.Kill();
-            _checkTween = _checkboxRect.DOPunchScale(Vector3.one * 0.25f, _checkPopDuration, 2, 0.5f)
+            _checkPunchTween?.Kill();
+            _checkPunchTween = _checkboxRect.DOPunchScale(Vector3.one * 0.25f, _checkPopDuration, 2, 0.5f)
                 .SetUpdate(true);
         }
 
@@ -224,31 +225,58 @@ public class TutorialGoalItem : MonoBehaviour
         }
 
         // 이전 Setup에서 복제된 칩을 모두 제거 (첫 자식 = 템플릿 보존)
+        // Destroy는 프레임 끝에 실행되므로, 즉시 레이아웃 계산에 포함되지 않도록 먼저 비활성화한다
         Transform template = _keyGuideContainer.GetChild(0);
         for (int i = _keyGuideContainer.childCount - 1; i >= 1; i--)
         {
-            Destroy(_keyGuideContainer.GetChild(i).gameObject);
+            GameObject oldChip = _keyGuideContainer.GetChild(i).gameObject;
+            oldChip.SetActive(false);
+            Destroy(oldChip);
         }
 
         // 모든 키를 템플릿 복제로 생성한다. 템플릿 자체는 마지막에 숨겨 다음 Setup의 원본 역할을 유지.
-        for (int i = 0; i < keyPaths.Length; i++)
+        // 키가 둘 이상이면(QE 등) 칩 하나에 "Q 또는 E"처럼 이어서 표시한다.
+        if (keyPaths.Length == 1)
         {
-            RectTransform chipRect = Instantiate(template, _keyGuideContainer) as RectTransform;
-            chipRect.gameObject.SetActive(true);
-
-            TMP_Text chipText = chipRect.GetComponentInChildren<TMP_Text>(true);
-            if (chipText != null)
+            CreateChip(template, _keyGuideContainer, TutorialKeyLabelUtil.GetLabel(keyPaths[0]));
+        }
+        else
+        {
+            string[] labels = new string[keyPaths.Length];
+            for (int i = 0; i < keyPaths.Length; i++)
             {
-                chipText.text = TutorialKeyLabelUtil.GetLabel(keyPaths[i]);
+                labels[i] = TutorialKeyLabelUtil.GetLabel(keyPaths[i]);
             }
+            CreateChip(template, _keyGuideContainer, string.Join(" 또는 ", labels));
         }
         template.gameObject.SetActive(false);
+
+        // 칩 개수/텍스트 확정 후 컨테이너(KeyGuide)의 ContentSizeFitter를 즉시 재계산.
+        // 자동 레이아웃 패스 전에 끝나지 않아 크기가 한 프레임 늦게 반영되는 문제를 해결한다.
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_keyGuideContainer);
+    }
+
+    /// <summary>칩 템플릿을 복제해 라벨을 채우고, 텍스트 기준 크기 계산을 즉시 반영합니다.</summary>
+    private static void CreateChip(Transform template, RectTransform container, string label)
+    {
+        RectTransform chipRect = Instantiate(template, container) as RectTransform;
+        chipRect.gameObject.SetActive(true);
+
+        TMP_Text chipText = chipRect.GetComponentInChildren<TMP_Text>(true);
+        if (chipText != null)
+        {
+            chipText.text = label;
+            // 텍스트 교체 후 ContentSizeFitter 계산을 즉시 반영
+            LayoutRebuilder.ForceRebuildLayoutImmediate(chipRect);
+        }
     }
 
     private void OnDestroy()
     {
         KillSlideTween();
-        _checkTween?.Kill();
-        _checkTween = null;
+        _checkPopTween?.Kill();
+        _checkPopTween = null;
+        _checkPunchTween?.Kill();
+        _checkPunchTween = null;
     }
 }

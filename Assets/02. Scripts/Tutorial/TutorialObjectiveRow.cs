@@ -2,6 +2,7 @@ using System;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UI.ProceduralImage;
 
 /// <summary>
@@ -113,20 +114,46 @@ public class TutorialObjectiveRow : MonoBehaviour
         GameObject template = _chipContainer.GetChild(0).gameObject;
         for (int i = _chipContainer.childCount - 1; i >= 1; i--)
         {
-            Destroy(_chipContainer.GetChild(i).gameObject);
+            GameObject oldChip = _chipContainer.GetChild(i).gameObject;
+            oldChip.SetActive(false);
+            Destroy(oldChip);
         }
 
-        foreach (string path in keyPaths)
+        // 키가 둘 이상이면(QE 등) 칩 하나에 "Q 또는 E"처럼 이어서 표시한다
+        if (keyPaths.Length == 1)
         {
-            GameObject chip = Instantiate(template, _chipContainer);
-            chip.SetActive(true);
-            TMP_Text text = chip.GetComponentInChildren<TMP_Text>(true);
-            if (text != null)
+            CreateChip(template, TutorialKeyLabelUtil.GetLabel(keyPaths[0]));
+        }
+        else
+        {
+            string[] labels = new string[keyPaths.Length];
+            for (int i = 0; i < keyPaths.Length; i++)
             {
-                text.text = TutorialKeyLabelUtil.GetLabel(path);
+                labels[i] = TutorialKeyLabelUtil.GetLabel(keyPaths[i]);
             }
+            CreateChip(template, string.Join(" 또는 ", labels));
         }
 
         template.SetActive(false);
+
+        // 칩 개수/텍스트 확정 후 컨테이너(Content Size Fitter)를 즉시 재계산
+        LayoutRebuilder.ForceRebuildLayoutImmediate(_chipContainer);
+    }
+
+    /// <summary>칩 템플릿을 복제해 라벨을 채우고, 텍스트 기준 크기 계산을 즉시 반영합니다.</summary>
+    private void CreateChip(GameObject template, string label)
+    {
+        GameObject chip = Instantiate(template, _chipContainer);
+        chip.SetActive(true);
+        TMP_Text text = chip.GetComponentInChildren<TMP_Text>(true);
+        if (text != null)
+        {
+            text.text = label;
+        }
+        // 텍스트 교체 후 ContentSizeFitter 계산을 즉시 반영
+        if (chip.transform is RectTransform chipRect)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(chipRect);
+        }
     }
 }

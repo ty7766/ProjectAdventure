@@ -39,15 +39,20 @@ public static class TutorialKeyLabelUtil
 
         switch (controlName.ToLowerInvariant())
         {
+            // "Left"/"Right" 단어로 오는 displayName도 특수문자로 통일 표기
+            case "left":
             case "left arrow":
             case "leftarrow":
                 return "←";
+            case "right":
             case "right arrow":
             case "rightarrow":
                 return "→";
+            case "up":
             case "up arrow":
             case "uparrow":
                 return "↑";
+            case "down":
             case "down arrow":
             case "downarrow":
                 return "↓";
