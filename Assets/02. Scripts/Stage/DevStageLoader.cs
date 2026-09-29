@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using UnityEngine;
 
 public class DevStageLoader : MonoBehaviour
@@ -62,6 +62,10 @@ public class DevStageLoader : MonoBehaviour
 
         _hudFlowPresenter?.Setup(stageManager, _playerProperties);
         _hudSystemPresenter?.Setup(stageManager);
+        if (_hudSystemPresenter != null && mapManager != null)
+        {
+            _hudSystemPresenter.Setup(mapManager);
+        }
     }
 }
 #endif
