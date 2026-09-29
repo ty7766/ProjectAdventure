@@ -60,7 +60,10 @@ public class FrameRateManager : Singleton<FrameRateManager>
         CurrentTargetFPS = targetFps;
 
         // 페이싱은 전적으로 targetFrameRate가 담당 (모바일에서 vSyncCount는 무시됨)
-        QualitySettings.vSyncCount = 0;
+        if (Application.isMobilePlatform)
+        {
+            QualitySettings.vSyncCount = 0;
+        }
         Application.targetFrameRate = targetFps;
 
         CustomDebug.Log($"[FrameRateManager] 목표 프레임레이트 적용: {targetFps} FPS (기기 재생률: {GetDeviceRefreshRate():0.#}Hz)");
@@ -108,7 +111,7 @@ public class FrameRateManager : Singleton<FrameRateManager>
         if (displayHz <= DefaultTargetFPS + 0.1f)
             return DefaultTargetFPS;
 
-        // 고주사율 기기: 기기 최대 재생률에 맞춤 (59.94Hz 같은 비정수 재생률은 내림 처리)
-        return Mathf.FloorToInt(displayHz);
+        // 고주사율 기기: 기기 최대 재생률에 맞춤 (비정수 재생률은 올림 처리하여 최소 재생률 보장)
+        return Mathf.CeilToInt(displayHz);
     }
 }
