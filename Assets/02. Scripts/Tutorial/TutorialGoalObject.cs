@@ -11,6 +11,9 @@ public class TutorialGoalObject : MonoBehaviour
     private TutorialEventBus _eventBus;
     private bool _reached;
 
+    /// <summary>이미 골인 지점에 도달했는지 여부</summary>
+    public bool WasReached => _reached;
+
     //--- Unity Methods ---//
     private void OnTriggerEnter(Collider other)
     {

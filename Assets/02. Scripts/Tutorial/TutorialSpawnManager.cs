@@ -17,6 +17,9 @@ public class TutorialSpawnManager : MonoBehaviour
     /// <summary>튜토리얼 동안 보석이 획득됐는지 여부</summary>
     public bool WasGemCollected => _gem != null && _gem.WasCollected;
 
+    /// <summary>튜토리얼 동안 골인 지점에 도달했는지 여부</summary>
+    public bool WasGoalReached => _goal != null && _goal.WasReached;
+
     //--- Public Methods ---//
     /// <summary>이벤트 버스를 주입합니다.</summary>
     public void Setup(TutorialEventBus eventBus)

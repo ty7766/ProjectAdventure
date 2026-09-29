@@ -39,6 +39,7 @@ public class TutorialManager : MonoBehaviour
     private Transform _playerTransform;
     private Coroutine _transitionCoroutine;
     private bool _isSectionTransitioning;
+    private bool _hasFoundGem;
     private bool _hasCollectedGem;
 
     /// <summary>튜토리얼 중 골인 지점 도달 여부</summary>
@@ -114,6 +115,7 @@ public class TutorialManager : MonoBehaviour
         _onCompleteCallback = onComplete;
         _sectionIndex = 0;
         _isSectionTransitioning = false;
+        _hasFoundGem = false;
         _hasCollectedGem = false;
         HasReachedGoal = false;
         IsActive = true;
@@ -416,6 +418,7 @@ public class TutorialManager : MonoBehaviour
 
     private void HandleGemEvent()
     {
+        _hasFoundGem = true;
         if (_spawnManager != null && _spawnManager.WasGemCollected)
         {
             _hasCollectedGem = true;
@@ -446,7 +449,7 @@ public class TutorialManager : MonoBehaviour
                 CompleteObjectiveAt(collectIndex);
             }
         }
-        else if (findIndex >= 0)
+        else if (_hasFoundGem && findIndex >= 0)
         {
             CompleteObjectiveAt(findIndex);
         }
@@ -460,6 +463,11 @@ public class TutorialManager : MonoBehaviour
 
     private void SyncGoalObjectives()
     {
+        if (_spawnManager != null && _spawnManager.WasGoalReached)
+        {
+            HasReachedGoal = true;
+        }
+
         if (!IsActive || _isSectionTransitioning)
         {
             return;
@@ -503,7 +511,7 @@ public class TutorialManager : MonoBehaviour
         float sqrDistance = (_playerTransform.position - gemPos).sqrMagnitude;
         if (sqrDistance <= _gemFindRadius * _gemFindRadius)
         {
-            CompleteObjectiveAt(findIndex);
+            HandleGemEvent();
         }
     }
 
