@@ -1,4 +1,4 @@
-﻿using GameManager.Singleton;
+using GameManager.Singleton;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -135,6 +135,12 @@ public class StageLoader : Singleton<StageLoader>
             mapManager.ResetState();
         }
 
+        // _playerEffectController가 비어있으면 플레이어에서 자동 탐색 (RequireComponent로 PlayerProperties와 같은 오브젝트)
+        if (_playerEffectController == null && _playerController != null)
+        {
+            _playerEffectController = _playerController.GetComponent<PlayerEffectController>();
+        }
+
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
         if (_hudStatusPresenter != null)
         {
@@ -145,12 +151,6 @@ public class StageLoader : Singleton<StageLoader>
         stageManager.InitializeStage();
 
         _cameraFollow?.SnapToTarget();
-
-        // _playerEffectController가 비어있으면 플레이어에서 자동 탐색 (RequireComponent로 PlayerProperties와 같은 오브젝트)
-        if (_playerEffectController == null && _playerController != null)
-        {
-            _playerEffectController = _playerController.GetComponent<PlayerEffectController>();
-        }
 
         if (_hudFlowPresenter != null)
         {
