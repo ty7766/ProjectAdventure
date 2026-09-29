@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using GameManager.Singleton;
 using UnityEngine;
@@ -39,6 +39,10 @@ public class TutorialManager : MonoBehaviour
     private Transform _playerTransform;
     private Coroutine _transitionCoroutine;
     private bool _isSectionTransitioning;
+    private bool _hasCollectedGem;
+
+    /// <summary>튜토리얼 중 골인 지점 도달 여부</summary>
+    public bool HasReachedGoal { get; private set; }
 
     /// <summary>튜토리얼 진행 중 여부 (HUD 등에서 입력 차단 확인용)</summary>
     public static bool IsActive { get; private set; }
@@ -48,7 +52,7 @@ public class TutorialManager : MonoBehaviour
     {
         _eventBus = new TutorialEventBus();
         _eventBus.GemFound += HandleGemEvent;
-        _eventBus.GemCollected += HandleGemEvent;
+        _eventBus.GemCollected += HandleGemCollected;
         _eventBus.GoalReached += HandleGoalReached;
     }
 
@@ -57,7 +61,7 @@ public class TutorialManager : MonoBehaviour
         if (_eventBus != null)
         {
             _eventBus.GemFound -= HandleGemEvent;
-            _eventBus.GemCollected -= HandleGemEvent;
+            _eventBus.GemCollected -= HandleGemCollected;
             _eventBus.GoalReached -= HandleGoalReached;
         }
         UnsubscribeMapManager();
@@ -74,6 +78,8 @@ public class TutorialManager : MonoBehaviour
 
         _inputNode?.Tick();
         PollGemFind();
+        SyncGemObjectives();
+        SyncGoalObjectives();
         CheckSectionCompletion();
     }
 
@@ -108,6 +114,8 @@ public class TutorialManager : MonoBehaviour
         _onCompleteCallback = onComplete;
         _sectionIndex = 0;
         _isSectionTransitioning = false;
+        _hasCollectedGem = false;
+        HasReachedGoal = false;
         IsActive = true;
 
         PreparePlayEnvironment();
@@ -214,13 +222,20 @@ public class TutorialManager : MonoBehaviour
             {
                 _tutorialView.HidePanel();
                 _cameraController.MoveToTarget(anchor,
-                    () => { _tutorialView.ShowSection(_sections, _sectionIndex); });
+                    () =>
+                    {
+                        _tutorialView.ShowSection(_sections, _sectionIndex);
+                        SyncGemObjectives();
+                        SyncGoalObjectives();
+                    });
                 return;
             }
             CustomDebug.LogWarning($"TutorialManager: '{section.FocusAnchorID}'를 찾지 못하여 카메라 이동 없이 진행합니다");
         }
 
         _tutorialView.ShowSection(_sections, _sectionIndex);
+        SyncGemObjectives();
+        SyncGoalObjectives();
     }
 
     /// <summary>이 섹션에서 MapManager 조작(선택/교체)이 필요한지 판별합니다.</summary>
@@ -393,45 +408,70 @@ public class TutorialManager : MonoBehaviour
         }
     }
 
+    private void HandleGemCollected()
+    {
+        _hasCollectedGem = true;
+        HandleGemEvent();
+    }
+
     private void HandleGemEvent()
+    {
+        if (_spawnManager != null && _spawnManager.WasGemCollected)
+        {
+            _hasCollectedGem = true;
+        }
+
+        SyncGemObjectives();
+    }
+
+    private void SyncGemObjectives()
     {
         if (!IsActive || _isSectionTransitioning)
         {
             return;
         }
 
-        // FindGem → CollectGem 어느 쪽이든, 아직 안 된 쪽부터 순서 없이 체크
         int findIndex = FindFirstUndone(TutorialCompletionType.FindGem);
         int collectIndex = FindFirstUndone(TutorialCompletionType.CollectGem);
 
-        // 획득이 '발견'보다 먼저 일어난 케이스도 모두 처리
-        if (findIndex >= 0 && collectIndex >= 0)
+        if (_hasCollectedGem || (_spawnManager != null && _spawnManager.WasGemCollected))
         {
-            // 둘 다 미완료면 발견을 먼저 체크 (획득 이벤트가 와도 전달 순서대로 처리)
-            CompleteObjectiveAt(findIndex);
-            return;
+            // 보석 획득 시 대기 중인 발견 및 수집 목표 모두 완료 처리
+            if (findIndex >= 0)
+            {
+                CompleteObjectiveAt(findIndex);
+            }
+            if (collectIndex >= 0)
+            {
+                CompleteObjectiveAt(collectIndex);
+            }
         }
-        if (findIndex >= 0)
+        else if (findIndex >= 0)
         {
             CompleteObjectiveAt(findIndex);
-        }
-        else if (collectIndex >= 0)
-        {
-            CompleteObjectiveAt(collectIndex);
         }
     }
 
     private void HandleGoalReached()
     {
+        HasReachedGoal = true;
+        SyncGoalObjectives();
+    }
+
+    private void SyncGoalObjectives()
+    {
         if (!IsActive || _isSectionTransitioning)
         {
             return;
         }
 
-        int index = FindFirstUndone(TutorialCompletionType.ReachGoal);
-        if (index >= 0)
+        if (HasReachedGoal)
         {
-            CompleteObjectiveAt(index);
+            int index = FindFirstUndone(TutorialCompletionType.ReachGoal);
+            if (index >= 0)
+            {
+                CompleteObjectiveAt(index);
+            }
         }
     }
 
