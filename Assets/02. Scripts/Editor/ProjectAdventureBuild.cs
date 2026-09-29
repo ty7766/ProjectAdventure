@@ -78,11 +78,13 @@ public static class ProjectAdventureBuild
     static BuildTarget ResolveTarget()
     {
         string targetArg = GetArg("-buildTarget");
-        if (!string.IsNullOrEmpty(targetArg) &&
-            Enum.TryParse(targetArg, ignoreCase: true, out BuildTarget parsed))
+        if (string.IsNullOrEmpty(targetArg))
+            return EditorUserBuildSettings.activeBuildTarget;
+
+        if (Enum.TryParse(targetArg, ignoreCase: true, out BuildTarget parsed))
             return parsed;
 
-        return EditorUserBuildSettings.activeBuildTarget;
+        throw new ArgumentException($"Unknown build target: '{targetArg}'");
     }
 
     static string GetDefaultOutputPath(BuildTarget target)
@@ -130,6 +132,8 @@ public static class ProjectAdventureBuild
                 continue;
             if (i + 1 < args.Length && !args[i + 1].StartsWith("-"))
                 return args[i + 1];
+
+            throw new ArgumentException($"Missing value for argument: {name}");
         }
         // -buildOutput=<value> 형태도 지원
         foreach (string arg in args)
