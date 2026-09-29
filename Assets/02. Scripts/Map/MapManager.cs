@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 //맵 프리팹 클래스 
@@ -53,6 +53,7 @@ public class MapManager : MonoBehaviour
 
     private MapChangeEffect _mapChangeEffect;
     private MapSelectionBeam _selectionBeam;
+    private Coroutine _refitBeamCoroutine;
 
     //--- Events ---//
     /// <summary>맵 선택 커서가 이동했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
@@ -164,6 +165,11 @@ public class MapManager : MonoBehaviour
     /// </summary>
     public void ResetState()
     {
+        if (_refitBeamCoroutine != null)
+        {
+            StopCoroutine(_refitBeamCoroutine);
+            _refitBeamCoroutine = null;
+        }
         _selectedSlotIndex = 0;
         _nextAllowedMapChangeTime = 0f;
         foreach (PathGroup group in _pathGroups)
@@ -390,7 +396,11 @@ public class MapManager : MonoBehaviour
 
         // 교체 시작: 빔을 페이드아웃 (맵 낙하 애니메이션과 겹치는 글리치 방지)
         _selectionBeam?.FadeOut();
-        StopCoroutine(RefitBeamIdle());
+        if (_refitBeamCoroutine != null)
+        {
+            StopCoroutine(_refitBeamCoroutine);
+            _refitBeamCoroutine = null;
+        }
 
         TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
@@ -402,7 +412,7 @@ public class MapManager : MonoBehaviour
         _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
 
         // 쿨타임이 끝나는 시점에 맞춰 빔을 페이드인
-        StartCoroutine(RefitBeamIdle());
+        _refitBeamCoroutine = StartCoroutine(RefitBeamIdle());
 
         OnMapSwapped?.Invoke(direction);
     }
@@ -420,6 +430,7 @@ public class MapManager : MonoBehaviour
             UpdateSelectionBeamFit(_pathGroups[_selectedSlotIndex]);
         }
         _selectionBeam?.FadeIn();
+        _refitBeamCoroutine = null;
     }
 
     private void SpawnPath(PathGroup group, int index)
