@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Animator))]
 public class MouseLook : MonoBehaviour
@@ -49,7 +50,10 @@ public class MouseLook : MonoBehaviour
 
     private void LookAtMouse()
     {
-        Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
+        Pointer pointer = Pointer.current;
+        if (pointer == null) return;
+
+        Ray ray = _mainCamera.ScreenPointToRay(pointer.position.ReadValue());
         Vector3 planePoint = transform.position + (-_mainCamera.transform.forward * _planeDistance);
         Plane plane = new Plane(-_mainCamera.transform.forward, planePoint);
 
