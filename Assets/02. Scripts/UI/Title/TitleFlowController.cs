@@ -27,9 +27,14 @@ public class TitleFlowController : MonoBehaviour
     [SerializeField, Range(0.1f, 3f)]
     private float _introDuration = 0.5f;
 
+    private const int STABLE_FRAME_COUNT = 3;
+    private const float STABLE_FRAME_DELTA = 0.05f;
+    private const float MAX_INTRO_WAIT = 2f;
+
     private Coroutine _fadeCoroutine;
     private CanvasGroup _currentActiveCanvas;
     private TitleState _currentState = TitleState.Title;
+    private bool _isExitingTitle;
 
     private void Start()
     {
@@ -46,6 +51,10 @@ public class TitleFlowController : MonoBehaviour
 
     public void GoToTitle()
     {
+        if (_isExitingTitle)
+        {
+            return;
+        }
         if (_fadeCoroutine != null)
         {
             StopCoroutine(_fadeCoroutine);
@@ -57,6 +66,30 @@ public class TitleFlowController : MonoBehaviour
     }
 
     public void GoToStageSelect()
+    {
+        if (_isExitingTitle)
+        {
+            return;
+        }
+
+        // 타이틀에서 넘어갈 때는 타이틀 UI 퇴장 연출(역순 슬라이드 아웃)을 먼저 끝낸다
+        if (_currentState == TitleState.Title && _titleCanvas.TryGetComponent(out IUIScreenTransition titleTransition))
+        {
+            _isExitingTitle = true;
+            _titleCanvas.blocksRaycasts = false;
+            _titleCanvas.interactable = false;
+            titleTransition.PlayExit(() =>
+            {
+                _isExitingTitle = false;
+                SwitchToStageSelect();
+            });
+            return;
+        }
+
+        SwitchToStageSelect();
+    }
+
+    private void SwitchToStageSelect()
     {
         if (_fadeCoroutine != null)
         {
@@ -70,6 +103,10 @@ public class TitleFlowController : MonoBehaviour
 
     public void GoToOptions()
     {
+        if (_isExitingTitle)
+        {
+            return;
+        }
         if (_fadeCoroutine != null)
         {
             StopCoroutine(_fadeCoroutine);
@@ -87,19 +124,22 @@ public class TitleFlowController : MonoBehaviour
         _currentActiveCanvas = _titleCanvas;
         _titleCameraController.SetCameraInstantly("Title");
         _stageSelectCanvas.blocksRaycasts = false;
-        _stageSelectCanvas.interactable = true;
+        _stageSelectCanvas.interactable = false;
         _titleCanvas.blocksRaycasts = false;
-        _titleCanvas.interactable = true;
+        _titleCanvas.interactable = false;
         _titleCanvas.alpha = 0.0f;
         _stageSelectCanvas.alpha = 0.0f;
         _optionsCanvas.gameObject.SetActive(false);
         _titleCanvas.gameObject.SetActive(true);
-        StartCoroutine(FadeIn(_titleCanvas, _introDuration));
+        StartCoroutine(IntroRoutine());
     }
 
     private IEnumerator SequentialFade(CanvasGroup fadeOut, CanvasGroup fadeIn)
     {
+        // 숨겨지는 화면의 버튼이 게임패드/키보드 네비게이션에 잡히지 않도록 interactable도 끈다
         fadeOut.blocksRaycasts = false;
+        fadeOut.interactable = false;
+        fadeIn.interactable = false;
 
         float halfDuration = _fadeDuration / 2f;
         float timer = 0f;
@@ -121,35 +161,73 @@ public class TitleFlowController : MonoBehaviour
         {
             fadeIn.gameObject.SetActive(true);
         }
-        fadeIn.alpha = 0f;
-
-        timer = 0f;
-        while (timer < halfDuration)
-        {
-            timer += Time.unscaledDeltaTime;
-            fadeIn.alpha = Mathf.Lerp(0f, 1f, timer / halfDuration);
-            yield return null;
-        }
-        fadeIn.alpha = 1f;
-        fadeIn.blocksRaycasts = true;
+        yield return EnterScreen(fadeIn, halfDuration);
     }
 
-    private IEnumerator FadeIn(CanvasGroup target, float duration)
+    private IEnumerator IntroRoutine()
     {
-        target.interactable = true;
-        float timer = 0f;
-        while (timer < duration)
+        // 씬 로드 직후의 프레임 스파이크(수백 ms)에 등장 연출이 통째로 건너뛰어지지 않도록 프레임이 안정될 때까지 대기
+        int stableFrames = 0;
+        float waited = 0f;
+        while (stableFrames < STABLE_FRAME_COUNT && waited < MAX_INTRO_WAIT)
         {
-            timer += Time.unscaledDeltaTime;
-            target.alpha = Mathf.Lerp(0f, 1f, timer / duration);
             yield return null;
+            waited += Time.unscaledDeltaTime;
+            stableFrames = Time.unscaledDeltaTime < STABLE_FRAME_DELTA ? stableFrames + 1 : 0;
         }
-        target.alpha = 1f;
-        target.blocksRaycasts = true;
+
+        yield return EnterScreen(_titleCanvas, _introDuration);
+    }
+
+    /// <summary>
+    /// 화면을 표시한다. 등장 연출(IUIScreenTransition)이 있으면 캔버스는 즉시 보이게 하고 연출에 맡기며,
+    /// 없으면 기존처럼 알파 페이드 인. 끝나면 입력을 열고 포커스를 잡는다.
+    /// </summary>
+    private IEnumerator EnterScreen(CanvasGroup screen, float fadeDuration)
+    {
+        if (screen.TryGetComponent(out IUIScreenTransition transition))
+        {
+            bool enterDone = false;
+            // PlayEnter가 같은 프레임에 요소들을 숨김 상태로 초기화하므로 알파를 바로 1로 올려도 튀지 않는다
+            transition.PlayEnter(() => enterDone = true);
+            screen.alpha = 1f;
+            while (!enterDone)
+            {
+                yield return null;
+            }
+        }
+        else
+        {
+            float timer = 0f;
+            while (timer < fadeDuration)
+            {
+                timer += Time.unscaledDeltaTime;
+                screen.alpha = Mathf.Lerp(0f, 1f, timer / fadeDuration);
+                yield return null;
+            }
+            screen.alpha = 1f;
+        }
+
+        screen.blocksRaycasts = true;
+        screen.interactable = true;
+        NotifyScreenShown(screen);
+    }
+
+    private static void NotifyScreenShown(CanvasGroup screen)
+    {
+        if (screen.TryGetComponent(out UIDefaultSelection selection))
+        {
+            selection.OnScreenShown();
+        }
     }
 
     private void HandleEscapeInput()
     {
+        if (_isExitingTitle)
+        {
+            return;
+        }
+
         if (GlobalUICanvasView.Instance != null)
         {
             if (GlobalUICanvasView.Instance.IsPopupShown())

@@ -82,6 +82,14 @@ public class SoundManager : Singleton<SoundManager>
     }
 
     /// <summary>
+    /// 해당 사운드 타입에 클립이 등록되어 있는지 확인하는 메소드
+    /// </summary>
+    public bool HasSound(SoundType soundType)
+    {
+        return _soundDictionary.ContainsKey(soundType);
+    }
+
+    /// <summary>
     /// SFX를 재생하는 메소드
     /// </summary>
     /// <param name="soundType">재생할 사운드 enum 타입</param>

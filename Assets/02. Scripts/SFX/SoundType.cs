@@ -12,6 +12,11 @@ public enum SoundType
     SFX_ClearUI = 201,
     SFX_GameStartCountdown = 203,
     SFX_GameStart = 204,
+    SFX_ButtonHover = 205,
+    SFX_ButtonDenied = 206,
+    SFX_StarPop = 207,
+    SFX_LockRattle = 208,
+    SFX_Unlock = 209,
 
     //InGame SFX
     SFX_MapSwitch = 300,
