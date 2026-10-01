@@ -91,6 +91,11 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandlePause()
     {
+        // 키보드 일시정지(HUDView.HandleInput)와 동일하게 튜토리얼/전환 연출 중에는 일시정지를 막는다
+        if (TutorialManager.IsActive || SceneTransitionManager.IsBusy)
+        {
+            return;
+        }
         _stageManager?.PauseGameSmoothly();
         _hudView.ShowPauseMenu();
         _hudView.HideHUD();

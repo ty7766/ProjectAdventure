@@ -189,43 +189,72 @@ public class SceneTransitionManager : MonoBehaviour
         _rootGroup.blocksRaycasts = true;
         bool hasCard = !string.IsNullOrEmpty(options.CardTitle);
 
-        // 1) 덮기
-        yield return Cover(options.Cover);
-        _isCovered = true;
-        float coveredAt = Time.unscaledTime;
-        if (hasCard)
+        // 어떤 단계에서 예외가 나도 _isBusy가 영구히 true로 남아 입력/스테이지 진행이 막히지 않도록 반드시 해제한다
+        try
         {
-            ShowCard(options);
-        }
-
-        // 2) 덮인 상태에서 전환 작업
-        onCovered?.Invoke();
-        if (!string.IsNullOrEmpty(sceneName))
-        {
-            AsyncOperation load = SceneManager.LoadSceneAsync(sceneName);
-            while (load != null && !load.isDone)
+            // 1) 덮기
+            yield return Cover(options.Cover);
+            _isCovered = true;
+            float coveredAt = Time.unscaledTime;
+            if (hasCard)
             {
-                yield return null;
+                ShowCard(options);
             }
-        }
-        // 씬 로드/스테이지 교체 직후의 프레임 스파이크가 걷는 연출을 잡아먹지 않도록 대기
-        yield return WaitForStableFrames();
 
-        if (hasCard)
-        {
-            while (Time.unscaledTime - coveredAt < _minCardTime)
+            // 2) 덮인 상태에서 전환 작업 (실패해도 화면은 걷어 조작 불능 상태를 피한다)
+            InvokeSafely(onCovered);
+            if (!string.IsNullOrEmpty(sceneName))
             {
-                yield return null;
+                AsyncOperation load = LoadSceneSafely(sceneName);
+                while (load != null && !load.isDone)
+                {
+                    yield return null;
+                }
             }
-            yield return HideCard();
+            // 씬 로드/스테이지 교체 직후의 프레임 스파이크가 걷는 연출을 잡아먹지 않도록 대기
+            yield return WaitForStableFrames();
+
+            if (hasCard)
+            {
+                while (Time.unscaledTime - coveredAt < _minCardTime)
+                {
+                    yield return null;
+                }
+                yield return HideCard();
+            }
+
+            // 3) 걷기
+            _isCovered = false;
+            yield return Reveal(options.Reveal);
         }
+        finally
+        {
+            _dotsTween?.Kill();
+            SetHiddenImmediate();
+            _isBusy = false;
+        }
+    }
 
-        // 3) 걷기
-        _isCovered = false;
-        yield return Reveal(options.Reveal);
+    private static void InvokeSafely(Action action)
+    {
+        try
+        {
+            action?.Invoke();
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+        }
+    }
 
-        SetHiddenImmediate();
-        _isBusy = false;
+    private static AsyncOperation LoadSceneSafely(string sceneName)
+    {
+        AsyncOperation load = SceneManager.LoadSceneAsync(sceneName);
+        if (load == null)
+        {
+            CustomDebug.LogError($"[SceneTransitionManager] 씬 '{sceneName}'을 로드할 수 없습니다. (Build Settings 등록 여부 확인)");
+        }
+        return load;
     }
 
     //--- Cover / Reveal ---//
