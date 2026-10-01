@@ -176,6 +176,12 @@ public class TitleFlowController : MonoBehaviour
             stableFrames = Time.unscaledDeltaTime < STABLE_FRAME_DELTA ? stableFrames + 1 : 0;
         }
 
+        // 게임에서 돌아온 경우: 전환 화면이 걷히기 시작할 때 타이틀 UI 등장을 겹쳐 시작한다
+        while (SceneTransitionManager.IsScreenCovered)
+        {
+            yield return null;
+        }
+
         yield return EnterScreen(_titleCanvas, _introDuration);
     }
 
@@ -223,7 +229,7 @@ public class TitleFlowController : MonoBehaviour
 
     private void HandleEscapeInput()
     {
-        if (_isExitingTitle)
+        if (_isExitingTitle || SceneTransitionManager.IsBusy)
         {
             return;
         }
