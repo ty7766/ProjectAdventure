@@ -33,6 +33,18 @@ public class TutorialView : MonoBehaviour
     private RectTransform _itemContainer;
     [SerializeField, Tooltip("목표 아이템 컴포넌트들 (프리팹에 미리 배치된 순서대로)")]
     private TutorialGoalItem[] _goalItems;
+    [SerializeField, Tooltip("목표 목록 맨 아래의 팁 행 (체크박스를 숨긴 목표 아이템). 섹션에 팁이 있을 때만 표시된다")]
+    private TutorialGoalItem _tipItem;
+    [SerializeField, Tooltip("팁 행 칩에 표시할 라벨")]
+    private string _tipChipLabel = "Tip";
+
+    [Header("터치 칩 아이콘")]
+    [SerializeField, Tooltip("이전 맵 선택 터치 버튼의 아이콘 Image (TouchControls/MapControls/Left/Image). 칩이 이 아이콘을 그대로 따라 그린다")]
+    private UnityEngine.UI.Image _touchSelectLeftIcon;
+    [SerializeField, Tooltip("다음 맵 선택 터치 버튼의 아이콘 Image (TouchControls/MapControls/Right/Image)")]
+    private UnityEngine.UI.Image _touchSelectRightIcon;
+    [SerializeField, Tooltip("지형 교체 터치 버튼의 아이콘 Image (TouchControls/MapControls/Change/Image)")]
+    private UnityEngine.UI.Image _touchChangeMapIcon;
 
     [Header("패널 위치")]
     [SerializeField, Tooltip("패널이 슬라이드 인 해서 머무는 anchoredPosition (디자이너 지정 홈 위치)")]
@@ -118,7 +130,22 @@ public class TutorialView : MonoBehaviour
             {
                 TutorialObjectiveConfig config = section.Objectives[i];
                 item.ResetVisual();
-                item.Setup(config.Description, ResolveKeyLabels(config));
+                string description = PlatformCapability.UseTouchUI
+                    ? TutorialKeyLabelUtil.GetTouchDescription(config)
+                    : config.Description;
+                item.Setup(description, ResolveKeyLabels(config), ResolveTouchIcon(config));
+            }
+        }
+
+        // 팁 행: 섹션에 팁이 있을 때만 목표 목록 아래에 표시
+        if (_tipItem != null)
+        {
+            bool hasTip = !string.IsNullOrEmpty(section.Tip);
+            _tipItem.gameObject.SetActive(hasTip);
+            if (hasTip)
+            {
+                _tipItem.ResetVisual();
+                _tipItem.Setup(section.Tip, new[] { _tipChipLabel });
             }
         }
 
@@ -226,6 +253,7 @@ public class TutorialView : MonoBehaviour
         {
             _goalItems[i]?.ResetVisual();
         }
+        _tipItem?.ResetVisual();
 
         // 타이틀 위치를 화면 밖 오른쪽으로
         _titleTween?.Kill();
@@ -233,6 +261,10 @@ public class TutorialView : MonoBehaviour
         _titleRect.anchoredPosition = titleTarget + new Vector2(_panelSlideOutDistance, 0f);
 
         yield return null; // 레이아웃 정리 한 프레임
+
+        // 아이템 폭이 확정된 뒤 칩/문구 길이에 맞춰 각 행을 맞추고, 바뀐 아이템 높이로 목록을 다시 쌓는다
+        // (패널이 아직 투명한 상태라 크기 변화가 보이지 않는다)
+        FitItemLayouts();
 
         // 3) 패널 슬라이드 인 (화면 밖 → 원위치)
         _panelTween?.Kill();
@@ -265,7 +297,40 @@ public class TutorialView : MonoBehaviour
             delay += _itemStagger;
         }
 
+        // 팁은 목표들 뒤에 이어서 등장
+        if (_tipItem != null && _tipItem.gameObject.activeSelf)
+        {
+            _tipItem.PlaySlideIn(_itemSlideDistance, delay);
+        }
+
         _showCoroutine = null;
+    }
+
+    /// <summary>표시 중인 목표 아이템(과 팁 행)의 행 레이아웃을 내용 길이에 맞춥니다.</summary>
+    private void FitItemLayouts()
+    {
+        // 방금 활성화된 행(팁 등)은 호출 시점에 따라 아직 폭이 계산되지 않았을 수 있으므로 먼저 폭을 확정한다
+        if (_itemContainer != null)
+        {
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_itemContainer);
+        }
+
+        for (int i = 0; i < _goalItems.Length; i++)
+        {
+            TutorialGoalItem item = _goalItems[i];
+            if (item != null && item.gameObject.activeSelf)
+            {
+                item.FitLayout();
+            }
+        }
+        if (_tipItem != null && _tipItem.gameObject.activeSelf)
+        {
+            _tipItem.FitLayout();
+        }
+        if (_itemContainer != null)
+        {
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(_itemContainer);
+        }
     }
 
     private void CompleteHide(System.Action onDone)
@@ -305,6 +370,25 @@ public class TutorialView : MonoBehaviour
             labels[i] = TutorialKeyLabelUtil.GetLabel(paths[i]);
         }
         return labels;
+    }
+
+    /// <summary>
+    /// 터치 UI 플랫폼에서 칩에 그릴 터치 버튼 아이콘을 얻습니다. 아이콘이 없는 조작(조이스틱 등)이나
+    /// 키보드/패드 플랫폼에서는 null을 돌려주며, 이때 칩은 라벨 글자로 표시된다.
+    /// </summary>
+    private UnityEngine.UI.Image ResolveTouchIcon(TutorialObjectiveConfig config)
+    {
+        if (!PlatformCapability.UseTouchUI)
+        {
+            return null;
+        }
+
+        return config.CompletionType switch
+        {
+            TutorialCompletionType.SelectMap => config.SelectDirection < 0 ? _touchSelectLeftIcon : _touchSelectRightIcon,
+            TutorialCompletionType.ChangeMap => _touchChangeMapIcon,
+            _ => null,
+        };
     }
 
     /// <summary>목표 구성에서 실제 표시할 키 바인딩 경로를 얻습니다. (리바인딩 반영)</summary>

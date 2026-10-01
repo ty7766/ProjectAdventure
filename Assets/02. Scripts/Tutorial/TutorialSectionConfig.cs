@@ -71,4 +71,7 @@ public class TutorialSectionConfig
 
     [Tooltip("이 섹션의 목표 목록 (모두 완료해야 다음 섹션으로 진행)")]
     public TutorialObjectiveConfig[] Objectives = Array.Empty<TutorialObjectiveConfig>();
+
+    [Tooltip("목표 목록 아래에 표시할 팁 문구 (비워두면 팁을 표시하지 않습니다)")]
+    public string Tip = "";
 }
