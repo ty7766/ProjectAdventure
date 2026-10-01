@@ -8,6 +8,38 @@ using UnityEngine.InputSystem;
 public static class TutorialKeyLabelUtil
 {
     /// <summary>
+    /// 터치 UI 플랫폼용 키 가이드 라벨. 키보드 키 대신 화면 터치 컨트롤(조이스틱 방향 / 맵 좌우·교체 버튼)을 가리킨다.
+    /// </summary>
+    public static string[] GetTouchLabels(TutorialObjectiveConfig config)
+    {
+        switch (config.CompletionType)
+        {
+            case TutorialCompletionType.MoveInDirection:
+                return new[]
+                {
+                    config.MoveDirection switch
+                    {
+                        TutorialMoveDirection.Up => "↑",
+                        TutorialMoveDirection.Down => "↓",
+                        TutorialMoveDirection.Left => "←",
+                        _ => "→",
+                    },
+                };
+
+            case TutorialCompletionType.SelectMap:
+                return new[] { config.SelectDirection < 0 ? "◀" : "▶" };
+
+            case TutorialCompletionType.ChangeMap:
+                // 터치에는 교체 버튼 하나만 있다 (항상 다음 맵으로 교체)
+                return new[] { "교체" };
+
+            default:
+                // FindGem / CollectGem / ReachGoal - 키 가이드 없음
+                return System.Array.Empty<string>();
+        }
+    }
+
+    /// <summary>
     /// "&lt;Keyboard&gt;/w" 같은 바인딩 경로를 키캡 라벨로 변환합니다. (예: "W", "←", "Q")
     /// </summary>
     public static string GetLabel(string bindingPath)

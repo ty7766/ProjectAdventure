@@ -44,6 +44,12 @@ public class TutorialGemObject : MonoBehaviour
         _eventBus = eventBus;
     }
 
+    /// <summary>획득 상태를 초기화합니다. (튜토리얼 재시작 시 다시 획득할 수 있도록)</summary>
+    public void ResetState()
+    {
+        _collected = false;
+    }
+
     /// <summary>StageManager를 주입해 부가 목표(보석 수집) 판정에 반영되도록 합니다.</summary>
     public void SetStageManager(StageManager stageManager)
     {

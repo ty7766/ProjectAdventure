@@ -106,6 +106,12 @@ public class HUDFlowPresenter : MonoBehaviour
         }
         NotificationPresenter.Reset();
 
+        // 튜토리얼 도중 재시작/스테이지 교체된 경우 이전 튜토리얼 세션을 정리한다 (카운트다운 후 처음부터 다시 시작)
+        if (_tutorialManager != null)
+        {
+            _tutorialManager.AbortTutorial();
+        }
+
         SoundManager.Instance?.PlayBGM(SoundType.None);
 
         _hudView.HideStageFailPanel();
@@ -156,7 +162,7 @@ public class HUDFlowPresenter : MonoBehaviour
         //처음 플레이 할 시 게임 시작 전 튜토리얼 보여주기 
         if (_tutorialManager != null && _tutorialManager.ShouldShowTutorial())
         {
-            _tutorialManager.StartTutorial(() => _stageManager?.StartStage());
+            _tutorialManager.StartTutorial(_stageManager, () => _stageManager?.StartStage());
         }
         else
         {

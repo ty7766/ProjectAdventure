@@ -40,6 +40,9 @@ public class TutorialSpawnManager : MonoBehaviour
     /// </summary>
     public void BindStageObjects(Transform stageRoot)
     {
+        // 이전 튜토리얼 종료 시 예약된 골대 복구가 새 튜토리얼 도중 실행되지 않도록 취소
+        StopAllCoroutines();
+
         _gem = stageRoot.GetComponentInChildren<TutorialGemObject>(true);
         _goal = stageRoot.GetComponentInChildren<TutorialGoalObject>(true);
 
@@ -49,6 +52,7 @@ public class TutorialSpawnManager : MonoBehaviour
         }
         else
         {
+            _gem.ResetState(); // 재시작 시 이전 시도의 획득 상태가 남지 않도록
             _gem.gameObject.SetActive(false); // 섹션 4 진입 시 활성화
         }
 
@@ -58,6 +62,7 @@ public class TutorialSpawnManager : MonoBehaviour
         }
         else
         {
+            _goal.ResetState();
             _goal.gameObject.SetActive(false); // 섹션 5 진입 시 활성화
         }
     }
@@ -88,8 +93,9 @@ public class TutorialSpawnManager : MonoBehaviour
         if (_goal != null)
         {
             // 골대는 스테이지 1의 실제 클리어 판정 오브젝트이므로 활성화해 복구한다.
-            // 단, 즉시 켜면 플레이어가 아직 트리거 안에 있어 OnTriggerEnter가 재발할 수 있으므로
-            // 다음 프레임으로 미룬다. (StageManager의 중복 클리어 가드가 있는 이중 안전망)
+            // 트리거 안에 플레이어가 있는 채로 다시 켜지면 프레임과 무관하게 OnTriggerEnter가 재발하므로,
+            // 중복 클리어는 StageManager의 _isStageCleared 가드가 막는다.
+            // 다음 프레임으로 미루는 것은 튜토리얼 완료 콜백(클리어 처리)이 먼저 끝나도록 순서를 보장하기 위함이다.
             var goal = _goal;
             _goal = null;
             RequestRestoreGoalNextFrame(goal);

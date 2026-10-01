@@ -30,6 +30,12 @@ public class TutorialGoalObject : MonoBehaviour
     }
 
     //--- Public Methods ---//
+    /// <summary>도달 상태를 초기화합니다. (튜토리얼 재시작 시 다시 판정할 수 있도록)</summary>
+    public void ResetState()
+    {
+        _reached = false;
+    }
+
     /// <summary>이벤트 버스를 주입합니다.</summary>
     public void Setup(TutorialEventBus eventBus)
     {

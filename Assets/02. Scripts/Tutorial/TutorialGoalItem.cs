@@ -89,9 +89,10 @@ public class TutorialGoalItem : MonoBehaviour
     }
 
     /// <summary>
-    /// 아이템 내용을 채웁니다. keyPaths에는 "&lt;Keyboard&gt;/w" 형태의 바인딩 경로가 담긴다.
+    /// 아이템 내용을 채웁니다. keyLabels에는 키캡 칩에 표시할 라벨("W", "←", "교체" 등)이 담긴다.
+    /// (플랫폼별 라벨 결정은 TutorialView가 담당)
     /// </summary>
-    public void Setup(string description, string[] keyPaths)
+    public void Setup(string description, string[] keyLabels)
     {
         CaptureDefaults();
 
@@ -99,7 +100,7 @@ public class TutorialGoalItem : MonoBehaviour
         {
             _promptText.text = description;
         }
-        BuildKeyChips(keyPaths);
+        BuildKeyChips(keyLabels);
     }
 
     /// <summary>
@@ -203,8 +204,8 @@ public class TutorialGoalItem : MonoBehaviour
         _slideTween = null;
     }
 
-    /// <summary>바인딩 경로 목록을 키캡 칩으로 절차 생성합니다. 프리팹의 첫 번째 자식 칩을 템플릿으로 복제한다.</summary>
-    private void BuildKeyChips(string[] keyPaths)
+    /// <summary>키 라벨 목록을 키캡 칩으로 절차 생성합니다. 프리팹의 첫 번째 자식 칩을 템플릿으로 복제한다.</summary>
+    private void BuildKeyChips(string[] keyLabels)
     {
         if (_keyGuideContainer == null)
         {
@@ -212,7 +213,7 @@ public class TutorialGoalItem : MonoBehaviour
         }
 
         // 키 가이드가 없는 목표면 칩 영역을 통째로 숨겨 텍스트 정렬을 유지한다
-        if (keyPaths == null || keyPaths.Length == 0)
+        if (keyLabels == null || keyLabels.Length == 0)
         {
             _keyGuideContainer.gameObject.SetActive(false);
             return;
@@ -236,19 +237,7 @@ public class TutorialGoalItem : MonoBehaviour
 
         // 모든 키를 템플릿 복제로 생성한다. 템플릿 자체는 마지막에 숨겨 다음 Setup의 원본 역할을 유지.
         // 키가 둘 이상이면(QE 등) 칩 하나에 "Q 또는 E"처럼 이어서 표시한다.
-        if (keyPaths.Length == 1)
-        {
-            CreateChip(template, _keyGuideContainer, TutorialKeyLabelUtil.GetLabel(keyPaths[0]));
-        }
-        else
-        {
-            string[] labels = new string[keyPaths.Length];
-            for (int i = 0; i < keyPaths.Length; i++)
-            {
-                labels[i] = TutorialKeyLabelUtil.GetLabel(keyPaths[i]);
-            }
-            CreateChip(template, _keyGuideContainer, string.Join(" 또는 ", labels));
-        }
+        CreateChip(template, _keyGuideContainer, keyLabels.Length == 1 ? keyLabels[0] : string.Join(" 또는 ", keyLabels));
         template.gameObject.SetActive(false);
 
         // 칩 개수/텍스트 확정 후 컨테이너(KeyGuide)의 ContentSizeFitter를 즉시 재계산.

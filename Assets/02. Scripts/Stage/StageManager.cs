@@ -65,6 +65,7 @@ public class StageManager : MonoBehaviour
     public bool IsTimerRunning => _isTimerRunning;
     public List<StageObject> StageObjects => _stageObjects;
     public PlayerController PlayerController => _playerController;
+    public MapManager MapManager => _mapManager;
 
     //--- Unity Methods ---//
     private void Awake()
