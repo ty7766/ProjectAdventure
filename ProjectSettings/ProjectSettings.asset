@@ -273,8 +273,8 @@ PlayerSettings:
   AndroidAllowedArchitectures: -1
   AndroidSplashScreenScale: 0
   androidSplashScreen: {fileID: 0}
-  AndroidKeystoreName: C:/Users/admin/.android/debug.keystore
-  AndroidKeyaliasName: androiddebugkey
+  AndroidKeystoreName: '{inproject}: '
+  AndroidKeyaliasName: 
   AndroidEnableArmv9SecurityFeatures: 0
   AndroidEnableArm64MTE: 0
   AndroidBuildApkPerCpuArchitecture: 0
