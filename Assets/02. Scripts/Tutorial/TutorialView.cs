@@ -140,12 +140,15 @@ public class TutorialView : MonoBehaviour
         // 팁 행: 섹션에 팁이 있을 때만 목표 목록 아래에 표시
         if (_tipItem != null)
         {
-            bool hasTip = !string.IsNullOrEmpty(section.Tip);
+            string tip = PlatformCapability.UseTouchUI && !string.IsNullOrEmpty(section.TouchTip)
+                ? section.TouchTip
+                : section.Tip;
+            bool hasTip = !string.IsNullOrEmpty(tip);
             _tipItem.gameObject.SetActive(hasTip);
             if (hasTip)
             {
                 _tipItem.ResetVisual();
-                _tipItem.Setup(section.Tip, new[] { _tipChipLabel });
+                _tipItem.Setup(tip, new[] { _tipChipLabel });
             }
         }
 

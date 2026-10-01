@@ -74,4 +74,7 @@ public class TutorialSectionConfig
 
     [Tooltip("목표 목록 아래에 표시할 팁 문구 (비워두면 팁을 표시하지 않습니다)")]
     public string Tip = "";
+
+    [Tooltip("터치 UI 플랫폼 전용 팁 문구 (비워두면 터치 UI에서도 위의 Tip을 사용합니다)")]
+    public string TouchTip = "";
 }

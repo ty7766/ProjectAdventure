@@ -172,6 +172,7 @@ MonoBehaviour:
       MoveDirection: 3
       SelectDirection: 1
     Tip: 
+    TouchTip: "화면의 왼쪽을 드래그해 보세요"
   - Title: "\uB9F5 \uC120\uD0DD\uD558\uAE30"
     SpawnOnStart: 0
     FocusAnchorID: 

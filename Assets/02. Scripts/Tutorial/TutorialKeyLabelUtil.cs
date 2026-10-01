@@ -8,16 +8,16 @@ using UnityEngine.InputSystem;
 public static class TutorialKeyLabelUtil
 {
     /// <summary>
-    /// 터치 UI 플랫폼용 키 가이드 라벨. 키보드 키 대신 화면 터치 컨트롤(조이스틱 / 맵 좌우·교체 버튼)을 가리킨다.
+    /// 터치 UI 플랫폼용 키 가이드 라벨. 키보드 키 대신 화면 터치 컨트롤(맵 좌우·교체 버튼)을 가리킨다.
     /// 맵 버튼은 보통 실제 버튼 아이콘이 칩에 그려지므로(TutorialView.ResolveTouchIcon), 여기 라벨은 아이콘이 없을 때의 대체 글자다.
+    /// 이동은 동적 조이스틱(화면을 끌어 이동)이라 가리킬 고정 컨트롤이 없으므로 칩 없이 설명 문구만 표시한다.
     /// </summary>
     public static string[] GetTouchLabels(TutorialObjectiveConfig config)
     {
         switch (config.CompletionType)
         {
             case TutorialCompletionType.MoveInDirection:
-                // 가상 조이스틱은 방향키가 아니므로 칩에는 조작 대상 이름을 표시한다
-                return new[] { "조이스틱" };
+                return System.Array.Empty<string>();
 
             case TutorialCompletionType.SelectMap:
                 return new[] { config.SelectDirection < 0 ? "◀" : "▶" };
@@ -34,8 +34,8 @@ public static class TutorialKeyLabelUtil
 
     /// <summary>
     /// 터치 UI 플랫폼용 목표 설명. 키보드 기준으로 작성된 설명("를 눌러 ...") 대신
-    /// 실제 터치 컨트롤(조이스틱을 밂 / 버튼 모양)에 맞는 문구를 돌려준다.
-    /// 칩 우측에 이어 붙어 "[칩] + 설명"이 한 문장이 되므로, 칩에 이미 표시된 내용(버튼 아이콘 등)은 반복하지 않는다.
+    /// 실제 터치 컨트롤(화면 드래그 / 버튼 모양)에 맞는 문구를 돌려준다.
+    /// 칩이 있는 목표는 칩 우측에 이어 붙어 "[칩] + 설명"이 한 문장이 되므로, 칩에 이미 표시된 내용(버튼 아이콘 등)은 반복하지 않는다.
     /// 해당하지 않는 목표는 원래 설명을 그대로 반환한다.
     /// </summary>
     public static string GetTouchDescription(TutorialObjectiveConfig config)
@@ -43,13 +43,13 @@ public static class TutorialKeyLabelUtil
         switch (config.CompletionType)
         {
             case TutorialCompletionType.MoveInDirection:
-                // 터치 스틱은 손가락으로 끌어 미는 조작이므로 "기울여" 대신 "밀어"를 쓴다
+                // 칩이 없으므로 문장이 단독으로 읽혀야 한다 (동적 조이스틱: 화면을 끌어 이동)
                 return config.MoveDirection switch
                 {
-                    TutorialMoveDirection.Up => "을 위로 밀어 이동",
-                    TutorialMoveDirection.Down => "을 아래로 밀어 이동",
-                    TutorialMoveDirection.Left => "을 왼쪽으로 밀어 이동",
-                    _ => "을 오른쪽으로 밀어 이동",
+                    TutorialMoveDirection.Up => "화면을 위로 끌어 이동",
+                    TutorialMoveDirection.Down => "화면을 아래로 끌어 이동",
+                    TutorialMoveDirection.Left => "화면을 왼쪽으로 끌어 이동",
+                    _ => "화면을 오른쪽으로 끌어 이동",
                 };
 
             case TutorialCompletionType.SelectMap:
