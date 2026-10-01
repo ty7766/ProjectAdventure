@@ -172,6 +172,12 @@ public abstract class UISequenceScreen : MonoBehaviour, IUIScreenTransition
         sequence.InsertCallback(at, () => UIFeedbackUtility.PlaySound(soundType));
     }
 
+    /// <summary>건너뛰기 시 InsertSound와 마찬가지로 생략된다.</summary>
+    protected static void InsertHaptic(Sequence sequence, float at, HapticType hapticType, float intensity = 1f)
+    {
+        sequence.InsertCallback(Mathf.Max(0f, at), () => Haptics.Play(hapticType, intensity));
+    }
+
     //--- Private Methods ---//
     private void HandleEnterComplete()
     {

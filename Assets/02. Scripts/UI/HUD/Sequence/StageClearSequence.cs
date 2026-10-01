@@ -31,6 +31,11 @@ public class StageClearSequence : UISequenceScreen
     [SerializeField, Range(0.1f, 0.6f)] private float _starDropDuration = 0.26f;
     [SerializeField, Range(0.1f, 1f)] private float _starInterval = 0.38f;
     [SerializeField, Tooltip("별 박힐 때 패널 흔들림 세기 (별 순서대로 점점 세짐)")] private float _shakeStrength = 7f;
+    [SerializeField, Range(0.3f, 1f), Tooltip("첫 별 진동 세기 (세 번째 별에서 최대)")] private float _starHapticMinIntensity = 0.6f;
+
+    //--- Constants ---//
+    // 별이 가속하며 떨어지는 마지막 구간에 예비 진동을 깐다 (StarDrop 파형 길이와 맞춤)
+    private const float HapticDropLead = 0.12f;
 
     //--- Fields ---//
     private Element _borderElement;
@@ -170,13 +175,19 @@ public class StageClearSequence : UISequenceScreen
         sequence.Insert(at, fill.DOFade(1f, _starDropDuration * 0.5f).SetEase(Ease.OutQuad));
 
         float impact = at + _starDropDuration;
+        float impactGrowth = 1f + impactOrder * 0.4f;
         InsertSound(sequence, impact, SoundType.SFX_StarPop);
         sequence.Insert(impact, slot.DOPunchScale(Vector3.one * 0.22f, 0.35f, 7, 0.6f));
         if (_shakeTarget != null)
         {
-            float strength = _shakeStrength * (1f + impactOrder * 0.4f);
+            float strength = _shakeStrength * impactGrowth;
             sequence.Insert(impact, _shakeTarget.DOShakeAnchorPos(0.25f, strength, 24, 90f, false, true));
         }
+
+        // 진동: 떨어지는 동안 차올랐다가 박히는 순간 충격 + 흔들림 여진. 흔들림처럼 별 순서대로 세진다
+        float hapticIntensity = Mathf.Lerp(_starHapticMinIntensity, 1f, (impactGrowth - 1f) / 0.8f);
+        InsertHaptic(sequence, impact - HapticDropLead, HapticType.StarDrop, hapticIntensity);
+        InsertHaptic(sequence, impact, HapticType.StarImpact, hapticIntensity);
     }
 
     private Image GetStarFill(int index)

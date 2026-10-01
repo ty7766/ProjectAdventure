@@ -283,6 +283,7 @@ public class MapManager : MonoBehaviour
         }
 
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapSwitch);
+        Haptics.Play(HapticType.Selection);
         UpdateCursorPosition();
         OnSelectionChanged?.Invoke(direction);
     }
@@ -325,6 +326,7 @@ public class MapManager : MonoBehaviour
         if (Time.time < _nextAllowedMapChangeTime)
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
+            Haptics.Play(HapticType.Denied);
             return;
         }
 
@@ -340,6 +342,7 @@ public class MapManager : MonoBehaviour
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
+            Haptics.Play(HapticType.Denied);
             OnMapSwapBlocked?.Invoke();
             return;
         }
@@ -356,6 +359,7 @@ public class MapManager : MonoBehaviour
         _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
         UpdateCursorPosition();
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
+        Haptics.Play(HapticType.MapSwap);
 
         OnMapSwapped?.Invoke(direction);
     }

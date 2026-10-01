@@ -112,6 +112,8 @@ public class StageManager : MonoBehaviour
         {
             _collectedGems++;
             OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+            // 일반/튜토리얼 보석 모두 이곳을 거치므로 진동은 여기서 한 번만
+            Haptics.Play(HapticType.GemCollect);
         }
     }
 

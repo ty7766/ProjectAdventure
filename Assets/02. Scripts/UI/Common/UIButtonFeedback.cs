@@ -116,6 +116,7 @@ public class UIButtonFeedback : MonoBehaviour,
             .SetUpdate(true)
             .OnKill(() => _target.anchoredPosition = _baseAnchoredPosition);
         UIFeedbackUtility.PlaySound(_deniedSound);
+        Haptics.Play(HapticType.Denied);
     }
 
     //--- Event Handlers ---//
@@ -177,6 +178,10 @@ public class UIButtonFeedback : MonoBehaviour,
         }
         _isPressed = true;
         ApplyState(_pressDuration, Ease.OutQuad);
+        if (UIFeedbackUtility.IsTouch(eventData))
+        {
+            Haptics.Play(HapticType.Tap);
+        }
     }
 
     public void OnPointerUp(PointerEventData eventData)

@@ -144,12 +144,14 @@ public class HUDFlowPresenter : MonoBehaviour
         for (int i = 3; i >= 1; i--)
         {
             SoundManager.Instance?.PlaySFX(SoundType.SFX_GameStartCountdown);
+            Haptics.Play(HapticType.CountdownTick);
 
             _hudView.PlayCountdownTick(i.ToString());
             yield return new WaitForSecondsRealtime(1.0f);
         }
 
         SoundManager.Instance?.PlaySFX(SoundType.SFX_GameStart);
+        Haptics.Play(HapticType.CountdownGo);
         SoundManager.Instance?.PlayBGM(SoundType.BGM_BackGroundMusic);
 
         _hudView.PlayCountdownGo(_stageGoString);
