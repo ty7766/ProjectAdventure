@@ -1,6 +1,7 @@
-﻿using System.Collections;
+﻿using DG.Tweening;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
@@ -10,7 +11,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     [SerializeField] private CanvasGroup _bgBlockerCanvasGroup;
     [SerializeField, Range(0.1f, 1f)] private float _fadeDuration = 0.3f;
 
-    private Coroutine _bgBlockerFadeCoroutine;
+    private Tween _bgBlockerTween;
     #endregion
 
     #region Popup Components
@@ -21,7 +22,14 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private Button _buttonPrefab;
 
-    private Coroutine _popupFadeCoroutine;
+    [Header("Popup Animation")]
+    [SerializeField, Range(0.5f, 1f)] private float _popupStartScale = 0.85f;
+    [SerializeField, Range(0.05f, 1f)] private float _popupShowDuration = 0.28f;
+    [SerializeField, Range(0.05f, 1f)] private float _popupHideDuration = 0.18f;
+
+    private Sequence _popupSequence;
+    private bool _isPopupShown;
+    private GameObject _selectionBeforePopup;
     #endregion
 
     #region FPS Monitor Components
@@ -86,47 +94,20 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     #region Common Methods
     public void ShowBgBlocker()
     {
-        if (_bgBlockerFadeCoroutine != null)
-        {
-            StopCoroutine(_bgBlockerFadeCoroutine);
-        }
-        _bgBlockerFadeCoroutine = StartCoroutine(FadeInBgBlocker());
+        _bgBlockerTween?.Kill();
+        _bgBlockerCanvasGroup.blocksRaycasts = true;
+        _bgBlockerTween = _bgBlockerCanvasGroup.DOFade(1f, _fadeDuration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true);
     }
 
     public void HideBgBlocker()
     {
-        if (_bgBlockerFadeCoroutine != null)
-        {
-            StopCoroutine(_bgBlockerFadeCoroutine);
-        }
-        _bgBlockerFadeCoroutine = StartCoroutine(FadeOutBgBlocker());
-    }
-
-    private IEnumerator FadeInBgBlocker()
-    {
-        _bgBlockerCanvasGroup.alpha = 0f;
-        _bgBlockerCanvasGroup.blocksRaycasts = true;
-        float timer = 0f;
-        while (timer < _fadeDuration)
-        {
-            timer += Time.unscaledDeltaTime;
-            _bgBlockerCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / _fadeDuration);
-            yield return null;
-        }
-        _bgBlockerCanvasGroup.alpha = 1f;
-    }
-
-    private IEnumerator FadeOutBgBlocker()
-    {
-        float timer = 0f;
-        while (timer < _fadeDuration)
-        {
-            timer += Time.unscaledDeltaTime;
-            _bgBlockerCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / _fadeDuration);
-            yield return null;
-        }
-        _bgBlockerCanvasGroup.alpha = 0f;
-        _bgBlockerCanvasGroup.blocksRaycasts = false;
+        _bgBlockerTween?.Kill();
+        _bgBlockerTween = _bgBlockerCanvasGroup.DOFade(0f, _fadeDuration)
+            .SetEase(Ease.OutQuad)
+            .SetUpdate(true)
+            .OnComplete(() => _bgBlockerCanvasGroup.blocksRaycasts = false);
     }
     #endregion
 
@@ -148,6 +129,8 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
             buttonLabel.text = buttonText;
         }
 
+        UIButtonFeedback.Ensure(newButton);
+
         newButton.onClick.AddListener(() => onClickCallback?.Invoke());
     }
 
@@ -164,56 +147,72 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     {
         gameObject.SetActive(true);
 
-        if (_popupFadeCoroutine != null)
+        if (!_isPopupShown)
         {
-            StopCoroutine(_popupFadeCoroutine);
+            _selectionBeforePopup = EventSystem.current != null ? EventSystem.current.currentSelectedGameObject : null;
         }
+        _isPopupShown = true;
 
         ShowBgBlocker();
-        _popupFadeCoroutine = StartCoroutine(FadeInPopup());
+
+        Transform panel = _popupCanvasGroup.transform;
+        _popupSequence?.Kill();
+        _popupCanvasGroup.blocksRaycasts = true;
+        if (_popupCanvasGroup.alpha <= 0f)
+        {
+            panel.localScale = Vector3.one * _popupStartScale;
+        }
+
+        _popupSequence = DOTween.Sequence().SetUpdate(true)
+            .Join(panel.DOScale(1f, _popupShowDuration).SetEase(Ease.OutBack))
+            .Join(_popupCanvasGroup.DOFade(1f, _popupShowDuration * 0.7f).SetEase(Ease.OutQuad));
+
+        SelectFirstPopupButton();
     }
 
     public void HidePopup()
     {
-        if (_popupFadeCoroutine != null)
-        {
-            StopCoroutine(_popupFadeCoroutine);
-        }
-
+        _isPopupShown = false;
         HideBgBlocker();
-        _popupFadeCoroutine = StartCoroutine(FadeOutPopup());
-        ClearButtons();
+
+        Transform panel = _popupCanvasGroup.transform;
+        _popupSequence?.Kill();
+        _popupCanvasGroup.blocksRaycasts = false;
+
+        _popupSequence = DOTween.Sequence().SetUpdate(true)
+            .Join(panel.DOScale(_popupStartScale, _popupHideDuration).SetEase(Ease.InBack))
+            .Join(_popupCanvasGroup.DOFade(0f, _popupHideDuration).SetEase(Ease.InQuad))
+            .OnComplete(ClearButtons);
+
+        RestoreSelectionAfterPopup();
     }
 
     public bool IsPopupShown()
     {
-        return _popupCanvasGroup.alpha > 0f;
+        return _isPopupShown;
     }
 
-    private IEnumerator FadeInPopup()
+    private void SelectFirstPopupButton()
     {
-        _popupCanvasGroup.blocksRaycasts = true;
-        float timer = 0f;
-        while (timer < _fadeDuration)
+        if (EventSystem.current == null || !UIDefaultSelection.IsNavigationMode || _buttonParent.childCount == 0)
         {
-            timer += Time.unscaledDeltaTime;
-            _popupCanvasGroup.alpha = Mathf.Lerp(0f, 1f, timer / _fadeDuration);
-            yield return null;
+            return;
         }
-        _popupCanvasGroup.alpha = 1f;
+        EventSystem.current.SetSelectedGameObject(_buttonParent.GetChild(_buttonParent.childCount - 1).gameObject);
     }
 
-    private IEnumerator FadeOutPopup()
+    private void RestoreSelectionAfterPopup()
     {
-        float timer = 0f;
-        while (timer < _fadeDuration)
+        if (EventSystem.current == null)
         {
-            timer += Time.unscaledDeltaTime;
-            _popupCanvasGroup.alpha = Mathf.Lerp(1f, 0f, timer / _fadeDuration);
-            yield return null;
+            return;
         }
-        _popupCanvasGroup.alpha = 0f;
-        _popupCanvasGroup.blocksRaycasts = false;
+
+        bool canRestore = UIDefaultSelection.IsNavigationMode
+            && _selectionBeforePopup != null
+            && _selectionBeforePopup.activeInHierarchy;
+        EventSystem.current.SetSelectedGameObject(canRestore ? _selectionBeforePopup : null);
+        _selectionBeforePopup = null;
     }
     #endregion
 

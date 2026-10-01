@@ -35,6 +35,11 @@ public class UI_SoundTabPresenter
 
         _model.SetBGMVolume(bgmVolume);
         _model.SetSFXVolume(sfxVolume);
+
+        if (_view.IsHapticsSectionVisible)
+        {
+            _view.HapticsIndex = Haptics.Enabled ? 1 : 0;
+        }
     }
 
     private void BindEvents()
@@ -47,6 +52,18 @@ public class UI_SoundTabPresenter
         );
 
         _view.BindSFXVolumeDragEnd(PlayClickSound);
+
+        if (_view.IsHapticsSectionVisible)
+        {
+            _view.BindHapticsSetting(OnHapticsChanged);
+        }
+    }
+
+    private void OnHapticsChanged(int index)
+    {
+        Haptics.Enabled = index == 1;
+        // 켰을 때 바로 손끝으로 확인할 수 있도록 미리 한 번 울려준다
+        Haptics.Play(HapticType.Tap);
     }
 
     private void PlayClickSound()

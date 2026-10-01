@@ -48,6 +48,7 @@ public class StageManager : MonoBehaviour
     private float _stageTimer = 0f;
     private bool _isTimerRunning = true;
     private bool _isInitialized = false;
+    private bool _isStageCleared = false;
 
     private HashSet<string> _collectedGemIDs = new HashSet<string>();
 
@@ -64,6 +65,7 @@ public class StageManager : MonoBehaviour
     public bool IsTimerRunning => _isTimerRunning;
     public List<StageObject> StageObjects => _stageObjects;
     public PlayerController PlayerController => _playerController;
+    public MapManager MapManager => _mapManager;
 
     //--- Unity Methods ---//
     private void Awake()
@@ -110,21 +112,48 @@ public class StageManager : MonoBehaviour
         {
             _collectedGems++;
             OnGemCountChanged?.Invoke(_collectedGems, _requiredGemsToClear);
+            // 일반/튜토리얼 보석 모두 이곳을 거치므로 진동은 여기서 한 번만
+            Haptics.Play(HapticType.GemCollect);
         }
     }
 
     public void StageClear()
     {
+        // 중복 클리어 방지 (튜토리얼 종료 시 자동 클리어 + 골대 재접촉 트리거 등)
+        if (_isStageCleared)
+        {
+            return;
+        }
+        _isStageCleared = true;
+        _isTimerRunning = false; // 클리어 시점의 시간을 확정한다 (행 일시정지 중 초과 실패 팝업 방지)
+
         ClearStage();
     }
 
     public void StartStage()
     {
+        // 튜토리얼 종료 시 StageClear()가 먼저 호출된 뒤 완료 콜백으로 진입할 수 있으므로
+        // 클리어된 스테이지를 다시 '진행 중' 상태로 되돌리지 않는다.
+        if (_isStageCleared)
+        {
+            return;
+        }
+
+        // 타이머는 여기서 리셋하지 않는다. 0으로 초기화하는 것은 InitializeStage() 담당이며,
+        // 튜토리얼 플레이 중에 흐른 시간이 이 시점에 사라지지 않아야 시간 제한 부가 목표가 유효해진다.
         _isTimerRunning = true;
-        _stageTimer = 0f;
         ResumeGameSmoothly();
         EnablePlayerControl();
         CheckStageObject();
+    }
+
+    /// <summary>
+    /// 스테이지 타이머만 즉시 가동합니다. (게임 재개/조작 활성화는 건드리지 않음)
+    /// 튜토리얼 플레이 단계에서 시간이 흐르고 부가 목표(시간 제한 등) 판정에 반영되도록 사용합니다.
+    /// </summary>
+    public void StartStageTimer()
+    {
+        _isTimerRunning = true;
     }
 
     /// <summary>
@@ -206,6 +235,7 @@ public class StageManager : MonoBehaviour
     public void InitializeStage()
     {
         _isInitialized = true;
+        _isStageCleared = false;
 
         _collectedGems = 0;
         _collectedGemIDs.Clear();

@@ -1,4 +1,4 @@
-﻿using GameManager.Singleton;
+using GameManager.Singleton;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +17,8 @@ public class StageLoader : Singleton<StageLoader>
     private PlayerController _playerController;
     [SerializeField]
     private PlayerProperties _playerProperties;
+    [SerializeField]
+    private PlayerEffectController _playerEffectController;
 
     // stageNumber(1-based) -> pre-instantiated stage instance
     private Dictionary<int, GameObject> _stageInstances = new Dictionary<int, GameObject>();
@@ -133,8 +135,17 @@ public class StageLoader : Singleton<StageLoader>
             mapManager.ResetState();
         }
 
+        // _playerEffectController가 비어있으면 플레이어에서 자동 탐색 (RequireComponent로 PlayerProperties와 같은 오브젝트)
+        if (_playerEffectController == null && _playerController != null)
+        {
+            _playerEffectController = _playerController.GetComponent<PlayerEffectController>();
+        }
+
         // HUD 먼저 구독 등록 (InitializeStage의 이벤트를 놓치지 않기 위해)
-        if (_hudStatusPresenter != null) _hudStatusPresenter.Setup(stageManager);
+        if (_hudStatusPresenter != null)
+        {
+            _hudStatusPresenter.Setup(stageManager, _playerProperties, _playerEffectController);
+        }
         else CustomDebug.LogError("[StageLoader] HUDStatusPresenter is not assigned.");
 
         stageManager.InitializeStage();
@@ -157,6 +168,11 @@ public class StageLoader : Singleton<StageLoader>
         else
         {
             CustomDebug.LogError("[StageLoader] HUDSystemPresenter is not assigned.");
+        }
+
+        if (_hudSystemPresenter != null && mapManager != null)
+        {
+            _hudSystemPresenter.Setup(mapManager);
         }
     }
 }

@@ -16,6 +16,10 @@ public class HUDView : MonoBehaviour
     [Header("Show/Hide Animation")]
     [SerializeField] private float _showHideDuration = 0.2f;
 
+    [Header("Icon Feedback")]
+    [SerializeField, Tooltip("하트를 잃었을 때 흔들림 세기 (캔버스 단위)")] private float _heartLostShake = 8f;
+    [SerializeField, Tooltip("보석 획득 시 튀어오르는 크기")] private float _gemCollectPunch = 0.45f;
+
     [Header("Sprites")]
     [SerializeField]
     private Sprite _starFilledSprite;
@@ -97,7 +101,17 @@ public class HUDView : MonoBehaviour
     [SerializeField]
     private Button _returnToMainMenuButtonStageFail;
 
+    [Header("Platform Specific")]
+    [SerializeField] private GameObject _touchControlsRoot; // TouchControls 오브젝트
 
+    [Header("Map Control Buttons (Touch)")]
+    [SerializeField] private Button _mapSelectLeftButton;
+    [SerializeField] private Button _mapSelectRightButton;
+    [SerializeField] private Button _mapSwapButton;
+    [SerializeField] private Image _mapSwapCooldownImage; // Fill 1->0 연출용 이미지 (Filled)
+
+    public void SetTouchControlsVisible(bool visible)
+        => _touchControlsRoot?.SetActive(visible);
 
     //--- Button Events ---//
     public event Action OnResumeButtonClicked;
@@ -106,10 +120,20 @@ public class HUDView : MonoBehaviour
     public event Action OnQuitGameButtonClicked;
     public event Action OnRetryButtonClicked;
     public event Action OnGoToNextStageButtonClicked;
+    public event Action OnMapSelectLeftClicked;
+    public event Action OnMapSelectRightClicked;
+    public event Action OnMapSwapClicked;
 
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
     private Coroutine _fontSizeCoroutine;
+    private MapSwapCooldownIndicator _mapSwapCooldown;
+    // Awake 이전(비활성 HUD)에 Setup으로 호출될 수 있으므로 지연 생성
+    private MapSwapCooldownIndicator MapSwapCooldown => _mapSwapCooldown ??= new MapSwapCooldownIndicator(_mapSwapCooldownImage);
+    private StageClearSequence _stageClearSequence;
+    private StageCountdownSequence _stageCountdownSequence;
+    private int _lastHealth = -1;
+    private int _lastCollectedGems = -1;
 
     //--- Properties ---//
     public bool IsPauseMenuActive
@@ -122,12 +146,39 @@ public class HUDView : MonoBehaviour
     private void Awake()
     {
         AddButtonListeners();
+        EnsureMenuButtonFeedback();
         _buffSlotPool = new BuffSlotPool(_contentParent, _buffItemPrefab);
+        if (_stageClearPanel != null)
+        {
+            _stageClearPanel.TryGetComponent(out _stageClearSequence);
+        }
+        if (_stageStartPanel != null)
+        {
+            _stageStartPanel.TryGetComponent(out _stageCountdownSequence);
+        }
     }
 
     private void Update()
     {
         HandleInput();
+        MapSwapCooldown.Tick();
+    }
+
+    /// <summary>
+    /// 맵 교체 쿨다운 UI를 활성화합니다. 이후 터치 쿨다운 UI는 뷰가 매 프레임 갱신합니다.
+    /// </summary>
+    /// <param name="remainingProvider">쿨다운 잔여 비율(0~1, 1 = 방금 교체됨)를 반환하는 함수</param>
+    public void StartMapSwapCooldownWatch(Func<float> remainingProvider)
+    {
+        MapSwapCooldown.Start(remainingProvider);
+    }
+
+    /// <summary>
+    /// 맵 교체 쿨다운 UI 표시를 중단합니다.
+    /// </summary>
+    public void StopMapSwapCooldownWatch()
+    {
+        MapSwapCooldown.Stop();
     }
 
     private void OnDestroy()
@@ -136,6 +187,16 @@ public class HUDView : MonoBehaviour
     }
 
     //--- Public Methods ---//
+    /// <summary>
+    /// 아이콘 증감 연출의 기준값을 초기화합니다. 스테이지 시작/재시작 시 호출해
+    /// 이전 판의 값(예: 사망 시 체력 0)과 비교해 회복/획득 연출이 잘못 재생되지 않게 한다.
+    /// </summary>
+    public void ResetIconFeedbackBaseline()
+    {
+        _lastHealth = -1;
+        _lastCollectedGems = -1;
+    }
+
     /// <summary>
     /// UI의 체력 표시를 업데이트 합니다.
     /// </summary>
@@ -146,6 +207,12 @@ public class HUDView : MonoBehaviour
         {
             UpdateHealthIcons(currentHealth, i);
         }
+
+        if (_lastHealth >= 0 && currentHealth != _lastHealth)
+        {
+            HUDIconFeedback.AnimateHealthChange(_heartImages, _lastHealth, currentHealth, _heartLostShake);
+        }
+        _lastHealth = currentHealth;
     }
 
     /// <summary>
@@ -167,6 +234,16 @@ public class HUDView : MonoBehaviour
                 _gemImages[i].gameObject.SetActive(false);
             }
         }
+
+        // 새로 채워진 보석만 튀어오름 (스테이지 재시작으로 줄어드는 경우는 연출 없음)
+        if (_lastCollectedGems >= 0)
+        {
+            for (int i = Mathf.Max(_lastCollectedGems, 0); i < Mathf.Min(collectedGems, safeRequired); i++)
+            {
+                HUDIconFeedback.PlayPunch(_gemImages[i].rectTransform, _gemCollectPunch);
+            }
+        }
+        _lastCollectedGems = collectedGems;
     }
 
     /// <summary>
@@ -285,6 +362,48 @@ public class HUDView : MonoBehaviour
         _fontSizeCoroutine = StartCoroutine(AnimateFontSize(targetFontSize, duration));
     }
 
+    /// <summary>
+    /// 카운트다운 준비 문구를 표출합니다.
+    /// </summary>
+    public void PlayCountdownReady(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayReady(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(80f, 1.0f);
+    }
+
+    /// <summary>
+    /// 카운트다운 숫자 한 박자를 표출합니다.
+    /// </summary>
+    public void PlayCountdownTick(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayTick(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(128f, 0.5f);
+    }
+
+    /// <summary>
+    /// 카운트다운 시작 신호(GO)를 표출합니다.
+    /// </summary>
+    public void PlayCountdownGo(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayGo(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(120f, 0.2f);
+    }
+
     public void ShowStageStartPanel()
     {
         FadePanel(_stageStartPanel, true);
@@ -341,6 +460,13 @@ public class HUDView : MonoBehaviour
             CustomDebug.LogWarning("UpdateStageClearStarSprite: Index out of range.");
             return;
         }
+        if (_stageClearSequence != null)
+        {
+            // 연출이 빈 별 위에 채워진 별을 박아 넣으므로 바탕은 항상 빈 별
+            _stageClearStarImages[index].sprite = _starEmptySprite;
+            _stageClearSequence.SetStarEarned(index, isCleared);
+            return;
+        }
         _stageClearStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
     }
 
@@ -349,6 +475,20 @@ public class HUDView : MonoBehaviour
     {
         if (panel == null)
         {
+            return;
+        }
+
+        // 화면 전용 시퀀스 연출이 있으면 단순 페이드 대신 사용
+        if (panel.TryGetComponent(out IUIScreenTransition transition))
+        {
+            if (show)
+            {
+                transition.PlayEnter(null);
+            }
+            else
+            {
+                transition.PlayExit(null);
+            }
             return;
         }
 
@@ -408,6 +548,9 @@ public class HUDView : MonoBehaviour
         _retryButtonPauseMenu?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
         _retryButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnRetryButtonClicked?.Invoke(); });
         _returnToMainMenuButtonStageFail?.onClick.AddListener(() => { PlayClickSound(); OnReturnToMainMenuButtonClicked?.Invoke(); });
+        _mapSelectLeftButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSelectLeftClicked?.Invoke(); });
+        _mapSelectRightButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSelectRightClicked?.Invoke(); });
+        _mapSwapButton?.onClick.AddListener(() => { PlayClickSound(); OnMapSwapClicked?.Invoke(); });
     }
 
     private void RemoveAllButtonListeners()
@@ -421,11 +564,14 @@ public class HUDView : MonoBehaviour
         _retryButtonPauseMenu?.onClick.RemoveAllListeners();
         _retryButtonStageFail?.onClick.RemoveAllListeners();
         _returnToMainMenuButtonStageFail?.onClick.RemoveAllListeners();
+        _mapSelectLeftButton?.onClick.RemoveAllListeners();
+        _mapSelectRightButton?.onClick.RemoveAllListeners();
+        _mapSwapButton?.onClick.RemoveAllListeners();
     }
 
     private void HandleInput()
     {   
-        if (TutorialManager.IsActive)
+        if (TutorialManager.IsActive || SceneTransitionManager.IsBusy)
         {
             return;
         }
@@ -492,6 +638,19 @@ public class HUDView : MonoBehaviour
         else
         {
             _gemImages[i].color = _emptyGemColor;
+        }
+    }
+
+    private void EnsureMenuButtonFeedback()
+    {
+        Button[] menuButtons =
+        {
+            _resumeButton, _returnToMainMenuButton, _quitGameButton, _retryButtonPauseMenu,
+            _retryButton, _goToNextStageButton, _retryButtonStageFail, _returnToMainMenuButtonStageFail,
+        };
+        foreach (var button in menuButtons)
+        {
+            UIButtonFeedback.Ensure(button);
         }
     }
 

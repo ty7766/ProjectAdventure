@@ -1,6 +1,5 @@
 ﻿using GameManager.Singleton;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class HUDSystemPresenter : MonoBehaviour
@@ -8,6 +7,7 @@ public class HUDSystemPresenter : MonoBehaviour
     [Header("References")]
     [SerializeField] private HUDView _hudView;
     [SerializeField] private StageManager _stageManager;
+    [SerializeField] private MapManager _mapManager;
 
     private void Awake()
     {
@@ -29,6 +29,23 @@ public class HUDSystemPresenter : MonoBehaviour
         _stageManager = stageManager;
     }
 
+    /// <summary>
+    /// 스테이지 전환 시 MapManager 레퍼런스를 재연결합니다.
+    /// </summary>
+    /// <param name="mapManager">현재 활성화된 스테이지의 MapManager</param>
+    public void Setup(MapManager mapManager)
+    {
+        _mapManager = mapManager;
+        if (_mapManager != null)
+        {
+            _hudView.StartMapSwapCooldownWatch(() => _mapManager.MapChangeCooldownRemaining01);
+        }
+        else
+        {
+            _hudView.StopMapSwapCooldownWatch();
+        }
+    }
+
     private void SubscribeButtonEvents()
     {
         if (_hudView == null) return;
@@ -38,6 +55,9 @@ public class HUDSystemPresenter : MonoBehaviour
         _hudView.OnQuitGameButtonClicked += HandleQuitGame;
         _hudView.OnRetryButtonClicked += HandleRetryStage;
         _hudView.OnGoToNextStageButtonClicked += HandleGoToNextStage;
+        _hudView.OnMapSelectLeftClicked += HandleMapSelectLeft;
+        _hudView.OnMapSelectRightClicked += HandleMapSelectRight;
+        _hudView.OnMapSwapClicked += HandleMapSwap;
     }
 
     private void UnsubscribeButtonEvents()
@@ -49,10 +69,33 @@ public class HUDSystemPresenter : MonoBehaviour
         _hudView.OnQuitGameButtonClicked -= HandleQuitGame;
         _hudView.OnRetryButtonClicked -= HandleRetryStage;
         _hudView.OnGoToNextStageButtonClicked -= HandleGoToNextStage;
+        _hudView.OnMapSelectLeftClicked -= HandleMapSelectLeft;
+        _hudView.OnMapSelectRightClicked -= HandleMapSelectRight;
+        _hudView.OnMapSwapClicked -= HandleMapSwap;
+    }
+
+    private void HandleMapSelectLeft()
+    {
+        _mapManager?.SelectMap(-1);
+    }
+
+    private void HandleMapSelectRight()
+    {
+        _mapManager?.SelectMap(1);
+    }
+
+    private void HandleMapSwap()
+    {
+        _mapManager?.SwapMap(1);
     }
 
     private void HandlePause()
     {
+        // 키보드 일시정지(HUDView.HandleInput)와 동일하게 튜토리얼/전환 연출 중에는 일시정지를 막는다
+        if (TutorialManager.IsActive || SceneTransitionManager.IsBusy)
+        {
+            return;
+        }
         _stageManager?.PauseGameSmoothly();
         _hudView.ShowPauseMenu();
         _hudView.HideHUD();
@@ -67,8 +110,15 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("dev-title");
+        LoadTitleScene();
+    }
+
+    /// <summary>
+    /// 플레이어를 중심으로 닫히는 전환 후 타이틀 씬으로 이동합니다. (timeScale은 덮인 뒤 복구)
+    /// </summary>
+    private static void LoadTitleScene()
+    {
+        SceneTransitionManager.TryLoadScene("dev-title", SceneTransitionOptions.ToTitle, () => Time.timeScale = 1f);
     }
 
     private void HandleQuitGame()
@@ -103,8 +153,12 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleRetryStage()
     {
-        Time.timeScale = 1f;
-        StageLoader.Instance?.ReloadCurrentStage();
+        // 같은 자리에서 다시 시작하므로 짧은 페이드로 덮고, 덮인 동안 상태를 되돌린다
+        SceneTransitionManager.TryRun(SceneTransitionOptions.Retry, () =>
+        {
+            Time.timeScale = 1f;
+            StageLoader.Instance?.ReloadCurrentStage();
+        });
     }
 
     private void HandleGoToNextStage()
@@ -122,12 +176,11 @@ public class HUDSystemPresenter : MonoBehaviour
                     "축하합니다!",
                     "모든 스테이지를 클리어하셨습니다!",
                     ("타이틀로", () => {
-                        Time.timeScale = 1f;
                         if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
                         {
                             GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                         }
-                        SceneManager.LoadScene("dev-title");
+                        LoadTitleScene();
                     })
                 );
             }
@@ -151,12 +204,11 @@ public class HUDSystemPresenter : MonoBehaviour
                     "스테이지 미해금",
                     "다음 스테이지는 아직 해금되지 않았습니다.",
                     ("타이틀로", () => {
-                        Time.timeScale = 1f;
                         if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
                         {
                             GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                         }
-                        SceneManager.LoadScene("dev-title");
+                        LoadTitleScene();
                     })
                 );
             }

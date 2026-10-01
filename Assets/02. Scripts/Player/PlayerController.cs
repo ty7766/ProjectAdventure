@@ -139,6 +139,7 @@ public class PlayerController : MonoBehaviour
         else
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerDamaged);
+            Haptics.Play(HapticType.Damage);
             _animator.SetTrigger(DamageHash);
             if(applyStun)
             {
@@ -215,6 +216,7 @@ public class PlayerController : MonoBehaviour
     private void Dead()
     {
         SoundManager.Instance.PlaySFX(SoundType.SFX_PlayerDead);
+        Haptics.Play(HapticType.Death);
 
         // Handle player death logic
         _isAlive = false;

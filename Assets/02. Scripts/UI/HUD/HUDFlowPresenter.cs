@@ -54,6 +54,7 @@ public class HUDFlowPresenter : MonoBehaviour
         if (_hudView == null) _hudView = GetComponent<HUDView>();
         if (_stageManager != null) _stageManager.OnStageCleared += HandleStageClear;
         if (_playerModel != null) _playerModel.OnPlayerDeath += HandlePlayerDeath;
+        _hudView.SetTouchControlsVisible(PlatformCapability.UseTouchUI);
     }
 
     private void Start()
@@ -105,6 +106,12 @@ public class HUDFlowPresenter : MonoBehaviour
         }
         NotificationPresenter.Reset();
 
+        // 튜토리얼 도중 재시작/스테이지 교체된 경우 이전 튜토리얼 세션을 정리한다 (카운트다운 후 처음부터 다시 시작)
+        if (_tutorialManager != null)
+        {
+            _tutorialManager.AbortTutorial();
+        }
+
         SoundManager.Instance?.PlayBGM(SoundType.None);
 
         _hudView.HideStageFailPanel();
@@ -125,26 +132,29 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private IEnumerator StartCountDown()
     {
-        _hudView.UpdateStageCountDownContent(_stageReadyString);
-        _hudView.ApplyStageCountDownAnimation(80f, 1.0f);
+        // 전환 연출이 화면을 다 걷은 뒤에 카운트다운을 시작한다 (덮인 동안 지나가 버리지 않도록)
+        while (SceneTransitionManager.IsBusy)
+        {
+            yield return null;
+        }
+
+        _hudView.PlayCountdownReady(_stageReadyString);
         yield return new WaitForSecondsRealtime(1.5f);
 
         for (int i = 3; i >= 1; i--)
         {
             SoundManager.Instance?.PlaySFX(SoundType.SFX_GameStartCountdown);
+            Haptics.Play(HapticType.CountdownTick);
 
-            _hudView.ApplyStageCountDownAnimation(128f, 0.5f);
-            _hudView.UpdateStageCountDownContent(i.ToString());
-            yield return new WaitForSecondsRealtime(0.5f);
-            _hudView.ApplyStageCountDownAnimation(100f, 0.5f);
-            yield return new WaitForSecondsRealtime(0.5f);
+            _hudView.PlayCountdownTick(i.ToString());
+            yield return new WaitForSecondsRealtime(1.0f);
         }
 
         SoundManager.Instance?.PlaySFX(SoundType.SFX_GameStart);
+        Haptics.Play(HapticType.CountdownGo);
         SoundManager.Instance?.PlayBGM(SoundType.BGM_BackGroundMusic);
 
-        _hudView.UpdateStageCountDownContent(_stageGoString);
-        _hudView.ApplyStageCountDownAnimation(120f, 0.2f);
+        _hudView.PlayCountdownGo(_stageGoString);
         yield return new WaitForSecondsRealtime(0.5f);
 
         _hudView.HideStageStartPanel();
@@ -154,7 +164,7 @@ public class HUDFlowPresenter : MonoBehaviour
         //처음 플레이 할 시 게임 시작 전 튜토리얼 보여주기 
         if (_tutorialManager != null && _tutorialManager.ShouldShowTutorial())
         {
-            _tutorialManager.StartTutorial(() => _stageManager?.StartStage());
+            _tutorialManager.StartTutorial(_stageManager, () => _stageManager?.StartStage());
         }
         else
         {

@@ -11,6 +11,9 @@ public class MapChangeEffect : MonoBehaviour
     [SerializeField]
     private float _enterDropDistance = 8f;
 
+    /// <summary>맵 교체 전환 애니메이션 길이 (초). 외부 타이밍 동기화용.</summary>
+    public float TransitionDuration => _transitionDuration;
+
     public void PlayExit(GameObject map)
     {
         StartCoroutine(AnimateExit(map, _transitionDuration));

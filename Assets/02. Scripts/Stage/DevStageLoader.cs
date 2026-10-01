@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using UnityEngine;
 
 public class DevStageLoader : MonoBehaviour
@@ -50,7 +50,11 @@ public class DevStageLoader : MonoBehaviour
         }
 
         // HUD 먼저 구독 (InitializeStage의 이벤트를 놓치지 않기 위해)
-        _hudStatusPresenter?.Setup(stageManager);
+        if (_hudStatusPresenter != null)
+        {
+            var effectController = _playerProperties != null ? _playerProperties.GetComponent<PlayerEffectController>() : null;
+            _hudStatusPresenter.Setup(stageManager, _playerProperties, effectController);
+        }
 
         stageManager.InitializeStage();
 
@@ -58,6 +62,10 @@ public class DevStageLoader : MonoBehaviour
 
         _hudFlowPresenter?.Setup(stageManager, _playerProperties);
         _hudSystemPresenter?.Setup(stageManager);
+        if (_hudSystemPresenter != null && mapManager != null)
+        {
+            _hudSystemPresenter.Setup(mapManager);
+        }
     }
 }
 #endif

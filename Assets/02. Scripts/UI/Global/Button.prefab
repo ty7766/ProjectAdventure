@@ -150,6 +150,7 @@ GameObject:
   - component: {fileID: 7190117480586031184}
   - component: {fileID: 2042822381871650965}
   - component: {fileID: 3074712167865589208}
+  - component: {fileID: 3739019027041282729}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -274,3 +275,26 @@ MonoBehaviour:
   m_PixelsPerUnitMultiplier: 1
   borderWidth: 0
   falloffDistance: 1
+--- !u!114 &3739019027041282729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8138009081785675542}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95d02a6c72d793848a4bed8fec2335ad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIButtonFeedback
+  _target: {fileID: 6808336044134566469}
+  _hoverScale: 1.12
+  _hoverTilt: 0
+  _hoverDuration: 0.15
+  _pressScale: 0.92
+  _pressDuration: 0.06
+  _releaseDuration: 0.22
+  _deniedShakeStrength: 12
+  _deniedDuration: 0.35
+  _hoverSound: 205
+  _deniedSound: 206
