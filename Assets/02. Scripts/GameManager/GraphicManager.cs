@@ -121,11 +121,13 @@ public class GraphicManager : Singleton<GraphicManager>
     /// <summary> 수직 동기화 설정 (0: 끔, 1: 켬) </summary>
     public void SetVSync(bool isOn)
     {
-#if !UNITY_ANDROID || UNITY_EDITOR
         // 모바일 실기기에서는 QualitySettings.vSyncCount가 무시되므로
         // FrameRateManager의 targetFrameRate 페이싱에 맡기고 여기서는 건드리지 않음
-        QualitySettings.vSyncCount = isOn ? 1 : 0;
-#endif
+        // (FrameRateManager와 같은 기준인 Application.isMobilePlatform으로 판정 — Android/iOS 공통, 에디터는 false)
+        if (!Application.isMobilePlatform)
+        {
+            QualitySettings.vSyncCount = isOn ? 1 : 0;
+        }
         PlayerPrefs.SetInt("VSync", isOn ? 1 : 0);
     }
 
