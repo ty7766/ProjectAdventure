@@ -52,14 +52,21 @@ public class MapManager : MonoBehaviour
     private float _mapChangeCooldownTime = 1.0f;
 
     private MapChangeEffect _mapChangeEffect;
-    private MapSelectionBeam _selectionBeam;
-    private Coroutine _refitBeamCoroutine;
+    private MapSelectionBeamPresenter _beamPresenter;
 
     //--- Events ---//
     /// <summary>맵 선택 커서가 이동했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
     public event System.Action<int> OnSelectionChanged;
     /// <summary>맵 교체가 성공했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
     public event System.Action<int> OnMapSwapped;
+    /// <summary>커서가 선택된 맵 그룹 위치로 갱신된 직후 호출됩니다. (시작/재시작/선택 이동/교체 모두 포함)</summary>
+    public event System.Action OnCursorMoved;
+    /// <summary>맵 교체가 확정되어 새 맵을 생성하기 직전에 호출됩니다.</summary>
+    public event System.Action OnMapSwapStarting;
+    /// <summary>플레이어가 선택된 맵 위에 있어 교체가 거부됐을 때 호출됩니다.</summary>
+    public event System.Action OnMapSwapBlocked;
+    /// <summary>스테이지 재시작으로 맵 선택 상태가 초기화될 때(커서 갱신 전) 호출됩니다.</summary>
+    public event System.Action OnStateReset;
 
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
@@ -96,6 +103,30 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    /// <summary>맵 교체 쿨타임(초)</summary>
+    public float MapChangeCooldownTime => _mapChangeCooldownTime;
+
+    /// <summary>현재 선택 커서가 가리키는 맵 그룹</summary>
+    public PathGroup SelectedGroup
+    {
+        get
+        {
+            if (_pathGroups == null || _selectedSlotIndex < 0 || _selectedSlotIndex >= _pathGroups.Length)
+            {
+                return null;
+            }
+            return _pathGroups[_selectedSlotIndex];
+        }
+    }
+
+    /// <summary>플레이어가 현재 선택된 맵 위에 있는지 (교체 불가 여부)</summary>
+    public bool IsPlayerOnSelectedMap()
+    {
+        PathGroup group = SelectedGroup;
+        return group != null && _playerCheckerScript != null
+            && _playerCheckerScript.CheckPlayerOnThisMap(group, _tileSize);
+    }
+
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
@@ -106,11 +137,10 @@ public class MapManager : MonoBehaviour
         if (_selectionCursor != null)
         {
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
-            _selectionBeam = _selectionCursor.GetComponentInChildren<MapSelectionBeam>(true);
-            if (_selectionBeam != null)
+            MapSelectionBeam selectionBeam = _selectionCursor.GetComponentInChildren<MapSelectionBeam>(true);
+            if (selectionBeam != null)
             {
-                // 초기 기본 규격 (첫 FitToBounds 전까지의 폴백)
-                _selectionBeam.SetTileSize(_tileSize);
+                _beamPresenter = new MapSelectionBeamPresenter(this, selectionBeam);
             }
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
@@ -128,8 +158,13 @@ public class MapManager : MonoBehaviour
 
     private void Update()
     {
-        // 플레이어가 맵에 오르거나 내리는 동안에도 빔 색상 피드백이 갱신되도록 주기적으로 체크
-        RefreshSelectionBeamState();
+        _beamPresenter?.Tick();
+    }
+
+    private void OnDestroy()
+    {
+        _beamPresenter?.Dispose();
+        _beamPresenter = null;
     }
 
     private void OnEnable()
@@ -165,11 +200,6 @@ public class MapManager : MonoBehaviour
     /// </summary>
     public void ResetState()
     {
-        if (_refitBeamCoroutine != null)
-        {
-            StopCoroutine(_refitBeamCoroutine);
-            _refitBeamCoroutine = null;
-        }
         _selectedSlotIndex = 0;
         _nextAllowedMapChangeTime = 0f;
         foreach (PathGroup group in _pathGroups)
@@ -183,6 +213,7 @@ public class MapManager : MonoBehaviour
                 }
             }
         }
+        OnStateReset?.Invoke();
         UpdateCursorPosition();
     }
 
@@ -281,84 +312,7 @@ public class MapManager : MonoBehaviour
             _selectionCursor.position = targetBasePos;
         }
 
-        // 선택된 맵의 실제 크기를 측정해 빔을 맵에 꼭 맞게 적응시킴
-        UpdateSelectionBeamFit(currentGroup);
-
-        RefreshSelectionBeamState();
-    }
-
-    /// <summary>
-    /// 그룹의 현재 활성 맵 인스턴스를 빔에 적용합니다.
-    /// 콜라이더 footprint(마칭 스퀘어)를 따라가며, 실패 시 렌더러 AABB로 폴백합니다.
-    /// </summary>
-    private void UpdateSelectionBeamFit(PathGroup group)
-    {
-        if (_selectionBeam == null)
-        {
-            return;
-        }
-
-        if (group.CurrentActivePath == null)
-        {
-            // 맵이 아직 없으면 SpawnPoint 중심의 기본 타일 규격으로 폴백
-            Vector3 fallbackCenter = group.SpawnPoint.position - Vector3.up * (_tileSize.y * 0.5f);
-            var fallbackBounds = new Bounds(fallbackCenter, _tileSize);
-            _selectionBeam.FitToBounds(fallbackBounds);
-            return;
-        }
-
-        // 맵 전체의 월드 바운딩 박스를 수집 (파티클 등 과대 바운드 제외)
-        var renderers = group.CurrentActivePath.GetComponentsInChildren<Renderer>();
-        Bounds bounds = default;
-        bool hasBounds = false;
-        for (int i = 0; i < renderers.Length; i++)
-        {
-            // 파티클/트레일 렌더러는 이펙트 재생 상태에 따라 바운드가 크게 변하므로 제외
-            if (renderers[i] is UnityEngine.ParticleSystemRenderer)
-            {
-                continue;
-            }
-
-            if (!hasBounds)
-            {
-                bounds = renderers[i].bounds;
-                hasBounds = true;
-            }
-            else
-            {
-                bounds.Encapsulate(renderers[i].bounds);
-            }
-        }
-
-        if (!hasBounds)
-        {
-            Vector3 fallbackCenter = group.SpawnPoint.position - Vector3.up * (_tileSize.y * 0.5f);
-            var fallbackBounds = new Bounds(fallbackCenter, _tileSize);
-            _selectionBeam.FitToBounds(fallbackBounds);
-            return;
-        }
-
-        _selectionBeam.FitToMap(group.CurrentActivePath, bounds);
-    }
-
-    /// <summary>
-    /// 선택된 맵 위에 플레이어가 올라가 있어 교체가 불가능한 경우 빔을 붉게 표시합니다.
-    /// </summary>
-    private void RefreshSelectionBeamState()
-    {
-        if (_selectionBeam == null || _playerCheckerScript == null)
-        {
-            return;
-        }
-
-        PathGroup currentGroup = _pathGroups[_selectedSlotIndex];
-        if (currentGroup == null || currentGroup.SpawnPoint == null)
-        {
-            return;
-        }
-
-        bool playerOnMap = _playerCheckerScript.CheckPlayerOnThisMap(currentGroup, _tileSize);
-        _selectionBeam.SetBlocked(playerOnMap);
+        OnCursorMoved?.Invoke();
     }
 
     private void TryChangeMap(int direction)
@@ -386,7 +340,7 @@ public class MapManager : MonoBehaviour
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
-            _selectionBeam?.SetBlocked(true);
+            OnMapSwapBlocked?.Invoke();
             return;
         }
 
@@ -394,43 +348,16 @@ public class MapManager : MonoBehaviour
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
-        // 교체 시작: 빔을 페이드아웃 (맵 낙하 애니메이션과 겹치는 글리치 방지)
-        _selectionBeam?.FadeOut();
-        if (_refitBeamCoroutine != null)
-        {
-            StopCoroutine(_refitBeamCoroutine);
-            _refitBeamCoroutine = null;
-        }
+        // 새 맵 생성 직전 통보 (빔 페이드아웃 등 연출은 구독자가 처리)
+        OnMapSwapStarting?.Invoke();
 
         TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
+        _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
         UpdateCursorPosition();
-        // 새 맵 인스턴스의 실제 크기에 빔 재적응 (페이드아웃 중이므로 보이지 않음)
-        UpdateSelectionBeamFit(targetGroup);
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
 
-        _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
-
-        // 쿨타임이 끝나는 시점에 맞춰 빔을 페이드인
-        _refitBeamCoroutine = StartCoroutine(RefitBeamIdle());
-
         OnMapSwapped?.Invoke(direction);
-    }
-
-    /// <summary>
-    /// 쿨타임이 끝나 빔이 다시 보여도 되는 시점까지 대기한 뒤, 최종 맵 위치로 재적응하고 페이드인합니다.
-    /// </summary>
-    private System.Collections.IEnumerator RefitBeamIdle()
-    {
-        yield return new WaitForSeconds(_mapChangeCooldownTime);
-
-        // 낙하 애니메이션 완료 후 최종 위치 기준으로 재측정한 뒤 페이드인
-        if (_selectedSlotIndex < _pathGroups.Length)
-        {
-            UpdateSelectionBeamFit(_pathGroups[_selectedSlotIndex]);
-        }
-        _selectionBeam?.FadeIn();
-        _refitBeamCoroutine = null;
     }
 
     private void SpawnPath(PathGroup group, int index)
