@@ -62,6 +62,11 @@ public abstract class UISequenceScreen : MonoBehaviour, IUIScreenTransition
         _wasSkipped = false;
         _pendingEnterComplete = onComplete;
         SetInputEnabled(_interactableDuringEnter);
+        if (!_interactableDuringEnter)
+        {
+            // 포인터는 blocksRaycasts로 막히지만 키보드/패드 Submit은 선택된 버튼에 그대로 들어가므로 선택을 해제한다
+            ReleaseSelection();
+        }
 
         _sequence = DOTween.Sequence().SetUpdate(true).SetLink(gameObject);
         BuildEnter(_sequence);
@@ -190,6 +195,11 @@ public abstract class UISequenceScreen : MonoBehaviour, IUIScreenTransition
     {
         _isEntering = false;
         SetInputEnabled(true);
+        // 입력이 열린 뒤 네비게이션 모드라면 기본 버튼에 포커스를 준다
+        if (!_interactableDuringEnter && TryGetComponent(out UIDefaultSelection defaultSelection))
+        {
+            defaultSelection.OnScreenShown();
+        }
         OnEnterCompleted();
 
         Action callback = _pendingEnterComplete;
@@ -213,6 +223,7 @@ public abstract class UISequenceScreen : MonoBehaviour, IUIScreenTransition
     /// <summary>
     /// 포인터 입력만 차단한다. interactable을 끄면 버튼이 Disabled 색으로 바뀌었다가
     /// 연출이 끝날 때 원래 색으로 튀므로 등장/퇴장 연출 중에도 버튼 색은 유지한다.
+    /// 키보드/패드 입력은 ReleaseSelection으로 선택을 비워 차단한다. (UIDefaultSelection은 blocksRaycasts가 꺼진 화면에 포커스를 주지 않음)
     /// </summary>
     private void SetInputEnabled(bool enabled)
     {
