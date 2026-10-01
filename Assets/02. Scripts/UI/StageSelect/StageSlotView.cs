@@ -51,11 +51,7 @@ public class StageSlotView : MonoBehaviour, ISelectHandler
     {
         _stageButton = GetComponent<Button>();
 
-        _feedback = GetComponent<UIButtonFeedback>();
-        if (_feedback == null)
-        {
-            _feedback = gameObject.AddComponent<UIButtonFeedback>();
-        }
+        _feedback = UIButtonFeedback.Ensure(this);
 
         if (_lockIcon == null && _lockedBlocker != null && _lockedBlocker.transform.childCount > 0)
         {

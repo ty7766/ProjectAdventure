@@ -74,6 +74,23 @@ public class UIButtonFeedback : MonoBehaviour,
     }
 
     //--- Public Methods ---//
+    /// <summary>
+    /// 대상에 UIButtonFeedback이 없으면 추가하고, 있으면 기존 컴포넌트를 반환한다.
+    /// (프리팹에 미리 붙여 인스펙터에서 조정한 값이 있으면 그대로 유지된다)
+    /// </summary>
+    public static UIButtonFeedback Ensure(Component target)
+    {
+        if (target == null)
+        {
+            return null;
+        }
+        if (!target.TryGetComponent(out UIButtonFeedback feedback))
+        {
+            feedback = target.gameObject.AddComponent<UIButtonFeedback>();
+        }
+        return feedback;
+    }
+
     public void SetHoverScale(float hoverScale)
     {
         _hoverScale = hoverScale;

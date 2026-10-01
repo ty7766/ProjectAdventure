@@ -160,9 +160,9 @@ public class TitleView : MonoBehaviour, IUIScreenTransition
         _exitButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnExitButtonClicked(); });
         _playButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnPlayButtonClicked(); });
         _optionsButton.onClick.AddListener(() => { PlayClickSound(); _titlePresenter.OnOptionsButtonClicked(); });
-        EnsureButtonFeedback(_playButton);
-        EnsureButtonFeedback(_optionsButton);
-        EnsureButtonFeedback(_exitButton);
+        UIButtonFeedback.Ensure(_playButton);
+        UIButtonFeedback.Ensure(_optionsButton);
+        UIButtonFeedback.Ensure(_exitButton);
         UIDefaultSelection.Ensure(gameObject, () => _playButton);
         GraphicManager.Instance.SetDoFMode("Title");
     }
@@ -216,14 +216,6 @@ public class TitleView : MonoBehaviour, IUIScreenTransition
         float parentUnitsPerCanvasUnit = parent.InverseTransformVector(_canvasRect.TransformVector(Vector3.right)).x;
 
         return new Vector2(home.x - distanceInCanvas * parentUnitsPerCanvasUnit, home.y);
-    }
-
-    private static void EnsureButtonFeedback(UnityEngine.UI.Button button)
-    {
-        if (button.GetComponent<UIButtonFeedback>() == null)
-        {
-            button.gameObject.AddComponent<UIButtonFeedback>();
-        }
     }
 
     private void DisposeButtonHandlers()

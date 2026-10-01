@@ -42,8 +42,8 @@ public class StageSelectView : MonoBehaviour, IStageSelectView, IUIScreenTransit
     {
         _presenter = new StageSelectPresenter(this);
         CacheSlotCanvasGroups();
-        EnsureButtonFeedback(_pageNextBtn);
-        EnsureButtonFeedback(_pagePrevBtn);
+        UIButtonFeedback.Ensure(_pageNextBtn);
+        UIButtonFeedback.Ensure(_pagePrevBtn);
         UIDefaultSelection.Ensure(gameObject, GetDefaultSelectable);
     }
 
@@ -237,14 +237,6 @@ public class StageSelectView : MonoBehaviour, IStageSelectView, IUIScreenTransit
             firstActive ??= slot.StageButton;
         }
         return firstActive;
-    }
-
-    private static void EnsureButtonFeedback(Button button)
-    {
-        if (button != null && button.GetComponent<UIButtonFeedback>() == null)
-        {
-            button.gameObject.AddComponent<UIButtonFeedback>();
-        }
     }
 
     private void AddButtonListeners()

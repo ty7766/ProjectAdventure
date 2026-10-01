@@ -129,10 +129,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
             buttonLabel.text = buttonText;
         }
 
-        if (newButton.GetComponent<UIButtonFeedback>() == null)
-        {
-            newButton.gameObject.AddComponent<UIButtonFeedback>();
-        }
+        UIButtonFeedback.Ensure(newButton);
 
         newButton.onClick.AddListener(() => onClickCallback?.Invoke());
     }
