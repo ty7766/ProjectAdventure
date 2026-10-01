@@ -1,6 +1,5 @@
 ﻿using GameManager.Singleton;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.Collections;
 
 public class HUDSystemPresenter : MonoBehaviour
@@ -106,8 +105,15 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenu()
     {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("dev-title");
+        LoadTitleScene();
+    }
+
+    /// <summary>
+    /// 플레이어를 중심으로 닫히는 전환 후 타이틀 씬으로 이동합니다. (timeScale은 덮인 뒤 복구)
+    /// </summary>
+    private static void LoadTitleScene()
+    {
+        SceneTransitionManager.TryLoadScene("dev-title", SceneTransitionOptions.ToTitle, () => Time.timeScale = 1f);
     }
 
     private void HandleQuitGame()
@@ -142,8 +148,12 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleRetryStage()
     {
-        Time.timeScale = 1f;
-        StageLoader.Instance?.ReloadCurrentStage();
+        // 같은 자리에서 다시 시작하므로 짧은 페이드로 덮고, 덮인 동안 상태를 되돌린다
+        SceneTransitionManager.TryRun(SceneTransitionOptions.Retry, () =>
+        {
+            Time.timeScale = 1f;
+            StageLoader.Instance?.ReloadCurrentStage();
+        });
     }
 
     private void HandleGoToNextStage()
@@ -161,12 +171,11 @@ public class HUDSystemPresenter : MonoBehaviour
                     "축하합니다!",
                     "모든 스테이지를 클리어하셨습니다!",
                     ("타이틀로", () => {
-                        Time.timeScale = 1f;
                         if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
                         {
                             GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                         }
-                        SceneManager.LoadScene("dev-title");
+                        LoadTitleScene();
                     })
                 );
             }
@@ -190,12 +199,11 @@ public class HUDSystemPresenter : MonoBehaviour
                     "스테이지 미해금",
                     "다음 스테이지는 아직 해금되지 않았습니다.",
                     ("타이틀로", () => {
-                        Time.timeScale = 1f;
                         if (GlobalUICanvasView.Instance != null && GlobalUICanvasView.Instance.PopupPresenter != null)
                         {
                             GlobalUICanvasView.Instance.PopupPresenter.HidePopup();
                         }
-                        SceneManager.LoadScene("dev-title");
+                        LoadTitleScene();
                     })
                 );
             }

@@ -16,6 +16,10 @@ public class HUDView : MonoBehaviour
     [Header("Show/Hide Animation")]
     [SerializeField] private float _showHideDuration = 0.2f;
 
+    [Header("Icon Feedback")]
+    [SerializeField, Tooltip("하트를 잃었을 때 흔들림 세기 (캔버스 단위)")] private float _heartLostShake = 8f;
+    [SerializeField, Tooltip("보석 획득 시 튀어오르는 크기")] private float _gemCollectPunch = 0.45f;
+
     [Header("Sprites")]
     [SerializeField]
     private Sprite _starFilledSprite;
@@ -124,6 +128,10 @@ public class HUDView : MonoBehaviour
     private bool _isPauseMenuActive = true;
     private Coroutine _fontSizeCoroutine;
     private Func<float> _mapChangeCooldownProvider;
+    private StageClearSequence _stageClearSequence;
+    private StageCountdownSequence _stageCountdownSequence;
+    private int _lastHealth = -1;
+    private int _lastCollectedGems = -1;
 
     //--- Properties ---//
     public bool IsPauseMenuActive
@@ -136,7 +144,16 @@ public class HUDView : MonoBehaviour
     private void Awake()
     {
         AddButtonListeners();
+        EnsureMenuButtonFeedback();
         _buffSlotPool = new BuffSlotPool(_contentParent, _buffItemPrefab);
+        if (_stageClearPanel != null)
+        {
+            _stageClearPanel.TryGetComponent(out _stageClearSequence);
+        }
+        if (_stageStartPanel != null)
+        {
+            _stageStartPanel.TryGetComponent(out _stageCountdownSequence);
+        }
     }
 
     private void Update()
@@ -204,6 +221,12 @@ public class HUDView : MonoBehaviour
         {
             UpdateHealthIcons(currentHealth, i);
         }
+
+        if (_lastHealth >= 0 && currentHealth != _lastHealth)
+        {
+            AnimateHealthChange(_lastHealth, currentHealth);
+        }
+        _lastHealth = currentHealth;
     }
 
     /// <summary>
@@ -225,6 +248,16 @@ public class HUDView : MonoBehaviour
                 _gemImages[i].gameObject.SetActive(false);
             }
         }
+
+        // 새로 채워진 보석만 튀어오름 (스테이지 재시작으로 줄어드는 경우는 연출 없음)
+        if (_lastCollectedGems >= 0)
+        {
+            for (int i = Mathf.Max(_lastCollectedGems, 0); i < Mathf.Min(collectedGems, safeRequired); i++)
+            {
+                PlayIconPunch(_gemImages[i].rectTransform, _gemCollectPunch);
+            }
+        }
+        _lastCollectedGems = collectedGems;
     }
 
     /// <summary>
@@ -343,6 +376,48 @@ public class HUDView : MonoBehaviour
         _fontSizeCoroutine = StartCoroutine(AnimateFontSize(targetFontSize, duration));
     }
 
+    /// <summary>
+    /// 카운트다운 준비 문구를 표출합니다.
+    /// </summary>
+    public void PlayCountdownReady(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayReady(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(80f, 1.0f);
+    }
+
+    /// <summary>
+    /// 카운트다운 숫자 한 박자를 표출합니다.
+    /// </summary>
+    public void PlayCountdownTick(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayTick(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(128f, 0.5f);
+    }
+
+    /// <summary>
+    /// 카운트다운 시작 신호(GO)를 표출합니다.
+    /// </summary>
+    public void PlayCountdownGo(string text)
+    {
+        if (_stageCountdownSequence != null)
+        {
+            _stageCountdownSequence.PlayGo(text);
+            return;
+        }
+        UpdateStageCountDownContent(text);
+        ApplyStageCountDownAnimation(120f, 0.2f);
+    }
+
     public void ShowStageStartPanel()
     {
         FadePanel(_stageStartPanel, true);
@@ -399,6 +474,13 @@ public class HUDView : MonoBehaviour
             CustomDebug.LogWarning("UpdateStageClearStarSprite: Index out of range.");
             return;
         }
+        if (_stageClearSequence != null)
+        {
+            // 연출이 빈 별 위에 채워진 별을 박아 넣으므로 바탕은 항상 빈 별
+            _stageClearStarImages[index].sprite = _starEmptySprite;
+            _stageClearSequence.SetStarEarned(index, isCleared);
+            return;
+        }
         _stageClearStarImages[index].sprite = isCleared ? _starFilledSprite : _starEmptySprite;
     }
 
@@ -407,6 +489,20 @@ public class HUDView : MonoBehaviour
     {
         if (panel == null)
         {
+            return;
+        }
+
+        // 화면 전용 시퀀스 연출이 있으면 단순 페이드 대신 사용
+        if (panel.TryGetComponent(out IUIScreenTransition transition))
+        {
+            if (show)
+            {
+                transition.PlayEnter(null);
+            }
+            else
+            {
+                transition.PlayExit(null);
+            }
             return;
         }
 
@@ -489,7 +585,7 @@ public class HUDView : MonoBehaviour
 
     private void HandleInput()
     {   
-        if (TutorialManager.IsActive)
+        if (TutorialManager.IsActive || SceneTransitionManager.IsBusy)
         {
             return;
         }
@@ -556,6 +652,56 @@ public class HUDView : MonoBehaviour
         else
         {
             _gemImages[i].color = _emptyGemColor;
+        }
+    }
+
+    /// <summary>
+    /// 하트 증감 반응. 잃은 하트는 움찔하며 흔들리고, 회복한 하트는 작게 시작해 튕기며 차오른다.
+    /// </summary>
+    private void AnimateHealthChange(int previousHealth, int currentHealth)
+    {
+        int count = _heartImages.Count;
+        if (currentHealth < previousHealth)
+        {
+            for (int i = Mathf.Clamp(currentHealth, 0, count); i < Mathf.Clamp(previousHealth, 0, count); i++)
+            {
+                RectTransform heart = _heartImages[i].rectTransform;
+                heart.DOComplete();
+                heart.DOPunchScale(Vector3.one * -0.35f, 0.35f, 8, 0.5f).SetUpdate(true);
+                heart.DOShakeAnchorPos(0.35f, _heartLostShake, 20, 90f, false, true).SetUpdate(true);
+            }
+        }
+        else
+        {
+            for (int i = Mathf.Clamp(previousHealth, 0, count); i < Mathf.Clamp(currentHealth, 0, count); i++)
+            {
+                RectTransform heart = _heartImages[i].rectTransform;
+                heart.DOComplete();
+                heart.localScale = Vector3.one * 0.4f;
+                heart.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+            }
+        }
+    }
+
+    private static void PlayIconPunch(RectTransform icon, float punch)
+    {
+        icon.DOComplete();
+        icon.DOPunchScale(Vector3.one * punch, 0.35f, 6, 0.5f).SetUpdate(true);
+    }
+
+    private void EnsureMenuButtonFeedback()
+    {
+        Button[] menuButtons =
+        {
+            _resumeButton, _returnToMainMenuButton, _quitGameButton, _retryButtonPauseMenu,
+            _retryButton, _goToNextStageButton, _retryButtonStageFail, _returnToMainMenuButtonStageFail,
+        };
+        foreach (var button in menuButtons)
+        {
+            if (button != null && button.GetComponent<UIButtonFeedback>() == null)
+            {
+                button.gameObject.AddComponent<UIButtonFeedback>();
+            }
         }
     }
 
