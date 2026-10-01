@@ -127,7 +127,9 @@ public class HUDView : MonoBehaviour
     //--- Fields ---//
     private bool _isPauseMenuActive = true;
     private Coroutine _fontSizeCoroutine;
-    private Func<float> _mapChangeCooldownProvider;
+    private MapSwapCooldownIndicator _mapSwapCooldown;
+    // Awake 이전(비활성 HUD)에 Setup으로 호출될 수 있으므로 지연 생성
+    private MapSwapCooldownIndicator MapSwapCooldown => _mapSwapCooldown ??= new MapSwapCooldownIndicator(_mapSwapCooldownImage);
     private StageClearSequence _stageClearSequence;
     private StageCountdownSequence _stageCountdownSequence;
     private int _lastHealth = -1;
@@ -159,29 +161,7 @@ public class HUDView : MonoBehaviour
     private void Update()
     {
         HandleInput();
-        UpdateMapSwapCooldownUI();
-    }
-
-    private void UpdateMapSwapCooldownUI()
-    {
-        if (_mapSwapCooldownImage == null || _mapChangeCooldownProvider == null)
-        {
-            return;
-        }
-
-        float remaining01 = _mapChangeCooldownProvider();
-        if (remaining01 <= 0f)
-        {
-            if (_mapSwapCooldownImage.enabled)
-            {
-                _mapSwapCooldownImage.fillAmount = 0f;
-                _mapSwapCooldownImage.enabled = false;
-            }
-            return;
-        }
-
-        _mapSwapCooldownImage.enabled = true;
-        _mapSwapCooldownImage.fillAmount = remaining01;
+        MapSwapCooldown.Tick();
     }
 
     /// <summary>
@@ -190,7 +170,7 @@ public class HUDView : MonoBehaviour
     /// <param name="remainingProvider">쿨다운 잔여 비율(0~1, 1 = 방금 교체됨)를 반환하는 함수</param>
     public void StartMapSwapCooldownWatch(Func<float> remainingProvider)
     {
-        _mapChangeCooldownProvider = remainingProvider;
+        MapSwapCooldown.Start(remainingProvider);
     }
 
     /// <summary>
@@ -198,11 +178,7 @@ public class HUDView : MonoBehaviour
     /// </summary>
     public void StopMapSwapCooldownWatch()
     {
-        _mapChangeCooldownProvider = null;
-        if (_mapSwapCooldownImage != null)
-        {
-            _mapSwapCooldownImage.enabled = false;
-        }
+        MapSwapCooldown.Stop();
     }
 
     private void OnDestroy()
@@ -211,6 +187,16 @@ public class HUDView : MonoBehaviour
     }
 
     //--- Public Methods ---//
+    /// <summary>
+    /// 아이콘 증감 연출의 기준값을 초기화합니다. 스테이지 시작/재시작 시 호출해
+    /// 이전 판의 값(예: 사망 시 체력 0)과 비교해 회복/획득 연출이 잘못 재생되지 않게 한다.
+    /// </summary>
+    public void ResetIconFeedbackBaseline()
+    {
+        _lastHealth = -1;
+        _lastCollectedGems = -1;
+    }
+
     /// <summary>
     /// UI의 체력 표시를 업데이트 합니다.
     /// </summary>
@@ -224,7 +210,7 @@ public class HUDView : MonoBehaviour
 
         if (_lastHealth >= 0 && currentHealth != _lastHealth)
         {
-            AnimateHealthChange(_lastHealth, currentHealth);
+            HUDIconFeedback.AnimateHealthChange(_heartImages, _lastHealth, currentHealth, _heartLostShake);
         }
         _lastHealth = currentHealth;
     }
@@ -254,7 +240,7 @@ public class HUDView : MonoBehaviour
         {
             for (int i = Mathf.Max(_lastCollectedGems, 0); i < Mathf.Min(collectedGems, safeRequired); i++)
             {
-                PlayIconPunch(_gemImages[i].rectTransform, _gemCollectPunch);
+                HUDIconFeedback.PlayPunch(_gemImages[i].rectTransform, _gemCollectPunch);
             }
         }
         _lastCollectedGems = collectedGems;
@@ -655,40 +641,6 @@ public class HUDView : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 하트 증감 반응. 잃은 하트는 움찔하며 흔들리고, 회복한 하트는 작게 시작해 튕기며 차오른다.
-    /// </summary>
-    private void AnimateHealthChange(int previousHealth, int currentHealth)
-    {
-        int count = _heartImages.Count;
-        if (currentHealth < previousHealth)
-        {
-            for (int i = Mathf.Clamp(currentHealth, 0, count); i < Mathf.Clamp(previousHealth, 0, count); i++)
-            {
-                RectTransform heart = _heartImages[i].rectTransform;
-                heart.DOComplete();
-                heart.DOPunchScale(Vector3.one * -0.35f, 0.35f, 8, 0.5f).SetUpdate(true);
-                heart.DOShakeAnchorPos(0.35f, _heartLostShake, 20, 90f, false, true).SetUpdate(true);
-            }
-        }
-        else
-        {
-            for (int i = Mathf.Clamp(previousHealth, 0, count); i < Mathf.Clamp(currentHealth, 0, count); i++)
-            {
-                RectTransform heart = _heartImages[i].rectTransform;
-                heart.DOComplete();
-                heart.localScale = Vector3.one * 0.4f;
-                heart.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
-            }
-        }
-    }
-
-    private static void PlayIconPunch(RectTransform icon, float punch)
-    {
-        icon.DOComplete();
-        icon.DOPunchScale(Vector3.one * punch, 0.35f, 6, 0.5f).SetUpdate(true);
-    }
-
     private void EnsureMenuButtonFeedback()
     {
         Button[] menuButtons =
@@ -698,10 +650,7 @@ public class HUDView : MonoBehaviour
         };
         foreach (var button in menuButtons)
         {
-            if (button != null && button.GetComponent<UIButtonFeedback>() == null)
-            {
-                button.gameObject.AddComponent<UIButtonFeedback>();
-            }
+            UIButtonFeedback.Ensure(button);
         }
     }
 

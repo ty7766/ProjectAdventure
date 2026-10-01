@@ -13,21 +13,9 @@ public class HUDStatusPresenter : MonoBehaviour
     {
         // View가 없으면 찾아주기 (필요시)
         if (_hudView == null) _hudView = GetComponent<HUDView>();
-        if (_playerModel == null) _playerModel = GetComponentInParent<PlayerProperties>();
-        if (_effectController == null) _effectController = GetComponentInParent<PlayerEffectController>();
-        _playerModel = _playerModel != null ? _playerModel : UnityEngine.Object.FindFirstObjectByType<PlayerProperties>();
-        _effectController = _effectController != null ? _effectController : UnityEngine.Object.FindFirstObjectByType<PlayerEffectController>();
 
+        // 플레이어/스테이지 레퍼런스는 인스펙터 지정값 또는 StageLoader/DevStageLoader의 Setup 주입만 사용한다
         SubscribeEventHandlers();
-    }
-
-    /// <summary>
-    /// 스테이지 전환 시 StageManager 레퍼런스를 재연결하고 이벤트를 재구독합니다.
-    /// 프리팹에서 _playerModel/_effectController가 비어있어도 동작하도록 런타임 주입 경로를 제공합니다.
-    /// </summary>
-    public void Setup(StageManager stageManager)
-    {
-        Setup(stageManager, _playerModel, _effectController);
     }
 
     /// <summary>
@@ -74,7 +62,8 @@ public class HUDStatusPresenter : MonoBehaviour
             }
         }
 
-        // 현재 값으로 UI 초기 동기화
+        // 현재 값으로 UI 초기 동기화 (새 판이므로 이전 판의 값과 비교한 증감 연출은 재생하지 않음)
+        _hudView.ResetIconFeedbackBaseline();
         if (_playerModel != null)
         {
             _hudView.UpdateHealthUI(_playerModel.Health);
