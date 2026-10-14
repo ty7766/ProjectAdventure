@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -84,6 +84,11 @@ public class GlobalUICanvasFPSMonitorPresenter
 
     public void ShowMonitor()
     {
+        if (PlatformCapability.UseTouchUI)
+        {
+            Debug.Log("FPS Monitor is disabled on touch UI platforms.");
+            return;
+        }
         _isEnabled = true;
         _view.ShowFPSMonitor();
     }

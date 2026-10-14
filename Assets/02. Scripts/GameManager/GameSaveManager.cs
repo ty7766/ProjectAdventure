@@ -3,7 +3,6 @@ using System.IO;
 using Utils.IO;
 using UnityEngine;
 using Newtonsoft.Json;
-using UnityEngine.SceneManagement;
 
 namespace GameManager.Singleton
 {
@@ -78,7 +77,7 @@ namespace GameManager.Singleton
 
         /// <summary>
         /// 스테이지 번호로 스테이지를 로드합니다. 게임 씬에 있으면 StageLoader로 프리팹을 교체하고,
-        /// 타이틀 등 다른 씬에 있으면 게임 씬(PlayStage)으로 이동합니다.
+        /// 타이틀 등 다른 씬에 있으면 게임 씬(PlayStage)으로 이동합니다. 두 경우 모두 전환 연출로 화면을 덮은 뒤 진행합니다.
         /// </summary>
         /// <param name="stageNumber">로드할 스테이지 번호 (1-based)</param>
         public void LoadStage(int stageNumber)
@@ -89,16 +88,27 @@ namespace GameManager.Singleton
                 return;
             }
 
+            // 전환 연출 중 중복 요청(버튼 연타 등)은 무시
+            if (SceneTransitionManager.IsBusy)
+            {
+                return;
+            }
+
             _currentStage = stageNumber;
+            SceneTransitionOptions transition = SceneTransitionOptions.StageChange(stageNumber);
 
             //이미 게임 씬이면 프리팹만 교체, 아니면 씬 이동후 StageLoader가 처리
             if (StageLoader.HasInstance)
             {
-                StageLoader.Instance.LoadStage(stageNumber);
+                SceneTransitionManager.TryRun(transition, () =>
+                {
+                    Time.timeScale = 1f;
+                    StageLoader.Instance.LoadStage(stageNumber);
+                });
             }
             else
             {
-                SceneManager.LoadScene("PlayStage");
+                SceneTransitionManager.TryLoadScene("PlayStage", transition);
             }
         }
 

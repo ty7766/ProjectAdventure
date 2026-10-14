@@ -418,7 +418,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e04572a6bc5476746a96c83477e7df0d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraAngleOffset: -75
+  _cameraAngleOffset: -60
   _fallThresholdY: -10
   _respawnDelay: 1.5
   _invincibleTime: 2
@@ -490,6 +490,14 @@ MonoBehaviour:
   _occludedLayerName: PlayerOccluded
   _targetRenderers:
   - {fileID: 8048908101749801786}
+  _outlineMaterial: {fileID: 0}
+  _color: {r: 0.2, g: 0.8, b: 1, a: 1}
+  _intensity: 2.5
+  _alpha: 0.9
+  _rimPower: 5
+  _rimThreshold: 0.35
+  _rimSoftness: 0.25
+  _fillBias: 0
 --- !u!1 &1653475845376044346
 GameObject:
   m_ObjectHideFlags: 0

@@ -89,6 +89,12 @@ public class StageObjectObserver : MonoBehaviour
             return;
         }
 
+        // 타이머가 정지된 동안(시작 전/클리어 후)에는 시간 초과를 판정하지 않는다.
+        if (!_stageManager.IsTimerRunning)
+        {
+            return;
+        }
+
         for (int i = _timeLimits.Count - 1; i >= 0; i--)
         {
             if (_stageManager.StageTimer > _timeLimits[i])

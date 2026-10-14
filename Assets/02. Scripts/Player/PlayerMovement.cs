@@ -37,14 +37,10 @@ public class PlayerMovement : MonoBehaviour
         GetPlayerComponents();
     }
 
-    private void Update()
-    {
-        ChangeViewDirection();
-    }
-
     private void FixedUpdate()
     {
         ApplyMovement();
+        ChangeViewDirection();
     }
 
     private void OnDrawGizmos()
@@ -97,11 +93,11 @@ public class PlayerMovement : MonoBehaviour
 
     private void ChangeViewDirection()
     {
-        if (_direction != Vector3.zero)
-        {
-            Quaternion targetRotation = Quaternion.LookRotation(_direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _turnSpeed * Time.deltaTime);
-        }
+        if (_direction == Vector3.zero) return;
+
+        Quaternion target = Quaternion.LookRotation(_direction);
+        float t = 1f - Mathf.Exp(-_turnSpeed * Time.fixedDeltaTime); // 프레임 독립 감쇠
+        _rb.MoveRotation(Quaternion.Slerp(_rb.rotation, target, t));
     }
 
     private void ApplyMovement()

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 //맵 프리팹 클래스 
@@ -52,6 +52,21 @@ public class MapManager : MonoBehaviour
     private float _mapChangeCooldownTime = 1.0f;
 
     private MapChangeEffect _mapChangeEffect;
+    private MapSelectionBeamPresenter _beamPresenter;
+
+    //--- Events ---//
+    /// <summary>맵 선택 커서가 이동했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
+    public event System.Action<int> OnSelectionChanged;
+    /// <summary>맵 교체가 성공했을 때 호출됩니다. (direction: -1 이전 / +1 다음)</summary>
+    public event System.Action<int> OnMapSwapped;
+    /// <summary>커서가 선택된 맵 그룹 위치로 갱신된 직후 호출됩니다. (시작/재시작/선택 이동/교체 모두 포함)</summary>
+    public event System.Action OnCursorMoved;
+    /// <summary>맵 교체가 확정되어 새 맵을 생성하기 직전에 호출됩니다.</summary>
+    public event System.Action OnMapSwapStarting;
+    /// <summary>플레이어가 선택된 맵 위에 있어 교체가 거부됐을 때 호출됩니다.</summary>
+    public event System.Action OnMapSwapBlocked;
+    /// <summary>스테이지 재시작으로 맵 선택 상태가 초기화될 때(커서 갱신 전) 호출됩니다.</summary>
+    public event System.Action OnStateReset;
 
     private int _selectedSlotIndex = 0;
     private float _nextAllowedMapChangeTime;
@@ -71,6 +86,47 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 맵 교체 쿨다운 잔여 비율(1 = 방금 교체됨, 0 = 사용 가능).
+    /// HUD(모바일 터치 UI)의 쿨다운 Fill 연출에 사용합니다.
+    /// </summary>
+    public float MapChangeCooldownRemaining01
+    {
+        get
+        {
+            float remaining = _nextAllowedMapChangeTime - Time.time;
+            if (remaining <= 0f)
+            {
+                return 0f;
+            }
+            return Mathf.Clamp01(remaining / _mapChangeCooldownTime);
+        }
+    }
+
+    /// <summary>맵 교체 쿨타임(초)</summary>
+    public float MapChangeCooldownTime => _mapChangeCooldownTime;
+
+    /// <summary>현재 선택 커서가 가리키는 맵 그룹</summary>
+    public PathGroup SelectedGroup
+    {
+        get
+        {
+            if (_pathGroups == null || _selectedSlotIndex < 0 || _selectedSlotIndex >= _pathGroups.Length)
+            {
+                return null;
+            }
+            return _pathGroups[_selectedSlotIndex];
+        }
+    }
+
+    /// <summary>플레이어가 현재 선택된 맵 위에 있는지 (교체 불가 여부)</summary>
+    public bool IsPlayerOnSelectedMap()
+    {
+        PathGroup group = SelectedGroup;
+        return group != null && _playerCheckerScript != null
+            && _playerCheckerScript.CheckPlayerOnThisMap(group, _tileSize);
+    }
+
     private void Awake()
     {
         Assert.IsNotNull(_pathGroups, $"[MapManager] '{name}'에 Path Groups가 할당되지 않았습니다.");
@@ -81,6 +137,11 @@ public class MapManager : MonoBehaviour
         if (_selectionCursor != null)
         {
             _cursorScript = _selectionCursor.GetComponent<FloatingCursor>();
+            MapSelectionBeam selectionBeam = _selectionCursor.GetComponentInChildren<MapSelectionBeam>(true);
+            if (selectionBeam != null)
+            {
+                _beamPresenter = new MapSelectionBeamPresenter(this, selectionBeam);
+            }
         }
         _playerCheckerScript = GetComponent<MapPlayerChecker>();
 
@@ -93,6 +154,17 @@ public class MapManager : MonoBehaviour
     {
         MapGeneration();
         UpdateCursorPosition();
+    }
+
+    private void Update()
+    {
+        _beamPresenter?.Tick();
+    }
+
+    private void OnDestroy()
+    {
+        _beamPresenter?.Dispose();
+        _beamPresenter = null;
     }
 
     private void OnEnable()
@@ -141,6 +213,7 @@ public class MapManager : MonoBehaviour
                 }
             }
         }
+        OnStateReset?.Invoke();
         UpdateCursorPosition();
     }
 
@@ -171,6 +244,24 @@ public class MapManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 키보드 입력 외(터치 UI 등)에서 맵 선택 커서를 이동시키는 public 진입점.
+    /// direction: -1 = 왼쪽, 1 = 오른쪽
+    /// </summary>
+    public void SelectMap(int direction)
+    {
+        ChangeSelection(direction);
+    }
+
+    /// <summary>
+    /// 키보드 입력 외(터치 UI 등)에서 선택된 맵 그룹의 맵을 교체하는 public 진입점.
+    /// direction: -1 = 이전 맵, 1 = 다음 맵
+    /// </summary>
+    public void SwapMap(int direction)
+    {
+        TryChangeMap(direction);
+    }
+
     //direction이 -1이면 왼쪽, 1이면 오른쪽
     private void ChangeSelection(int direction)
     {
@@ -192,7 +283,9 @@ public class MapManager : MonoBehaviour
         }
 
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapSwitch);
+        Haptics.Play(HapticType.Selection);
         UpdateCursorPosition();
+        OnSelectionChanged?.Invoke(direction);
     }
 
     private void UpdateCursorPosition()
@@ -219,6 +312,8 @@ public class MapManager : MonoBehaviour
         {
             _selectionCursor.position = targetBasePos;
         }
+
+        OnCursorMoved?.Invoke();
     }
 
     private void TryChangeMap(int direction)
@@ -231,6 +326,7 @@ public class MapManager : MonoBehaviour
         if (Time.time < _nextAllowedMapChangeTime)
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
+            Haptics.Play(HapticType.Denied);
             return;
         }
 
@@ -246,6 +342,8 @@ public class MapManager : MonoBehaviour
         if (_playerCheckerScript.CheckPlayerOnThisMap(targetGroup, _tileSize))
         {
             SoundManager.Instance.PlaySFX(SoundType.SFX_MapChangeAlert);
+            Haptics.Play(HapticType.Denied);
+            OnMapSwapBlocked?.Invoke();
             return;
         }
 
@@ -253,12 +351,17 @@ public class MapManager : MonoBehaviour
 
         targetGroup.CurrentPathIndex = (targetGroup.CurrentPathIndex + direction + totalCount) % totalCount;
 
+        // 새 맵 생성 직전 통보 (빔 페이드아웃 등 연출은 구독자가 처리)
+        OnMapSwapStarting?.Invoke();
+
         TransitionPath(targetGroup, targetGroup.CurrentPathIndex);
 
+        _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
         UpdateCursorPosition();
         SoundManager.Instance.PlaySFX(SoundType.SFX_MapChange);
+        Haptics.Play(HapticType.MapSwap);
 
-        _nextAllowedMapChangeTime = Time.time + _mapChangeCooldownTime;
+        OnMapSwapped?.Invoke(direction);
     }
 
     private void SpawnPath(PathGroup group, int index)

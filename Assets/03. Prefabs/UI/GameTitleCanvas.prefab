@@ -423,6 +423,11 @@ MonoBehaviour:
   _playButton: {fileID: 6379769993427326555}
   _optionsButton: {fileID: 5492453814654357956}
   _exitButton: {fileID: 7795351460375721039}
+  _slideTargets:
+  - {fileID: 776529771869129965}
+  - {fileID: 7891779083681965576}
+  - {fileID: 5071379793037486695}
+  - {fileID: 9126091862330716278}
   _flowController: {fileID: 0}
 --- !u!225 &1227327686993939685
 CanvasGroup:

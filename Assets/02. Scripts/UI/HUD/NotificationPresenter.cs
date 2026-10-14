@@ -29,6 +29,8 @@ public class NotificationPresenter : MonoBehaviour
     private Vector2 _hiddenPosition = new Vector2(0, 150);
     [SerializeField]
     private Vector2 _shownPosition = new Vector2(0, -50);
+    [SerializeField, Tooltip("숨김 위치에서 화면 가장자리 밖으로 추가로 더 밀어낼 거리 (그림자/외곽선 여유)")]
+    private float _offscreenMargin = 24f;
 
     [Header("Timing Settings")]
     [SerializeField]
@@ -106,15 +108,48 @@ public class NotificationPresenter : MonoBehaviour
 
         // 1단계: 등장 (Slide Down)
         PopupContext currentContext = _popupQueue.Dequeue();
-        _view.ShowPopupAt(_hiddenPosition, currentContext);
-        yield return StartCoroutine(_view.MovePopup(_hiddenPosition, _shownPosition, _animDuration));
+        Vector2 hiddenPosition = ResolveHiddenPosition();
+        _view.ShowPopupAt(hiddenPosition, currentContext);
+        yield return StartCoroutine(_view.MovePopup(hiddenPosition, _shownPosition, _animDuration));
 
         // 2단계: 대기
         yield return new WaitForSecondsRealtime(_showDuration);
 
         // 3단계: 퇴장 (Slide Up)
-        yield return StartCoroutine(_view.MovePopup(_shownPosition, _hiddenPosition, _animDuration));
+        yield return StartCoroutine(_view.MovePopup(_shownPosition, hiddenPosition, _animDuration));
         _isShowingPopup = false; 
+    }
+
+    /// <summary>
+    /// 인스펙터의 숨김 위치가 실제 크기(터치 배율 포함)로는 화면 밖으로 다 나가지 못할 때 보정한다.
+    /// 화면 가장자리에 앵커된 상태에서, 피벗 반대편 변까지 가장자리 밖으로 나가는 위치를 최소값으로 쓴다.
+    /// </summary>
+    private Vector2 ResolveHiddenPosition()
+    {
+        var rect = (RectTransform)transform;
+        Vector2 size = Vector2.Scale(rect.rect.size, rect.localScale);
+        Vector2 slide = _hiddenPosition - _shownPosition;
+        Vector2 hidden = _hiddenPosition;
+
+        if (slide.x > 0f && rect.anchorMin.x >= 1f)
+        {
+            hidden.x = Mathf.Max(hidden.x, size.x * rect.pivot.x + _offscreenMargin);
+        }
+        else if (slide.x < 0f && rect.anchorMax.x <= 0f)
+        {
+            hidden.x = Mathf.Min(hidden.x, -size.x * (1f - rect.pivot.x) - _offscreenMargin);
+        }
+
+        if (slide.y > 0f && rect.anchorMin.y >= 1f)
+        {
+            hidden.y = Mathf.Max(hidden.y, size.y * rect.pivot.y + _offscreenMargin);
+        }
+        else if (slide.y < 0f && rect.anchorMax.y <= 0f)
+        {
+            hidden.y = Mathf.Min(hidden.y, -size.y * (1f - rect.pivot.y) - _offscreenMargin);
+        }
+
+        return hidden;
     }
 
 

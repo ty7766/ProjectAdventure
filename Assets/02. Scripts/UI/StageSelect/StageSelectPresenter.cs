@@ -1,4 +1,5 @@
-﻿using GameManager.Singleton;
+﻿using DG.Tweening;
+using GameManager.Singleton;
 using UnityEngine;
 
 public class StageSelectPresenter
@@ -6,6 +7,9 @@ public class StageSelectPresenter
     private IStageSelectView _view;
     private int _pageIndex = 0;
     private const int STAGES_PER_PAGE = 8; // 페이지당 슬롯 수
+    private const float LOCKED_POPUP_DELAY = 0.2f; // 잠김 연출을 먼저 보여준 뒤 팝업을 띄운다
+
+    private Tween _lockedPopupDelay;
 
     public StageSelectPresenter(IStageSelectView view)
     {
@@ -49,7 +53,12 @@ public class StageSelectPresenter
         }
         else
         {
-            ShowUnlockConditionPopup(stageNumber);
+            if (_lockedPopupDelay != null && _lockedPopupDelay.IsActive())
+            {
+                return;
+            }
+            _view.PlayLockedSlotFeedback(slotIndex);
+            _lockedPopupDelay = DOVirtual.DelayedCall(LOCKED_POPUP_DELAY, () => ShowUnlockConditionPopup(stageNumber), true);
         }
     }
 

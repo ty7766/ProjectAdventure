@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
 using TMPro;
 
 public class UI_GraphicTabView : MonoBehaviour
@@ -29,11 +30,34 @@ public class UI_GraphicTabView : MonoBehaviour
     [Header("Performance Monitor Settings")]
     [SerializeField] private TMP_Dropdown _dropDownFpsMonitor;
 
+    [Header("Touch UI Exclusions")]
+    [SerializeField, Tooltip("터치 UI(모바일)에서 숨길 그래픽 설정 항목들의 부모 오브젝트(행) 목록")]
+    private List<GameObject> _hideOnTouchUI;
+
     private UI_GraphicTabPresenter _presenter;
 
     private void Awake()
     {
+        ApplyTouchUIExclusions();
         _presenter = new UI_GraphicTabPresenter(this);
+    }
+
+    /// <summary>
+    /// 터치 UI(모바일)에 적합하지 않은 그래픽 설정 항목을 비활성화한다.
+    /// 행 단위(라벨 + 컨트롤을 포함한 부모 오브젝트)로 숨겨 라벨이 남지 않도록 한다.
+    /// </summary>
+    private void ApplyTouchUIExclusions()
+    {
+        if (!PlatformCapability.UseTouchUI) return;
+
+        if (_hideOnTouchUI == null) return;
+        foreach (var row in _hideOnTouchUI)
+        {
+            if (row != null)
+            {
+                row.SetActive(false);
+            }
+        }
     }
 
     private void Start()
