@@ -97,6 +97,9 @@ namespace GameManager.Singleton
             _currentStage = stageNumber;
             SceneTransitionOptions transition = SceneTransitionOptions.StageChange(stageNumber);
 
+            // 화면이 iris로 닫히는 동안 현재 BGM(타이틀 등)도 함께 페이드 아웃
+            SoundManager.Instance?.PlayBGM(SoundType.None, 0.8f);
+
             //이미 게임 씬이면 프리팹만 교체, 아니면 씬 이동후 StageLoader가 처리
             if (StageLoader.HasInstance)
             {

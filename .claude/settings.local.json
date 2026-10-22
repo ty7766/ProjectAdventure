@@ -10,5 +10,37 @@
       "PowerShell(git branch *)",
       "Bash(grep -iE \"\\\\.\\(md|txt|pdf|docx|xlsx|csv\\)$\")"
     ]
+  },
+  "skillOverrides": {
+    "2d-pixel-perfect": "user-invocable-only",
+    "audio-setup-mixers": "user-invocable-only",
+    "build-live-game": "user-invocable-only",
+    "design-taste-frontend": "user-invocable-only",
+    "find-skills": "user-invocable-only",
+    "generate-editor-search-query": "user-invocable-only",
+    "impeccable": "user-invocable-only",
+    "implement-in-app-purchases": "user-invocable-only",
+    "initialize-ai-navigation": "user-invocable-only",
+    "levelplay-unity-integration": "user-invocable-only",
+    "localization": "user-invocable-only",
+    "manage-sprite-atlas": "user-invocable-only",
+    "migrate-birp-to-urp": "user-invocable-only",
+    "new-unity-project": "user-invocable-only",
+    "opencode-delegate": "user-invocable-only",
+    "optimize-audio": "user-invocable-only",
+    "optimize-text-mesh-pro": "user-invocable-only",
+    "optimize-web": "user-invocable-only",
+    "setup-multiplayer-services": "user-invocable-only",
+    "setup-vivox-voice-chat": "user-invocable-only",
+    "shader-graph-create-custom-node": "user-invocable-only",
+    "sprite-editor": "user-invocable-only",
+    "sprite-segment-3x3grid": "user-invocable-only",
+    "tilemap-palette-create": "user-invocable-only",
+    "tilemap-ruletile-createempty": "user-invocable-only",
+    "ui-ugui": "user-invocable-only",
+    "ui-uitk": "user-invocable-only",
+    "unity-package-management": "user-invocable-only",
+    "urp-postprocessing": "name-only",
+    "validate-urp-render-graph-renderer-feature": "user-invocable-only"
   }
 }

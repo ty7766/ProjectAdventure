@@ -33,6 +33,9 @@ public class StageCountdownSequence : UISequenceScreen
     [SerializeField, Range(0.1f, 0.6f)] private float _popDuration = 0.35f;
     [SerializeField, Range(0.5f, 1f), Tooltip("숫자가 자리 잡은 뒤 다음 박자까지 줄어드는 비율")] private float _breathScale = 0.92f;
     [SerializeField, Range(0.3f, 1.2f)] private float _breathDuration = 0.6f;
+    [SerializeField, Tooltip("준비 문구가 사라지기 시작하는 시점 (다음 박자 1.5초 전에 완전히 사라져야 함)")] private float _readyFadeOutStart = 1.1f;
+    [SerializeField, Tooltip("숫자가 사라지기 시작하는 시점 (다음 박자 1.0초 전에 완전히 사라져야 함)")] private float _tickFadeOutStart = 0.62f;
+    [SerializeField, Range(0.1f, 0.4f)] private float _fadeOutDuration = 0.25f;
     [SerializeField] private float _ringMaxScale = 1.6f;
     [SerializeField] private float _goRingMaxScale = 2.4f;
 
@@ -67,18 +70,20 @@ public class StageCountdownSequence : UISequenceScreen
         _beatSequence.Insert(0f, _label.DOFade(1f, 0.5f).SetEase(Ease.OutQuad));
         _beatSequence.Insert(0f, DOTween.To(() => _label.characterSpacing, value => _label.characterSpacing = value, _readySpacingTo, 0.9f).SetEase(Ease.OutCubic));
         _beatSequence.Insert(0f, _label.rectTransform.DOScale(1f, 0.9f).SetEase(Ease.OutCubic));
+        // 다음 박자 전에 완전히 사라져 빈 화면이 되도록 함
+        _beatSequence.Insert(_readyFadeOutStart, _label.DOFade(0f, _fadeOutDuration).SetEase(Ease.InSine));
     }
 
     /// <summary>카운트 숫자 한 박자</summary>
     public void PlayTick(string text)
     {
-        PlayBeat(text, _numberFontSize, _labelBaseColor, 0.5f, 1.8f, _ringMaxScale, 0.6f);
+        PlayBeat(text, _numberFontSize, _labelBaseColor, 0.5f, 1.8f, _ringMaxScale, 0.6f, true);
     }
 
     /// <summary>GO! 박자: 강조색으로 더 크게</summary>
     public void PlayGo(string text)
     {
-        PlayBeat(text, _goFontSize, _goColor, 0.3f, 2.4f, _goRingMaxScale, 0.85f);
+        PlayBeat(text, _goFontSize, _goColor, 0.3f, 2.4f, _goRingMaxScale, 0.85f, false);
     }
 
     //--- Protected Methods ---//
@@ -129,7 +134,7 @@ public class StageCountdownSequence : UISequenceScreen
     }
 
     //--- Private Methods ---//
-    private void PlayBeat(string text, float fontSize, Color color, float fromScale, float overshoot, float ringScale, float ringAlpha)
+    private void PlayBeat(string text, float fontSize, Color color, float fromScale, float overshoot, float ringScale, float ringAlpha, bool fadeOutBeforeNext)
     {
         if (!BeginBeat())
         {
@@ -148,6 +153,11 @@ public class StageCountdownSequence : UISequenceScreen
         _beatSequence.Insert(0f, _label.DOFade(1f, 0.12f).SetEase(Ease.OutQuad));
         _beatSequence.Insert(0f, labelRect.DOScale(1f, _popDuration).SetEase(Ease.OutBack, overshoot));
         _beatSequence.Insert(_popDuration, labelRect.DOScale(_breathScale, _breathDuration).SetEase(Ease.InOutSine));
+        if (fadeOutBeforeNext)
+        {
+            // 다음 숫자가 뜨기 전에 완전히 사라진다 (교차 없이 글자가 하나씩만 보임)
+            _beatSequence.Insert(_tickFadeOutStart, _label.DOFade(0f, _fadeOutDuration).SetEase(Ease.InSine));
+        }
 
         if (_ring != null)
         {
