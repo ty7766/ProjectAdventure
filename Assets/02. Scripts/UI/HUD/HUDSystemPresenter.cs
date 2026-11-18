@@ -110,7 +110,7 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleReturnToMainMenu()
     {
-        LoadTitleScene();
+        LandLinkerServices.BeforeLeavingRun(LoadTitleScene);
     }
 
     /// <summary>
@@ -153,6 +153,11 @@ public class HUDSystemPresenter : MonoBehaviour
 
     private void HandleRetryStage()
     {
+        LandLinkerServices.BeforeLeavingRun(RetryStage);
+    }
+
+    private void RetryStage()
+    {
         // 같은 자리에서 다시 시작하므로 짧은 페이드로 덮고, 덮인 동안 상태를 되돌린다
         SceneTransitionManager.TryRun(SceneTransitionOptions.Retry, () =>
         {
@@ -162,6 +167,11 @@ public class HUDSystemPresenter : MonoBehaviour
     }
 
     private void HandleGoToNextStage()
+    {
+        LandLinkerServices.BeforeLeavingRun(GoToNextStage);
+    }
+
+    private void GoToNextStage()
     {
         if (GameSaveManager.Instance == null) return;
 

@@ -99,14 +99,13 @@ public class StageObjectObserver : MonoBehaviour
         {
             if (_stageManager.StageTimer > _timeLimits[i])
             {
-                var ts = TimeSpan.FromSeconds(_timeLimits[i]);
                 if(!HUDFlowPresenter.MissionTextDict.TryGetValue(StageObjectType.TimeLimitClear, out string format))
                 {
                     CustomDebug.LogError("[Stage Object Observer] MissionTextDict : No 'TimeLimitClear' Key !!!", this);
                     _timeLimits.RemoveAt(i);
                     continue;
                 }
-                string content = string.Format(format, ts.Minutes, ts.Seconds);
+                string content = HUDFlowPresenter.FormatTimeLimit(format, _timeLimits[i]);
                 content += _failedString;
                 NotificationPresenter.AddPopup(new PopupContext(content, _unfilledStar, _failedColor));
 

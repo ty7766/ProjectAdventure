@@ -46,11 +46,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _minInterval: 3
-  _maxInterval: 3.5
+  _minInterval: 2.2
+  _maxInterval: 2.6
   _moveDistance: 9
   _direction: 1
-  _tileSpeed: 1
+  _tileSpeed: 0.8
 --- !u!1 &5316585157081882689
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,11 +97,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _minInterval: 1.5
-  _maxInterval: 2
+  _minInterval: 1.1
+  _maxInterval: 1.5
   _moveDistance: 9
   _direction: 1
-  _tileSpeed: 2.5
+  _tileSpeed: 1.4
 --- !u!1 &5784080366206049439
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,6 +163,8 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -184,9 +186,11 @@ MeshRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
 --- !u!1 &5932052258541337745
 GameObject:
@@ -280,10 +284,10 @@ MonoBehaviour:
   _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
   _minInterval: 1
-  _maxInterval: 2
+  _maxInterval: 1.5
   _moveDistance: 9
   _direction: 0
-  _tileSpeed: 1.5
+  _tileSpeed: 1
 --- !u!1 &9179760329313067217
 GameObject:
   m_ObjectHideFlags: 0
@@ -330,11 +334,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _objectType: 2
   _movingRingPrefab: {fileID: 6903931070413041793, guid: 316f058ccf2a88a4ca9ef0a3fadca601, type: 3}
-  _minInterval: 2
-  _maxInterval: 3
+  _minInterval: 1.5
+  _maxInterval: 2.2
   _moveDistance: 9
   _direction: 0
-  _tileSpeed: 1.8
+  _tileSpeed: 1.3
 --- !u!1001 &845256376042186422
 PrefabInstance:
   m_ObjectHideFlags: 0

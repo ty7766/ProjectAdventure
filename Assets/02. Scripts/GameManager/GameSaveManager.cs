@@ -22,6 +22,9 @@ namespace GameManager.Singleton
         
         public int CurrentStageNumber => _currentStage;
 
+        /// <summary>로컬 세이브 파일을 쓴 직후 호출됩니다. (클라우드 세이브 업로드 트리거)</summary>
+        public static event System.Action Saved;
+
         //--- Unity Lifecycle Methods ---//
         protected override void Awake()
         {
@@ -195,6 +198,63 @@ namespace GameManager.Singleton
             Save();
         }
 
+        /// <summary>
+        /// 현재 진행도의 복사본을 반환합니다. (클라우드 업로드용)
+        /// </summary>
+        public GameSaveData CreateSnapshot()
+        {
+            var records = new List<StageSaveRecord>();
+            foreach (var record in _saveData)
+            {
+                if (record != null)
+                {
+                    records.Add(new StageSaveRecord(record.StageNumber, record.IsCleared, record.AcquiredStars));
+                }
+            }
+            return new GameSaveData { HasCompletedTutorial = _hasCompletedTutorial, StageRecords = records };
+        }
+
+        /// <summary>
+        /// 다른 기기/클라우드의 진행도를 합칩니다. 진행도는 줄어들지 않습니다(클리어는 OR, 별은 최댓값).
+        /// 바뀐 것이 있으면 로컬에 저장하고 true를 반환합니다.
+        /// </summary>
+        public bool MergeProgress(bool tutorialDone, IEnumerable<StageSaveRecord> records)
+        {
+            bool changed = false;
+            if (tutorialDone && !_hasCompletedTutorial)
+            {
+                _hasCompletedTutorial = true;
+                changed = true;
+            }
+
+            if (records != null)
+            {
+                foreach (var incoming in records)
+                {
+                    if (incoming == null) continue;
+                    var target = GetSaveRecord(incoming.StageNumber);
+                    if (target == null) continue;
+                    if (incoming.IsCleared && !target.IsCleared)
+                    {
+                        target.IsCleared = true;
+                        changed = true;
+                    }
+                    int stars = Mathf.Clamp(incoming.AcquiredStars, 0, 3);
+                    if (stars > target.AcquiredStars)
+                    {
+                        target.AcquiredStars = stars;
+                        changed = true;
+                    }
+                }
+            }
+
+            if (changed)
+            {
+                Save();
+            }
+            return changed;
+        }
+
         //--- Private Methods ---//
         private void Save()
         {
@@ -203,6 +263,7 @@ namespace GameManager.Singleton
                 HasCompletedTutorial = _hasCompletedTutorial,
                 StageRecords = _saveData
             });
+            Saved?.Invoke();
         }
 
         private void InitializeSaveData()

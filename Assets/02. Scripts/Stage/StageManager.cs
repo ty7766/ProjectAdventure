@@ -143,6 +143,7 @@ public class StageManager : MonoBehaviour
         // 튜토리얼 플레이 중에 흐른 시간이 이 시점에 사라지지 않아야 시간 제한 부가 목표가 유효해진다.
         _isTimerRunning = true;
         ResumeGameSmoothly();
+        LandLinkerServices.StageStarted(GameManager.Singleton.GameSaveManager.Instance != null ? GameManager.Singleton.GameSaveManager.Instance.CurrentStageNumber : 0);
         EnablePlayerControl();
         CheckStageObject();
     }

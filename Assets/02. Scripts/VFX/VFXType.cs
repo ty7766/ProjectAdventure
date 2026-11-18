@@ -10,4 +10,5 @@ public enum VFXType
     RuneChange,
     FallingRockHit,
     CollectGem,
+    Teleport,
 }

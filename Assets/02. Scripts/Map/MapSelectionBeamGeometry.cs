@@ -12,6 +12,8 @@ public static class MapSelectionBeamGeometry
 {
     private const int MaxGridSize = 96;
     private const int OverlapBufferSize = 64;
+    // 맵 바운드 XZ 면적 대비 이 비율 이상인 트리거는 맵 바닥(수면 등)으로 보고 윤곽에 포함한다
+    private const float LargeTriggerAreaRatio = 0.2f;
     private static readonly Collider[] s_overlapBuffer = new Collider[OverlapBufferSize];
 
     // ------------------------------------------------------------------
@@ -29,14 +31,24 @@ public static class MapSelectionBeamGeometry
             return null;
         }
 
-        // 맵 콜라이더가 속한 레이어만 질의해 플레이어/보석 등 다른 오브젝트가 버퍼를 채우는 것을 방지
+        // 윤곽에 쓰는 콜라이더: 일반 콜라이더 + 맵 바닥 역할을 하는 넓은 트리거(오션 맵의 수면 등).
+        // 수면은 플레이어가 빠지도록 트리거로 되어 있어, 일반 콜라이더만 쓰면 바다 맵의 윤곽이 소품 모양으로 조각난다.
+        // 보석·텔레포터 같은 작은 트리거는 면적 기준으로 걸러낸다.
+        float largeTriggerArea = worldBounds.size.x * worldBounds.size.z * LargeTriggerAreaRatio;
+        var footprintColliders = new HashSet<Collider>();
         int layerMask = 0;
         foreach (Collider collider in colliders)
         {
-            if (!collider.isTrigger)
+            if (collider.isTrigger)
             {
-                layerMask |= 1 << collider.gameObject.layer;
+                Vector3 size = collider.bounds.size;
+                if (size.x * size.z < largeTriggerArea)
+                {
+                    continue;
+                }
             }
+            footprintColliders.Add(collider);
+            layerMask |= 1 << collider.gameObject.layer;
         }
         if (layerMask == 0)
         {
@@ -72,7 +84,6 @@ public static class MapSelectionBeamGeometry
         // 샘플: true면 셀이 맵 내부. 가장자리 1열/1행은 항상 false(바깥 보장)
         bool[,] inside = new bool[paddedRows, paddedCols];
         Vector3 half = new Vector3(res * 0.45f, halfHeight, res * 0.45f);
-        Transform mapRoot = mapInstance.transform;
 
         for (int i = 1; i < paddedRows - 1; i++)
         {
@@ -83,11 +94,11 @@ public static class MapSelectionBeamGeometry
                 Vector3 center = new Vector3(x, centerY, z);
 
                 int hitCount = Physics.OverlapBoxNonAlloc(center, half, s_overlapBuffer, Quaternion.identity,
-                    layerMask, QueryTriggerInteraction.Ignore);
+                    layerMask, QueryTriggerInteraction.Collide);
                 bool isInside = false;
                 for (int k = 0; k < hitCount; k++)
                 {
-                    if (s_overlapBuffer[k] != null && s_overlapBuffer[k].transform.IsChildOf(mapRoot))
+                    if (s_overlapBuffer[k] != null && footprintColliders.Contains(s_overlapBuffer[k]))
                     {
                         isInside = true;
                         break;
