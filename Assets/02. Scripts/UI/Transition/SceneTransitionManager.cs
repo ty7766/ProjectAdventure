@@ -85,7 +85,8 @@ public class SceneTransitionManager : MonoBehaviour
     [SerializeField, Tooltip("플레이어 발밑이 아닌 몸통 쪽을 중심으로 삼기 위한 월드 오프셋")] private Vector3 _playerFocusOffset = new Vector3(0f, 1f, 0f);
 
     [Header("Card")]
-    [SerializeField, Range(0f, 2f), Tooltip("카드가 보이는 최소 시간 (로딩이 빨라도 읽을 수 있게)")] private float _minCardTime = 0.7f;
+    [SerializeField, Range(0f, 1f), Tooltip("로딩/안정화가 끝난 뒤 카드 연출을 시작하기 전 대기 시간 (빈 화면 유지)")] private float _cardSettleDelay = 0.2f;
+    [SerializeField, Range(0f, 2f), Tooltip("카드 연출 시작 후 카드가 보이는 시간 (읽을 수 있게)")] private float _minCardTime = 0.7f;
 
     //--- Fields ---//
     private static SceneTransitionManager s_instance;
@@ -195,11 +196,6 @@ public class SceneTransitionManager : MonoBehaviour
             // 1) 덮기
             yield return Cover(options.Cover);
             _isCovered = true;
-            float coveredAt = Time.unscaledTime;
-            if (hasCard)
-            {
-                ShowCard(options);
-            }
 
             // 2) 덮인 상태에서 전환 작업 (실패해도 화면은 걷어 조작 불능 상태를 피한다)
             InvokeSafely(onCovered);
@@ -216,10 +212,10 @@ public class SceneTransitionManager : MonoBehaviour
 
             if (hasCard)
             {
-                while (Time.unscaledTime - coveredAt < _minCardTime)
-                {
-                    yield return null;
-                }
+                // 로딩 스터터링이 끝난 뒤에 카드 연출을 시작해야 자간 애니메이션이 끊기지 않는다
+                yield return new WaitForSecondsRealtime(_cardSettleDelay);
+                ShowCard(options);
+                yield return new WaitForSecondsRealtime(_minCardTime);
                 yield return HideCard();
             }
 

@@ -68,6 +68,8 @@ public class HUDView : MonoBehaviour
     private Button _quitGameButton;
     [SerializeField]
     private Button _retryButtonPauseMenu;
+    [SerializeField, Tooltip("일시정지 타이틀 아래 현재 스테이지 번호")]
+    private TextMeshProUGUI _pauseStageText;
 
     [Header("Stage Start UI")]
     [SerializeField]
@@ -280,7 +282,26 @@ public class HUDView : MonoBehaviour
         {
             return;
         }
+        RefreshPauseStageText();
         FadePanel(_pauseMenu, true);
+    }
+
+    /// <summary>
+    /// 일시정지 메뉴 타이틀 아래에 현재 스테이지 번호를 표시합니다.
+    /// </summary>
+    private void RefreshPauseStageText()
+    {
+        if (_pauseStageText == null)
+        {
+            return;
+        }
+        var save = GameManager.Singleton.GameSaveManager.Instance;
+        bool hasStage = save != null && save.CurrentStageNumber > 0;
+        _pauseStageText.gameObject.SetActive(hasStage);
+        if (hasStage)
+        {
+            _pauseStageText.text = $"스테이지 {save.CurrentStageNumber}";
+        }
     }
 
     /// <summary>
@@ -307,11 +328,7 @@ public class HUDView : MonoBehaviour
             return;
         }
 
-        TimeSpan timeSpan = TimeSpan.FromSeconds(timeInSeconds);
-        _timerText.text = string.Format("<mspace=0.7em>{0:D2}:{1:D2}.</mspace><mspace=0.5em><size=50%>{2:D3}</size></mspace>",
-            timeSpan.Minutes,
-            timeSpan.Seconds,
-            timeSpan.Milliseconds);
+        _timerText.text = FormatMinutesSeconds(TimeSpan.FromSeconds(timeInSeconds));
     }
 
     /// <summary>
@@ -442,14 +459,20 @@ public class HUDView : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 플레이 시간을 "분:초"로 표시합니다. (소수점 이하는 버림)
+    /// </summary>
+    private static string FormatMinutesSeconds(TimeSpan timeSpan)
+    {
+        int totalSeconds = Mathf.Max(0, (int)timeSpan.TotalSeconds);
+        return string.Format("<mspace=0.7em>{0:D2}:{1:D2}</mspace>", totalSeconds / 60, totalSeconds % 60);
+    }
+
     public void UpdateStageClearTimeRecordText(TimeSpan timeSpan)
     {
         if(_stageClearTimeText != null)
         {
-            _stageClearTimeText.text = string.Format("<mspace=0.7em>{0:D2}:{1:D2}.</mspace><mspace=0.5em><size=50%>{2:D3}</size></mspace>",
-            timeSpan.Minutes,
-            timeSpan.Seconds,
-            timeSpan.Milliseconds);
+            _stageClearTimeText.text = FormatMinutesSeconds(timeSpan);
         }
     }
 

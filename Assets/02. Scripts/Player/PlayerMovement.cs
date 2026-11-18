@@ -31,6 +31,12 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float _groundCheckDist = 0.1f;
     [SerializeField] private float _radius;
 
+    [Header("Analog Input")]
+    [SerializeField, Range(0f, 0.5f), Tooltip("이 세기 미만의 스틱 입력은 무시 (미세 떨림 방지)")]
+    private float _inputDeadZone = 0.2f;
+    [SerializeField, Range(0.5f, 1f), Tooltip("데드존을 넘었을 때 최소 이동 비율. 최대 속도 × 이 값이 1을 넘어야 걷기 애니메이션이 재생된다")]
+    private float _minMoveRatio = 0.6f;
+
     //--- Unity Methods ---//
     private void Awake()
     {
@@ -93,7 +99,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void ChangeViewDirection()
     {
-        if (_direction == Vector3.zero) return;
+        if (_direction == Vector3.zero || _direction.sqrMagnitude < _inputDeadZone * _inputDeadZone) return;
 
         Quaternion target = Quaternion.LookRotation(_direction);
         float t = 1f - Mathf.Exp(-_turnSpeed * Time.fixedDeltaTime); // 프레임 독립 감쇠
@@ -151,14 +157,33 @@ public class PlayerMovement : MonoBehaviour
 
     private void SetAnimationSpeed()
     {
-        float animSpeed = _rb.linearVelocity.magnitude;
-        _animator.SetFloat(SpeedHash, Mathf.Clamp(animSpeed, 1f, _speed));
+        Vector3 velocity = _rb.linearVelocity;
+        velocity.y = 0f;
+        _animator.SetFloat(SpeedHash, Mathf.Clamp(velocity.magnitude, 1f, _speed));
     }
 
     private void ApplyTargetVelocity()
     {
-        Vector3 targetVelocity = Vector3.ClampMagnitude(_direction, 1f) * _speed;
+        Vector3 targetVelocity = GetPlanarDirection() * _speed;
         targetVelocity.y = _rb.linearVelocity.y;
         _rb.linearVelocity = targetVelocity;
+    }
+
+    /// <summary>
+    /// 입력 세기를 이동 비율로 바꿉니다. 스틱을 살짝만 기울였을 때 걷기 애니메이션 임계 속도(Speed 1)보다 느리게 움직이면
+    /// 대기 자세로 미끄러지듯 이동하므로, 데드존 아래는 정지하고 그 위는 최소 비율부터 시작합니다.
+    /// </summary>
+    private Vector3 GetPlanarDirection()
+    {
+        Vector3 direction = Vector3.ClampMagnitude(_direction, 1f);
+        float magnitude = direction.magnitude;
+        if (magnitude < _inputDeadZone)
+        {
+            return Vector3.zero;
+        }
+
+        float t = Mathf.InverseLerp(_inputDeadZone, 1f, magnitude);
+        float scale = Mathf.Lerp(_minMoveRatio, 1f, t);
+        return direction / magnitude * scale;
     }
 }

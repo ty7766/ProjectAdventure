@@ -1,5 +1,7 @@
 {
   "dependencies": {
+    "com.google.ads.mobile": "11.6.0",
+    "com.korygames.platform": "file:../../korygames-platform/unity/com.korygames.platform",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "2.0.9",
     "com.unity.collab-proxy": "2.11.2",
@@ -48,5 +50,14 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "package.openupm.com",
+      "url": "https://package.openupm.com",
+      "scopes": [
+        "com.google.ads.mobile"
+      ]
+    }
+  ]
 }

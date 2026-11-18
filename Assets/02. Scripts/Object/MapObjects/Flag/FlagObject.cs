@@ -12,6 +12,26 @@ public class FlagObject : SpecialObject
         FindStageManagerWhenIsNull();
     }
 
+    // 다시하기는 미리 생성된 스테이지 인스턴스를 껐다 켜서 재사용하므로, 깃발을 파괴하지 않고 콜라이더만 끈다.
+    // (기본 SpecialObject 동작인 Destroy를 쓰면 다시하기 후 깃발이 사라진다)
+    private void OnEnable()
+    {
+        if (_col != null)
+        {
+            _col.enabled = true;
+        }
+    }
+
+    protected override void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player"))
+        {
+            return;
+        }
+        _col.enabled = false;
+        ApplyEffect(other.gameObject);
+    }
+
     protected override void ApplyEffect(GameObject player)
     {
         StageClear();

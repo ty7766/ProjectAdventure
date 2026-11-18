@@ -70,6 +70,8 @@ public class Teleporter : MonoBehaviour
         targetPosition.y += _yOffset; // 바닥에 묻히지 않게 살짝 띄움
 
         SoundManager.Instance.PlaySFX_3D(SoundType.SFX_Teleport, transform.position);
+        PlayTeleportEffect(player.position);
+        PlayTeleportEffect(_destination.transform.position);
 
         PlayerMovement playerMovement = player.GetComponent<PlayerMovement>();
         if(playerMovement != null)
@@ -78,6 +80,15 @@ public class Teleporter : MonoBehaviour
         }
 
         _destination.ReceivePlayer();
+    }
+
+    private static void PlayTeleportEffect(Vector3 position)
+    {
+        if (!VFXManager.HasInstance)
+        {
+            return;
+        }
+        VFXManager.Instance.PlayVFX(VFXType.Teleport, position);
     }
 
     private void ReceivePlayer()

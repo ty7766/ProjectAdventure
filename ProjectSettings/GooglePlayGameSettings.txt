@@ -1,0 +1,9 @@
+lastUpgrade=20100
+proj.pluginVersion=2.1.0
+proj.AppId=796817250748
+and.BundleId=com.korygames.landlinker
+proj.classDir=Assets%2fGooglePlayGames
+proj.ConstantsClassName=GPGSIds
+and.ResourceData=%3c%3fxml+version%3d%221.0%22+encoding%3d%22utf-8%22%3f%3e%0a%3cresources%3e%0a++%3cstring+name%3d%22app_id%22+translatable%3d%22false%22%3e796817250748%3c%2fstring%3e%0a++%3cstring+name%3d%22package_name%22+translatable%3d%22false%22%3ecom.korygames.landlinker%3c%2fstring%3e%0a%3c%2fresources%3e
+and.ClientId=796817250748-85krvqf6sbc95itfnrei7nvtdskiq7t6.apps.googleusercontent.com
+android.SetupDone=true

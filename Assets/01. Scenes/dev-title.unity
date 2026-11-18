@@ -1721,7 +1721,7 @@ MonoBehaviour:
     rotation: {x: -0, y: 0, z: 0}
     focusDistance: 9.76
   - pointName: Options
-    position: {x: -0.843, y: 1.036, z: -11.674}
+    position: {x: -1.3443246, y: 1.0322965, z: -11.370204}
     rotation: {x: -12.661, y: 31.134, z: 0.371}
     focusDistance: 2.93
   currentFocusDistance: 4.1
@@ -1855,22 +1855,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 776529771869129965, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 585.069
-      objectReference: {fileID: 0}
-    - target: {fileID: 776529771869129965, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 417.4376
-      objectReference: {fileID: 0}
-    - target: {fileID: 776529771869129965, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -617.47
-      objectReference: {fileID: 0}
-    - target: {fileID: 776529771869129965, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 417.44
-      objectReference: {fileID: 0}
     - target: {fileID: 1207418733177059092, guid: 50c70dbec9a7dcb4f95fa6f1faa0c8b2, type: 3}
       propertyPath: _flowController
       value: 

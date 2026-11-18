@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using System.Collections.Generic;
 
 [RequireComponent(typeof(Audio3DSourcePool))]
@@ -27,6 +28,10 @@ public class SoundManager : Singleton<SoundManager>
     [SerializeField]
     private List<SoundData> _soundDataList;
 
+    [Header("BGM 전환")]
+    [SerializeField, Range(0f, 2f)] private float _bgmFadeOutDuration = 0.5f;
+    [SerializeField, Range(0f, 3f)] private float _bgmFadeInDuration = 1.0f;
+
     private Dictionary<SoundType, SoundData> _soundDictionary = new Dictionary<SoundType, SoundData>();
     private Audio3DSourcePool _audio3DPool;
 
@@ -36,6 +41,11 @@ public class SoundManager : Singleton<SoundManager>
 
     //현재 재생 중인 BGM 고유 볼륨. 전역 볼륨만 바뀌어도 다시 곱해줘야 하므로 보관한다.
     private float _currentBGMVolume = 1f;
+
+    //곡 전환 페이드용 배율(0~1)
+    private float _bgmFade = 1f;
+    private SoundType _requestedBGM = SoundType.None;
+    private Tween _bgmTween;
 
     protected override void Awake()
     {
@@ -54,31 +64,51 @@ public class SoundManager : Singleton<SoundManager>
     /// BGM을 재생하는 메소드
     /// </summary>
     /// <param name="soundType">재생할 사운드 enum 타입</param>
-    public void PlayBGM(SoundType soundType)
+    /// <param name="fadeOutDuration">기존 곡 페이드 아웃 시간 (음수면 기본값)</param>
+    /// <param name="fadeInDuration">새 곡 페이드 인 시간 (음수면 기본값)</param>
+    public void PlayBGM(SoundType soundType, float fadeOutDuration = -1f, float fadeInDuration = -1f)
     {
-        if (soundType == SoundType.None)
+        SoundData soundData = null;
+        if (soundType != SoundType.None && !_soundDictionary.TryGetValue(soundType, out soundData))
         {
-            _bgmSource.Stop();
+            CustomDebug.LogWarning("해당 사운드 타입이 없습니다.");
             return;
         }
 
-        if (_soundDictionary.TryGetValue(soundType, out SoundData soundData))
+        // 이미 같은 곡이 (페이드 중이어도) 요청된 상태면 무시
+        if (soundType == _requestedBGM && (soundType == SoundType.None || _bgmSource.isPlaying))
         {
-            if(_bgmSource.clip == soundData.AudioClip && _bgmSource.isPlaying)
+            return;
+        }
+        _requestedBGM = soundType;
+
+        // 재생 중인 곡은 페이드 아웃 -> 곡 교체 -> 페이드 인. 정지(None)는 페이드 아웃 후 멈춘다.
+        // timeScale이 0인 상태(클리어/일시정지)에서도 진행되도록 언스케일드 시간 사용
+        float fadeOut = fadeOutDuration >= 0f ? fadeOutDuration : _bgmFadeOutDuration;
+        float fadeIn = fadeInDuration >= 0f ? fadeInDuration : _bgmFadeInDuration;
+        _bgmTween?.Kill();
+        Sequence sequence = DOTween.Sequence().SetUpdate(true).SetLink(gameObject);
+        if (_bgmSource.isPlaying && _bgmFade > 0f)
+        {
+            sequence.Append(DOTween.To(() => _bgmFade, SetBGMFade, 0f, fadeOut * _bgmFade).SetEase(Ease.InSine));
+        }
+        sequence.AppendCallback(() =>
+        {
+            SetBGMFade(0f);
+            if (soundData == null)
             {
+                _bgmSource.Stop();
                 return;
             }
-
             _currentBGMVolume = soundData.Volume;
             _bgmSource.clip = soundData.AudioClip;
-            ApplyBGMVolume();
             _bgmSource.Play();
-        }
-        else
+        });
+        if (soundData != null)
         {
-            CustomDebug.LogWarning("해당 사운드 타입이 없습니다.");
+            sequence.Append(DOTween.To(() => _bgmFade, SetBGMFade, 1f, fadeIn).SetEase(Ease.OutSine));
         }
-
+        _bgmTween = sequence;
     }
 
     /// <summary>
@@ -214,7 +244,13 @@ public class SoundManager : Singleton<SoundManager>
     //전역 BGM 볼륨과 현재 곡의 고유 볼륨을 곱해 실제 AudioSource에 반영
     private void ApplyBGMVolume()
     {
-        _bgmSource.volume = _bgmVolume * _currentBGMVolume;
+        _bgmSource.volume = _bgmVolume * _currentBGMVolume * _bgmFade;
+    }
+
+    private void SetBGMFade(float fade)
+    {
+        _bgmFade = fade;
+        ApplyBGMVolume();
     }
 
     private void InitializeAudioDictionary()

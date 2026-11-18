@@ -35,6 +35,24 @@ public class HUDFlowPresenter : MonoBehaviour
 
     public static Dictionary<StageObjectType, string> MissionTextDict = new Dictionary<StageObjectType, string>();
 
+    /// <summary>
+    /// 시간 제한 도전과제 문구를 만듭니다. 0인 단위는 뺍니다. (예: "5분 0초" → "5분", "0분 50초" → "50초")
+    /// </summary>
+    public static string FormatTimeLimit(string format, float seconds)
+    {
+        var ts = TimeSpan.FromSeconds(seconds);
+        string text = string.Format(format, (int)ts.TotalMinutes, ts.Seconds);
+        if (ts.Seconds == 0 && ts.TotalMinutes >= 1)
+        {
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"\s*(?<!\d)0초", "");
+        }
+        else if (ts.TotalMinutes < 1)
+        {
+            text = System.Text.RegularExpressions.Regex.Replace(text, @"(?<!\d)0분\s*", "");
+        }
+        return text;
+    }
+
     private Coroutine _countDownCoroutine;
     private Coroutine _deathSequenceCoroutine;
     private bool _isSetupCalled = false;
@@ -181,6 +199,7 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private IEnumerator PlayerDeathSequence()
     {
+        ReportRunEnded(false);
         _stageManager?.PauseGameSmoothly(1.5f);
         yield return new WaitForSecondsRealtime(1.5f);
         _hudView.HideHUD();
@@ -193,6 +212,7 @@ public class HUDFlowPresenter : MonoBehaviour
 
     private IEnumerator StageClearSequence()
     {
+        ReportRunEnded(true);
         _stageManager?.PauseGameSmoothly(1.0f);
         yield return new WaitForSecondsRealtime(1.0f);
         _hudView.HideHUD();
@@ -208,6 +228,21 @@ public class HUDFlowPresenter : MonoBehaviour
             _hudView.UpdateStageClearStageNumberText(GameSaveManager.Instance.CurrentStageNumber);
         }
         _hudView.ShowStageClearPanel();
+    }
+
+    /// <summary>한 판의 결과를 플랫폼(분석, 판 사이 광고 판정)에 알립니다. PC 빌드에서는 아무 일도 하지 않습니다.</summary>
+    private void ReportRunEnded(bool cleared)
+    {
+        if (_stageManager == null || GameSaveManager.Instance == null) return;
+        int stars = 0;
+        if (cleared)
+        {
+            foreach (var obj in _stageManager.StageObjects)
+            {
+                if (obj.isCleared) stars++;
+            }
+        }
+        LandLinkerServices.RunEnded(GameSaveManager.Instance.CurrentStageNumber, cleared, stars, _stageManager.StageTimer);
     }
 
     // --- Helper Methods (Object & Stars) ---
@@ -234,8 +269,7 @@ public class HUDFlowPresenter : MonoBehaviour
         switch (obj.stageObjectType)
         {
             case StageObjectType.TimeLimitClear:
-                var ts = TimeSpan.FromSeconds(obj.value);
-                return string.Format(format, ts.Minutes, ts.Seconds);
+                return FormatTimeLimit(format, obj.value);
 
             case StageObjectType.RemainHealthClear:
                 return string.Format(format, obj.value);

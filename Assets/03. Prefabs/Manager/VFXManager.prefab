@@ -70,6 +70,9 @@ MonoBehaviour:
   - Type: 8
     Prefab: {fileID: 1696168356051795115, guid: 03cb18eb435c95e40a5a51bafa9eab3a, type: 3}
     PoolSize: 1
+  - Type: 9
+    Prefab: {fileID: 3987381754495328826, guid: cf5704dbd2360ec4b89e37500ab551f6, type: 3}
+    PoolSize: 4
 --- !u!114 &4852398430870279020
 MonoBehaviour:
   m_ObjectHideFlags: 0

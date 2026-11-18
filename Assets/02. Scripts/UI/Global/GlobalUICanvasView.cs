@@ -22,6 +22,16 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     [SerializeField] private Transform _buttonParent;
     [SerializeField] private Button _buttonPrefab;
 
+    [Header("Popup Button Style")]
+    [SerializeField, Tooltip("첫 번째 버튼(주 행동) 윗면 / 아랫단 색")]
+    private Color _primaryFaceColor = new Color32(0xF7, 0xA9, 0x4B, 0xFF);
+    [SerializeField] private Color _primaryLipColor = new Color32(0xC8, 0x6F, 0x24, 0xFF);
+    [SerializeField] private Color _primaryLabelColor = Color.white;
+    [SerializeField, Tooltip("두 번째 이후 버튼(취소 등) 윗면 / 아랫단 색")]
+    private Color _secondaryFaceColor = new Color32(0xF1, 0xE2, 0xC4, 0xFF);
+    [SerializeField] private Color _secondaryLipColor = new Color32(0xC9, 0xB0, 0x86, 0xFF);
+    [SerializeField] private Color _secondaryLabelColor = new Color32(0x5A, 0x3A, 0x22, 0xFF);
+
     [Header("Popup Animation")]
     [SerializeField, Range(0.5f, 1f)] private float _popupStartScale = 0.85f;
     [SerializeField, Range(0.05f, 1f)] private float _popupShowDuration = 0.28f;
@@ -120,6 +130,7 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
 
     public void CreateButton(string buttonText, System.Action onClickCallback)
     {
+        bool isPrimary = _buttonParent.childCount == 0;
         Button newButton = Instantiate(_buttonPrefab, _buttonParent);
         newButton.gameObject.SetActive(true);
 
@@ -127,11 +138,29 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
         if (buttonLabel != null)
         {
             buttonLabel.text = buttonText;
+            buttonLabel.color = isPrimary ? _primaryLabelColor : _secondaryLabelColor;
         }
+        ApplyButtonColors(newButton, isPrimary);
 
         UIButtonFeedback.Ensure(newButton);
 
         newButton.onClick.AddListener(() => onClickCallback?.Invoke());
+    }
+
+    /// <summary>
+    /// 버튼 루트(아랫단)와 Face(윗면) 이미지 색을 주/보조 버튼에 맞게 칠합니다.
+    /// </summary>
+    private void ApplyButtonColors(Button button, bool isPrimary)
+    {
+        if (button.TryGetComponent(out Graphic lip))
+        {
+            lip.color = isPrimary ? _primaryLipColor : _secondaryLipColor;
+        }
+        Transform face = button.transform.Find("Face");
+        if (face != null && face.TryGetComponent(out Graphic faceGraphic))
+        {
+            faceGraphic.color = isPrimary ? _primaryFaceColor : _secondaryFaceColor;
+        }
     }
 
     public void ClearButtons()
@@ -139,7 +168,10 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
         int childCount = _buttonParent.childCount;
         for (int i = childCount - 1; i >= 0; i--)
         {
-            Destroy(_buttonParent.GetChild(i).gameObject);
+            // Destroy는 프레임 끝에 처리되므로, 같은 프레임에 새 버튼을 만들 때 childCount로 주 버튼을 판단할 수 있도록 먼저 떼어낸다.
+            Transform child = _buttonParent.GetChild(i);
+            child.SetParent(null, false);
+            Destroy(child.gameObject);
         }
     }
 

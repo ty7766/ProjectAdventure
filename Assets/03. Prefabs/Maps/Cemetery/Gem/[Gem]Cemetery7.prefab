@@ -58,7 +58,6 @@ Transform:
   - {fileID: 8380427015797032860}
   - {fileID: 2492220471621785745}
   - {fileID: 6636251686275352051}
-  - {fileID: 3279355163824754778}
   - {fileID: 6259131926180174797}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -981,6 +980,7 @@ MonoBehaviour:
   _playerViewAngle: 80
   _mapSize: {x: 12, y: 10}
   _mapCenterTransform: {fileID: 3218991790741365807}
+  _angleDistanceMin: 0.0001
 --- !u!54 &5842245202388385410
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1081,138 +1081,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 6654352611750191772, guid: 06dbcd1ea3c5a914b8bbf3f57ad34e9e, type: 3}
   m_PrefabInstance: {fileID: 4214100100132854549}
-  m_PrefabAsset: {fileID: 0}
---- !u!1001 &4245340201878298202
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 3218991790741365807}
-    m_Modifications:
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.8000001
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.8
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.8000001
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: -0.23
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.50300026
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2027524604507608250, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      propertyPath: m_Name
-      value: PP_Statue_01 (6)
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 1216639523417974806, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 2027524604507608250, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 7161144573824434177}
-    - targetCorrespondingSourceObject: {fileID: 2027524604507608250, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2760501834804185245}
-  m_SourcePrefab: {fileID: 100100000, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
---- !u!1 &2794849195233528544 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2027524604507608250, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-  m_PrefabInstance: {fileID: 4245340201878298202}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &7161144573824434177
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2794849195233528544}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 54f05186976220d4896da7cdbf2051e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _angelSpeed: 0.9
-  _angelRotationSpeed: 8
-  _damageAmount: 1
-  _activeRange: 10
-  _playerViewAngle: 80
-  _mapSize: {x: 12, y: 10}
-  _mapCenterTransform: {fileID: 3218991790741365807}
---- !u!54 &2760501834804185245
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2794849195233528544}
-  serializedVersion: 5
-  m_Mass: 10
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 116
-  m_CollisionDetection: 0
---- !u!4 &3279355163824754778 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1686851283865701888, guid: 2efbcf5d7b0b1744880cd5d8ad58e376, type: 3}
-  m_PrefabInstance: {fileID: 4245340201878298202}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4657221372945886578
 PrefabInstance:
@@ -1676,6 +1544,7 @@ MonoBehaviour:
   _playerViewAngle: 80
   _mapSize: {x: 12, y: 10}
   _mapCenterTransform: {fileID: 3218991790741365807}
+  _angleDistanceMin: 0.0001
 --- !u!54 &2320269877438616622
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2109,6 +1978,7 @@ MonoBehaviour:
   _playerViewAngle: 80
   _mapSize: {x: 12, y: 10}
   _mapCenterTransform: {fileID: 3218991790741365807}
+  _angleDistanceMin: 0.0001
 --- !u!54 &4330615140940178361
 Rigidbody:
   m_ObjectHideFlags: 0
