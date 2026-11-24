@@ -28,6 +28,13 @@ public static class LlCloudSave
         s_pendingServerSave = null;
     }
 
+    public static void Reset()
+    {
+        s_pushAgain = false;
+        s_lastPushedBody = null;
+        s_pendingServerSave = null;
+    }
+
     public static void Attach()
     {
         GameSaveManager.Saved -= OnLocalSaved;

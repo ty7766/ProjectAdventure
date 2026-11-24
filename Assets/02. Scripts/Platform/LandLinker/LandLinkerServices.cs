@@ -1,12 +1,17 @@
 using System;
+using UnityEngine;
 
 /// <summary>
-/// 게임 코드가 부르는 코리게임즈 플랫폼 기능(클라우드 세이브, 구글 계정, 판 사이 전면 광고, 분석)의 단일 입구.
+/// 게임 코드가 부르는 코리게임즈 플랫폼 기능(클라우드 세이브, 구글 계정, 고객 문의, 계정 삭제, 법적 문서, 전면 광고, 분석)의 단일 입구.
 /// Android 빌드에서만 KORYGAMES 플랫폼 SDK에 연결되고, PC 등 다른 타겟에서는 아무 일도 하지 않는다
 /// (구현은 LandLinker/Android 폴더의 #if UNITY_ANDROID 코드). 게임 코드에는 플랫폼 분기를 두지 않는다.
 /// </summary>
 public static class LandLinkerServices
 {
+    public const string PrivacyPolicyUrl = "https://games.codingbot.kr/land-linker/privacy/";
+    public const string TermsOfServiceUrl = "https://games.codingbot.kr/land-linker/terms/";
+    public const string AccountDeletionWebUrl = "https://games.codingbot.kr/land-linker/privacy/#delete-account";
+
     /// <summary>온라인/구글 계정 상태가 바뀌었을 때 (옵션 UI 갱신용)</summary>
     public static event Action StateChanged;
 
@@ -22,6 +27,25 @@ public static class LandLinkerServices
         }
     }
 
+    public static bool CanOptInOnThisPlatform
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return LlPlatform.CanOptIn;
+#else
+            return false;
+#endif
+        }
+    }
+
+    public static void RequestConsentAndEnable()
+    {
+#if UNITY_ANDROID
+        LlPlatform.RequestConsentFromOptions();
+#endif
+    }
+
     public static bool IsOnline
     {
         get
@@ -30,6 +54,18 @@ public static class LandLinkerServices
             return LlPlatform.IsRunning && Kory.Platform.KorySession.Online;
 #else
             return false;
+#endif
+        }
+    }
+
+    public static string PlayerId
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return LlPlatform.PlayerId ?? "";
+#else
+            return "";
 #endif
         }
     }
@@ -58,6 +94,18 @@ public static class LandLinkerServices
         }
     }
 
+    public static bool GoogleLinked
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return LlPlatform.GoogleLinked;
+#else
+            return false;
+#endif
+        }
+    }
+
     public static string GoogleDisplayName
     {
         get
@@ -66,6 +114,18 @@ public static class LandLinkerServices
             return GoogleSignedIn ? Kory.Platform.KoryGoogleAccount.Instance.DisplayName : "";
 #else
             return "";
+#endif
+        }
+    }
+
+    public static bool PrivacyOptionsRequired
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return LlPlatform.PrivacyOptionsRequired;
+#else
+            return false;
 #endif
         }
     }
@@ -79,6 +139,39 @@ public static class LandLinkerServices
         done?.Invoke("unavailable");
 #endif
     }
+
+    /// <summary>서버 및 기기 계정 데이터 영구 삭제 (Google Play 계정 삭제 정책 준수)</summary>
+    public static void DeleteAccount(Action<bool, string> done)
+    {
+#if UNITY_ANDROID
+        LlPlatform.DeleteAccount(done);
+#else
+        done?.Invoke(false, "unavailable");
+#endif
+    }
+
+    /// <summary>인게임 고객 문의 제출 (POST /v1/support/tickets)</summary>
+    public static void SubmitSupportTicket(string category, string body, string email, Action<bool, string, string, string> done)
+    {
+#if UNITY_ANDROID
+        LlPlatform.SubmitSupportTicket(category, body, email, done);
+#else
+        done?.Invoke(false, null, null, "unavailable");
+#endif
+    }
+
+    public static void ShowPrivacyOptions(Action done)
+    {
+#if UNITY_ANDROID
+        LlPlatform.ShowPrivacyOptions(done);
+#else
+        done?.Invoke();
+#endif
+    }
+
+    public static void OpenPrivacyPolicy() => Application.OpenURL(PrivacyPolicyUrl);
+
+    public static void OpenTermsOfService() => Application.OpenURL(TermsOfServiceUrl);
 
     /// <summary>스테이지 시작 (분석)</summary>
     public static void StageStarted(int stage)

@@ -255,6 +255,32 @@ namespace GameManager.Singleton
             return changed;
         }
 
+        /// <summary>
+        /// 계정 삭제 시 기기 내 스테이지/튜토리얼 진행도를 초기화합니다. (삭제 직전이므로 클라우드 업로드를 일으키지 않음)
+        /// </summary>
+        public void ResetAllProgress()
+        {
+            _hasCompletedTutorial = false;
+            if (_saveData != null)
+            {
+                foreach (var record in _saveData)
+                {
+                    if (record == null) continue;
+                    record.IsCleared = false;
+                    record.AcquiredStars = 0;
+                }
+            }
+            if (File.Exists(SavePath))
+            {
+                File.Delete(SavePath);
+            }
+            SaveSystem.SaveGameData(SavePath, new GameSaveData
+            {
+                HasCompletedTutorial = false,
+                StageRecords = _saveData
+            });
+        }
+
         //--- Private Methods ---//
         private void Save()
         {
