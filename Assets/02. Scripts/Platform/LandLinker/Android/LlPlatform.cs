@@ -23,6 +23,8 @@ public static class LlPlatform
 
     public static bool HasConsent => PlayerPrefs.GetInt(ConsentPrefKey, 0) == 1;
 
+    public static ConsentState Consent => !PlayerPrefs.HasKey(ConsentPrefKey) ? ConsentState.Unknown : HasConsent ? ConsentState.Granted : ConsentState.Declined;
+
     public static bool CanOptIn => (!KoryPlatform.IsInitialized || !HasConsent) && !KoryPlatform.OfflineRequested;
 
     public static bool GoogleLinked =>
@@ -62,19 +64,8 @@ public static class LlPlatform
         // 아직 최초 동의를 받지 않은 경우(최초 실행) 백그라운드 전송·세션 생성 없이 UI 준비 후 고지 팝업만 띄운다.
         if (!PlayerPrefs.HasKey(ConsentPrefKey))
         {
-            var gate = new GameObject("LlConsentGate");
-            UnityEngine.Object.DontDestroyOnLoad(gate);
-            gate.AddComponent<LlConsentGate>();
+            LandLinkerServices.RequestConsentPrompt();
         }
-    }
-
-    public static void RequestConsentFromOptions()
-    {
-        if (IsRunning || KoryPlatform.OfflineRequested) return;
-        LlConsentGate.ShowDisclosurePopup(() =>
-        {
-            GrantConsentAndBoot();
-        }, DeclineConsent);
     }
 
     public static void GrantConsentAndBoot()
@@ -106,7 +97,7 @@ public static class LlPlatform
         var config = KoryConfig.Load();
         if (config == null)
         {
-            Debug.LogWarning("[LandLinker] Resources/KoryConfig 가 없어 플랫폼 기능을 끕니다.");
+            Debug.LogWarning("[LandLinker] Resources/KoryConfig is missing; platform disabled.");
             return;
         }
 
@@ -180,6 +171,7 @@ public static class LlPlatform
         {
             LlCloudSave.Reset();
             if (GameSaveManager.HasInstance) GameSaveManager.Instance.ResetAllProgress();
+            DeclineConsent();
             done?.Invoke(true, null);
             return;
         }
@@ -269,114 +261,35 @@ public static class LlPlatform
 
     private static void OnNotice(KoryNotice notice, string serverMessage)
     {
-        switch (notice)
-        {
-            case KoryNotice.GoogleProgressRestored:
-                ShowPopup("알림", "구글 계정의 진행 상황을 불러왔습니다.");
-                break;
-            case KoryNotice.GoogleLinked:
-                ShowPopup("알림", "구글 계정과 연동되었습니다.\n진행 상황이 클라우드에 저장됩니다.");
-                break;
-            // 오프라인이어도 게임은 로컬 세이브로 그대로 진행되므로 따로 알리지 않는다.
-        }
+        if (notice == KoryNotice.GoogleProgressRestored)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.GoogleProgressRestored));
+        else if (notice == KoryNotice.GoogleLinked)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.GoogleLinked));
     }
 
-    // 이 기기 계정과 구글 계정에 각각 진행도가 있을 때. 어느 쪽을 고르든 이 기기의 로컬 진행도는
-    // 접속 후 클라우드 세이브와 합쳐지므로(클리어 OR, 별 최댓값) 진행도가 줄지 않는다.
     private static void OnGoogleConflict(JObject device, JObject google)
     {
-        LlPlatformRunner.RunWhenUiReady(() =>
+        var info = new ConflictInfo
         {
-            var popup = GlobalUICanvasView.Instance.PopupPresenter;
-            string message = "이 기기와 구글 계정에 서로 다른 진행 상황이 있습니다.\n"
-                + $"이 기기: {Summary(device)}\n구글 계정: {Summary(google)}\n"
-                + "<size=80%>이 기기의 진행 상황은 선택한 쪽에 합쳐집니다.</size>";
-            popup.ShowPopup("이어서 할 계정 선택", message,
-                ("구글 계정", () => { popup.HidePopup(); KoryGoogleAccount.Instance?.Choose(KoryGoogleAccount.ChooseGoogle); }),
-                ("이 기기", () => { popup.HidePopup(); KoryGoogleAccount.Instance?.Choose(KoryGoogleAccount.ChooseDevice); }));
-        });
+            DeviceClearedStages = device != null ? (device.Value<int?>("stagesCleared") ?? -1) : -1,
+            DeviceStars = device != null ? (device.Value<int?>("stars") ?? -1) : -1,
+            GoogleClearedStages = google != null ? (google.Value<int?>("stagesCleared") ?? -1) : -1,
+            GoogleStars = google != null ? (google.Value<int?>("stars") ?? -1) : -1,
+        };
+        LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseConflict(info));
     }
 
-    private static string Summary(JObject summary)
+    public static void ResolveConflict(bool chooseGoogle)
     {
-        if (summary == null) return "진행 없음";
-        int cleared = summary.Value<int?>("stagesCleared") ?? 0;
-        int stars = summary.Value<int?>("stars") ?? 0;
-        return $"{cleared}스테이지 클리어 · 별 {stars}개";
-    }
-
-    private static void ShowPopup(string title, string message)
-    {
-        LlPlatformRunner.RunWhenUiReady(() =>
-        {
-            var popup = GlobalUICanvasView.Instance.PopupPresenter;
-            popup.ShowPopup(title, message, ("확인", () => popup.HidePopup()));
-        });
+        var google = KoryGoogleAccount.Instance;
+        if (google != null) google.Choose(chooseGoogle ? KoryGoogleAccount.ChooseGoogle : KoryGoogleAccount.ChooseDevice);
     }
 }
 
-/// <summary>
-/// 최초 실행 시 UI가 준비되면 데이터 수집·이용 안내(Prominent Disclosure)를 띄워 동의를 받는다.
-/// 동의 전까지 KoryPlatform / KorySession / KoryAnalyticsPump는 시작되지 않는다.
-/// </summary>
-public sealed class LlConsentGate : MonoBehaviour
-{
-    private bool _shown;
-
-    private void Update()
-    {
-        if (_shown) return;
-        if (!GlobalUICanvasView.HasInstance || GlobalUICanvasView.Instance.PopupPresenter == null) return;
-        if (GlobalUICanvasView.Instance.IsPopupShown() || SceneTransitionManager.IsBusy) return;
-
-        _shown = true;
-        ShowDisclosurePopup(
-            () =>
-            {
-                LlPlatform.GrantConsentAndBoot();
-                if (this != null) Destroy(gameObject);
-            },
-            () =>
-            {
-                LlPlatform.DeclineConsent();
-                if (this != null) Destroy(gameObject);
-            });
-    }
-
-    public static void ShowDisclosurePopup(Action onAccept, Action onDecline)
-    {
-        if (!GlobalUICanvasView.HasInstance || GlobalUICanvasView.Instance.PopupPresenter == null) return;
-        var popup = GlobalUICanvasView.Instance.PopupPresenter;
-        const string message =
-            "LAND LINKER(Android)는 클라우드 저장, 고객 지원, 광고 제공 및 성능·플레이 분석을 위해 아래 정보를 수집·전송합니다.\n\n"
-            + "• 계정·진행: 게스트 ID, Play 게임즈 ID, 스테이지 클리어 및 별 기록\n"
-            + "• 진단·플레이: 앱 버전, 기기 모델·OS·화면 주사율·메모리, 프레임 속도(FPS), 스테이지·광고 기록\n"
-            + "• 광고: Google AdMob 광고 ID\n\n"
-            + "<size=85%>동의하지 않으면 오프라인 모드로 실행되며 서버 전송과 광고 기능이 꺼집니다.</size>";
-        popup.ShowPopup(
-            "데이터 수집 및 이용 안내",
-            message,
-            ("동의하고 시작", () =>
-            {
-                popup.HidePopup();
-                onAccept?.Invoke();
-            }),
-            ("개인정보 처리방침", () => LandLinkerServices.OpenPrivacyPolicy()),
-            ("오프라인 (동의 안 함)", () =>
-            {
-                popup.HidePopup();
-                onDecline?.Invoke();
-            })
-        );
-    }
-}
-
-/// <summary>
-/// 플랫폼 호스트 오브젝트에 붙어 시작 시 게스트 계정을 만들고, UI가 준비되면 대기 중인 팝업을 띄운다.
-/// </summary>
 public sealed class LlPlatformRunner : MonoBehaviour
 {
     private static LlPlatformRunner s_instance;
+
     private static readonly System.Collections.Generic.Queue<Action> s_uiQueue = new System.Collections.Generic.Queue<Action>();
 
     public static void RunWhenUiReady(Action action)
@@ -416,3 +329,4 @@ public sealed class LlPlatformRunner : MonoBehaviour
     }
 }
 #endif
+

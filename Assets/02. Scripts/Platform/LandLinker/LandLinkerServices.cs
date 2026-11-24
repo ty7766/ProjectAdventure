@@ -11,10 +11,84 @@ public static class LandLinkerServices
     public const string PrivacyPolicyUrl = "https://games.codingbot.kr/land-linker/privacy/";
     public const string TermsOfServiceUrl = "https://games.codingbot.kr/land-linker/terms/";
     public const string AccountDeletionWebUrl = "https://games.codingbot.kr/land-linker/privacy/#delete-account";
-
     /// <summary>온라인/구글 계정 상태가 바뀌었을 때 (옵션 UI 갱신용)</summary>
     public static event Action StateChanged;
+    public static event Action ConsentPromptRequested;
+    public static event Action<PlatformNotice> Notice;
+    public static event Action<ConflictInfo> ConflictChoiceRequested;
 
+    public static bool ConsentPromptPending { get; private set; }
+
+    public static bool AccountFeaturesAvailable
+    {
+        get
+        {
+#if UNITY_EDITOR
+            return PlatformCapability.EditorForceTouchUI;
+#elif UNITY_ANDROID
+            return true;
+#else
+            // PC: enable after desktop Google sign-in is configured
+            return false;
+#endif
+        }
+    }
+
+    public static ConsentState Consent
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return LlPlatform.Consent;
+#else
+            return ConsentState.Unknown;
+#endif
+        }
+    }
+
+    public static void RequestConsentPrompt()
+    {
+        ConsentPromptPending = true;
+        ConsentPromptRequested?.Invoke();
+    }
+
+    public static void GrantConsent()
+    {
+        ConsentPromptPending = false;
+#if UNITY_ANDROID
+        LlPlatform.GrantConsentAndBoot();
+#endif
+    }
+
+    public static void DeclineConsent()
+    {
+        ConsentPromptPending = false;
+#if UNITY_ANDROID
+        LlPlatform.DeclineConsent();
+#endif
+    }
+
+    public static string ShortAccountNumber
+    {
+        get
+        {
+            string id = PlayerId;
+            return string.IsNullOrEmpty(id) ? "" : "#" + id.Substring(Math.Max(0, id.Length - 4)).ToUpperInvariant();
+        }
+    }
+
+    public static void CopyAccountNumberToClipboard() => GUIUtility.systemCopyBuffer = PlayerId;
+
+    public static void ResolveConflict(bool chooseGoogle)
+    {
+#if UNITY_ANDROID
+        LlPlatform.ResolveConflict(chooseGoogle);
+#endif
+    }
+
+    internal static void RaiseNotice(PlatformNotice notice) => Notice?.Invoke(notice);
+
+    internal static void RaiseConflict(ConflictInfo info) => ConflictChoiceRequested?.Invoke(info);
     public static bool IsEnabled
     {
         get
@@ -42,7 +116,7 @@ public static class LandLinkerServices
     public static void RequestConsentAndEnable()
     {
 #if UNITY_ANDROID
-        LlPlatform.RequestConsentFromOptions();
+        RequestConsentPrompt();
 #endif
     }
 
@@ -151,12 +225,22 @@ public static class LandLinkerServices
     }
 
     /// <summary>인게임 고객 문의 제출 (POST /v1/support/tickets)</summary>
-    public static void SubmitSupportTicket(string category, string body, string email, Action<bool, string, string, string> done)
+    public static void SubmitSupportTicket(string category, string body, string email, Action<SupportTicketResult> done)
     {
+        var validation = SupportTicketValidation.Validate(body, email);
+        if (validation != SupportError.None)
+        {
+            done?.Invoke(new SupportTicketResult { Error = validation });
+            return;
+        }
+
 #if UNITY_ANDROID
-        LlPlatform.SubmitSupportTicket(category, body, email, done);
+        LlPlatform.SubmitSupportTicket(category, body, email, (ok, reference, url, error) =>
+            done?.Invoke(new SupportTicketResult { Ok = ok, Reference = reference, ThreadUrl = url,
+                Error = ok ? SupportError.None : error == "rate_limited" ? SupportError.RateLimited :
+                    error == "invalid_request" ? SupportError.TooShort : SupportError.Failed }));
 #else
-        done?.Invoke(false, null, null, "unavailable");
+        done?.Invoke(new SupportTicketResult { Error = SupportError.Failed });
 #endif
     }
 
@@ -172,7 +256,6 @@ public static class LandLinkerServices
     public static void OpenPrivacyPolicy() => Application.OpenURL(PrivacyPolicyUrl);
 
     public static void OpenTermsOfService() => Application.OpenURL(TermsOfServiceUrl);
-
     /// <summary>스테이지 시작 (분석)</summary>
     public static void StageStarted(int stage)
     {

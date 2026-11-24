@@ -64,10 +64,15 @@ public class UI_OptionPresenter
     private void SetupVisibleTabs()
     {
         bool hideKeyBindTab = PlatformCapability.UseTouchUI;
+        if (_view.AccountTabButton != null)
+        {
+            _view.AccountTabButton.gameObject.SetActive(LandLinkerServices.AccountFeaturesAvailable);
+        }
 
         foreach (var tabButton in _tabButtons)
         {
-            bool hideButton = hideKeyBindTab && tabButton.TabName == KeyBindTabName;
+            bool hideButton = (hideKeyBindTab && tabButton.TabName == KeyBindTabName)
+                || (!LandLinkerServices.AccountFeaturesAvailable && (tabButton == _view.AccountTabButton || tabButton.TabName == "Account"));
             if (hideButton)
             {
                 tabButton.gameObject.SetActive(false);
@@ -117,6 +122,9 @@ public class UI_OptionPresenter
                 break;
             case "KeyBind":
                 _view.ShowKeyBindTab();
+                break;
+            case "Account":
+                _view.ShowAccountTab();
                 break;
             default:
                 Debug.LogError($"Unknown tab name: {_currentTab}");
