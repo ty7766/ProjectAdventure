@@ -100,3 +100,7 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 /Assets/TextMesh Pro/Glyph Report.txt
 /Assets/TextMesh Pro/Glyph Report.txt.meta
+
+# QA captures (unity capture_game_view)
+/Assets/Temp/
+/Assets/Temp.meta

@@ -53,6 +53,8 @@ public class GlobalUICanvasView : Singleton<GlobalUICanvasView>
     [SerializeField] private TextMeshProUGUI _frameTimeText;
     #endregion
 
+    [SerializeField] private UI_SupportModalView _supportModal;
+    public UI_SupportModalView SupportModal => _supportModal;
     private GlobalUICanvasPopupPresenter _popupPresenter;
     private GlobalUICanvasFPSMonitorPresenter _fpsMonitorPresenter;
 

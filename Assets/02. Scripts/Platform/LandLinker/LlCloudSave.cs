@@ -1,4 +1,4 @@
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
 using System.Collections.Generic;
 using GameManager.Singleton;
 using Kory.Platform;
@@ -23,6 +23,13 @@ public static class LlCloudSave
     private static void ResetStatics()
     {
         s_pushing = false;
+        s_pushAgain = false;
+        s_lastPushedBody = null;
+        s_pendingServerSave = null;
+    }
+
+    public static void Reset()
+    {
         s_pushAgain = false;
         s_lastPushedBody = null;
         s_pendingServerSave = null;

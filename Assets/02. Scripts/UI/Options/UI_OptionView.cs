@@ -18,6 +18,9 @@ public class UI_OptionView : MonoBehaviour
     [SerializeField] private CanvasGroup _audioTab;
     [SerializeField] private CanvasGroup _keyBindTab;
     [SerializeField] private UI_KeyBindTabView _keyBindTabView;
+    [SerializeField] private CanvasGroup _accountTab;
+    [SerializeField] private UI_AccountTabView _accountTabView;
+    [SerializeField] private UI_OptionTabButtonView _accountTabButton;
 
     [Header("Settings")]
     [SerializeField] private float _unselectedTabOpacity = 0.8f;
@@ -26,6 +29,7 @@ public class UI_OptionView : MonoBehaviour
     private UI_OptionPresenter _presenter;
 
     public TitleFlowController FlowController => _flowController;
+    public UI_OptionTabButtonView AccountTabButton => _accountTabButton;
 
     private void Awake()
     {
@@ -95,6 +99,14 @@ public class UI_OptionView : MonoBehaviour
         StartCoroutine(DoTransition(1f, _keyBindTab, _transitionDuration));
     }
 
+    public void ShowAccountTab()
+    {
+        if (_accountTab == null) return;
+        if (_accountTabView != null) _accountTabView.Refresh();
+        HideAllTab();
+        StartCoroutine(DoTransition(1f, _accountTab, _transitionDuration));
+    }
+
     private void HideAllTab()
     {
         Assert.IsNotNull(_graphicTab, "Graphic Tab reference is not assigned in the inspector!");
@@ -104,9 +116,11 @@ public class UI_OptionView : MonoBehaviour
         _graphicTab.blocksRaycasts = false;
         _audioTab.blocksRaycasts = false;
         _keyBindTab.blocksRaycasts = false;
+        if (_accountTab != null) _accountTab.blocksRaycasts = false;
         StartCoroutine(DoTransition(0f, _graphicTab, _transitionDuration));
         StartCoroutine(DoTransition(0f, _audioTab, _transitionDuration));
         StartCoroutine(DoTransition(0f, _keyBindTab, _transitionDuration));
+        if (_accountTab != null) StartCoroutine(DoTransition(0f, _accountTab, _transitionDuration));
     }
 
     private IEnumerator DoTransition(float targetAlpha, CanvasGroup canvasGroup, float duration)

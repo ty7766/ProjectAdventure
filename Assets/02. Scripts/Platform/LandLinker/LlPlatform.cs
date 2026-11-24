@@ -1,0 +1,366 @@
+#if UNITY_ANDROID || UNITY_STANDALONE
+using System;
+using System.Collections;
+using GameManager.Singleton;
+using Kory.Platform;
+using Newtonsoft.Json.Linq;
+using UnityEngine;
+
+/// <summary>
+/// Android와 Windows Standalone(STOVE)에서 플랫폼 SDK를 연결한다. 광고는 Android에서만 사용한다.
+/// 또한 최초 실행 시 명시적 고지·동의(Prominent Disclosure)를 받은 뒤에만 SDK·분석·세션을 초기화한다.
+/// </summary>
+public static class LlPlatform
+{
+    public const string GameKey = "ll";
+    private const string ConsentPrefKey = "kory.ll.consent.v1";
+
+    private static bool s_unlinkedAfterDelete;
+    private static bool s_updateAvailableShown;
+
+    public static bool IsRunning => KoryPlatform.IsInitialized && HasConsent;
+
+    public static bool HasConsent => PlayerPrefs.GetInt(ConsentPrefKey, 0) == 1;
+
+    public static ConsentState Consent => !PlayerPrefs.HasKey(ConsentPrefKey) ? ConsentState.Unknown : HasConsent ? ConsentState.Granted : ConsentState.Declined;
+
+    public static bool CanOptIn => (!KoryPlatform.IsInitialized || !HasConsent) && !KoryPlatform.OfflineRequested;
+
+    public static bool GoogleLinked =>
+        !s_unlinkedAfterDelete
+        && IsRunning
+        && KorySession.HasAccount
+        && KoryGoogleAccount.Instance != null
+        && (KoryGoogleAccount.Instance.Linked || KoryGoogleAccount.Instance.SignedIn);
+
+    public static string PlayerId => IsRunning ? KorySession.PlayerId : "";
+
+    public static bool PrivacyOptionsRequired => IsRunning && KoryAds.PrivacyOptionsRequired;
+
+    // SDK 부팅(BeforeSceneLoad)보다 먼저: 원격 설정·분석 경로를 이 게임 경로로 돌린다.
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void Routes()
+    {
+        s_unlinkedAfterDelete = false;
+        s_updateAvailableShown = false;
+        KoryRoutes.Config = KoryRoutes.GamePrefix + GameKey + "/config";
+        KoryRoutes.Events = KoryRoutes.GamePrefix + GameKey + "/events";
+    }
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void Boot()
+    {
+        if (KoryPlatform.IsInitialized || KoryPlatform.OfflineRequested)
+        {
+            return;
+        }
+
+        if (HasConsent)
+        {
+            InitializePlatform();
+            return;
+        }
+
+        // 아직 최초 동의를 받지 않은 경우(최초 실행) 백그라운드 전송·세션 생성 없이 UI 준비 후 고지 팝업만 띄운다.
+        if (!PlayerPrefs.HasKey(ConsentPrefKey))
+        {
+            LandLinkerServices.RequestConsentPrompt();
+        }
+    }
+
+    public static void GrantConsentAndBoot()
+    {
+        PlayerPrefs.SetInt(ConsentPrefKey, 1);
+        PlayerPrefs.Save();
+        InitializePlatform();
+        if (KoryPlatform.IsInitialized && !KorySession.HasAccount)
+        {
+            _ = KorySession.StartGuest();
+        }
+        LandLinkerServices.RaiseStateChanged();
+    }
+
+    public static void DeclineConsent()
+    {
+        PlayerPrefs.SetInt(ConsentPrefKey, 0);
+        PlayerPrefs.Save();
+        LandLinkerServices.RaiseStateChanged();
+    }
+
+    private static void InitializePlatform()
+    {
+        if (KoryPlatform.IsInitialized || KoryPlatform.OfflineRequested)
+        {
+            return;
+        }
+
+        var config = KoryConfig.Load();
+        if (config == null)
+        {
+            Debug.LogWarning("[LandLinker] Resources/KoryConfig is missing; platform disabled.");
+            return;
+        }
+
+        KorySession.AfterLogin = LlCloudSave.PullAfterLogin;
+        KoryAnalyticsPump.PerfSampling = () => StageLoader.HasInstance && Time.timeScale > 0f;
+        KoryPlatform.Notice -= OnNotice;
+        KoryPlatform.Notice += OnNotice;
+        KoryGoogleAccount.Conflict -= OnGoogleConflict;
+        KoryGoogleAccount.Conflict += OnGoogleConflict;
+        KoryGoogleAccount.StateChanged -= LandLinkerServices.RaiseStateChanged;
+        KoryGoogleAccount.StateChanged += LandLinkerServices.RaiseStateChanged;
+        KorySession.Changed -= LandLinkerServices.RaiseStateChanged;
+        KorySession.Changed += LandLinkerServices.RaiseStateChanged;
+
+        KoryPlatform.Initialize(config);
+        KoryUpdateGate.Changed -= OnUpdateGateChanged;
+        KoryUpdateGate.Changed += OnUpdateGateChanged;
+
+        LlCloudSave.Attach();
+#if UNITY_ANDROID
+        LlInterstitialAds.Attach(KoryPlatform.Host);
+#endif
+        KoryPlatform.Host.AddComponent<LlPlatformRunner>();
+    }
+
+    private static void OnUpdateGateChanged()
+    {
+        if (KoryUpdateGate.Required)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.UpdateRequired));
+        else if (KoryUpdateGate.Available && !s_updateAvailableShown)
+        {
+            s_updateAvailableShown = true;
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.UpdateAvailable));
+        }
+    }
+
+    public static bool CanCancelGoogleSignIn
+    {
+        get
+        {
+#if UNITY_STANDALONE || UNITY_EDITOR
+            return IsRunning && KoryGoogleAccount.Provider is KoryDesktopGoogleSignIn;
+#else
+            return false;
+#endif
+        }
+    }
+
+    public static void CancelGoogleSignIn()
+    {
+#if UNITY_STANDALONE || UNITY_EDITOR
+        if (KoryGoogleAccount.Provider is KoryDesktopGoogleSignIn) KoryDesktopGoogleSignIn.CancelPending();
+#endif
+    }
+
+    public static void Track(string name, params (string key, object value)[] props)
+    {
+        if (!IsRunning) return;
+        KoryAnalytics.Track(name, props);
+    }
+
+    public static async void SignInGoogle(Action<string> done)
+    {
+        var google = KoryGoogleAccount.Instance;
+        if (!IsRunning || google == null || !google.Available)
+        {
+            done?.Invoke("unavailable");
+            return;
+        }
+        try
+        {
+            s_unlinkedAfterDelete = false;
+            var result = await google.SignInInteractive();
+            done?.Invoke(string.IsNullOrEmpty(result.errorCode) ? null : result.errorCode);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            done?.Invoke("error");
+        }
+    }
+
+    public static void ShowPrivacyOptions(Action done)
+    {
+        if (!IsRunning)
+        {
+            done?.Invoke();
+            return;
+        }
+        KoryAds.ShowPrivacyOptions(() =>
+        {
+            LandLinkerServices.RaiseStateChanged();
+            done?.Invoke();
+        });
+    }
+
+    public static async void DeleteAccount(Action<bool, string> done)
+    {
+        if (!IsRunning)
+        {
+            done?.Invoke(false, "unavailable");
+            return;
+        }
+        if (!KorySession.HasAccount)
+        {
+            LlCloudSave.Reset();
+            if (GameSaveManager.HasInstance) GameSaveManager.Instance.ResetAllProgress();
+            DeclineConsent();
+            done?.Invoke(true, null);
+            return;
+        }
+        try
+        {
+            var result = await KoryApi.Delete<JObject>(KoryRoutes.Account);
+            if (!result.ok)
+            {
+                done?.Invoke(false, string.IsNullOrEmpty(result.errorCode) ? "error" : result.errorCode);
+                return;
+            }
+
+            s_unlinkedAfterDelete = true;
+            LlCloudSave.Reset();
+            if (GameSaveManager.HasInstance)
+            {
+                GameSaveManager.Instance.ResetAllProgress();
+            }
+            KorySession.SignOut();
+            DeclineConsent();
+            done?.Invoke(true, null);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            done?.Invoke(false, "error");
+        }
+    }
+
+    public static async void SubmitSupportTicket(string category, string body, string email, Action<bool, string, string, string> done)
+    {
+        if (!IsRunning)
+        {
+            done?.Invoke(false, null, null, "unavailable");
+            return;
+        }
+        try
+        {
+            if (!KorySession.HasAccount)
+            {
+                var auth = await KorySession.StartGuest();
+                if (auth != KoryAuthOutcome.SignedIn && string.IsNullOrEmpty(KorySession.Token))
+                {
+                    done?.Invoke(false, null, null, "offline");
+                    return;
+                }
+            }
+
+            var payload = new JObject
+            {
+                ["category"] = category,
+                ["body"] = body,
+                ["device"] = new JObject
+                {
+                    ["appVersion"] = Application.version,
+                    ["platform"] = Application.platform.ToString(),
+                    ["os"] = SystemInfo.operatingSystem,
+                    ["model"] = SystemInfo.deviceModel,
+                },
+            };
+            if (!string.IsNullOrWhiteSpace(email))
+            {
+                payload["email"] = email.Trim();
+            }
+
+            var result = await KoryApi.Post<JObject>(KoryRoutes.SupportTickets, payload);
+            if (result.ok)
+            {
+                string ticketRef = result.data?["ref"]?.ToString() ?? "";
+                string threadUrl = result.data?["threadUrl"]?.ToString() ?? "";
+                done?.Invoke(true, ticketRef, threadUrl, null);
+            }
+            else
+            {
+                string code = !string.IsNullOrEmpty(result.errorCode)
+                    ? result.errorCode
+                    : (result.networkError ? "network_error" : "error");
+                done?.Invoke(false, null, null, code);
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            done?.Invoke(false, null, null, "error");
+        }
+    }
+
+    private static void OnNotice(KoryNotice notice, string serverMessage)
+    {
+        if (notice == KoryNotice.GoogleProgressRestored)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.GoogleProgressRestored));
+        else if (notice == KoryNotice.GoogleLinked)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.GoogleLinked));
+    }
+
+    private static void OnGoogleConflict(JObject device, JObject google)
+    {
+        var info = new ConflictInfo
+        {
+            DeviceClearedStages = device != null ? (device.Value<int?>("stagesCleared") ?? -1) : -1,
+            DeviceStars = device != null ? (device.Value<int?>("stars") ?? -1) : -1,
+            GoogleClearedStages = google != null ? (google.Value<int?>("stagesCleared") ?? -1) : -1,
+            GoogleStars = google != null ? (google.Value<int?>("stars") ?? -1) : -1,
+        };
+        LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseConflict(info));
+    }
+
+    public static void ResolveConflict(bool chooseGoogle)
+    {
+        var google = KoryGoogleAccount.Instance;
+        if (google != null) google.Choose(chooseGoogle ? KoryGoogleAccount.ChooseGoogle : KoryGoogleAccount.ChooseDevice);
+    }
+}
+
+public sealed class LlPlatformRunner : MonoBehaviour
+{
+    private static LlPlatformRunner s_instance;
+
+    private static readonly System.Collections.Generic.Queue<Action> s_uiQueue = new System.Collections.Generic.Queue<Action>();
+
+    public static void RunWhenUiReady(Action action)
+    {
+        s_uiQueue.Enqueue(action);
+    }
+
+    private void Awake()
+    {
+        s_instance = this;
+    }
+
+    private IEnumerator Start()
+    {
+        // SDK는 스스로 계정을 만들지 않는다. 구글 복구/기존 계정 접속이 끝난 뒤에도 계정이 없으면 게스트로 시작한다.
+        while (!KorySession.StartupDone)
+        {
+            yield return null;
+        }
+        if (!KorySession.HasAccount)
+        {
+            _ = KorySession.StartGuest();
+        }
+    }
+
+    private void Update()
+    {
+        if (s_uiQueue.Count == 0) return;
+        if (!GlobalUICanvasView.HasInstance || GlobalUICanvasView.Instance.PopupPresenter == null) return;
+        if (GlobalUICanvasView.Instance.IsPopupShown() || SceneTransitionManager.IsBusy) return;
+        s_uiQueue.Dequeue()?.Invoke();
+    }
+
+    private void OnDestroy()
+    {
+        if (s_instance == this) s_instance = null;
+    }
+}
+#endif
+
