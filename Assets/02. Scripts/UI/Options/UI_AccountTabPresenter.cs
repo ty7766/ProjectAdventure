@@ -35,6 +35,7 @@ public class UI_AccountTabPresenter
         {
             Online = LandLinkerServices.IsEnabled,
             Linking = _linking,
+            CanCancel = LandLinkerServices.CanCancelGoogleSignIn,
             Working = _working,
             Linked = LandLinkerServices.GoogleLinked,
             Name = LandLinkerServices.GoogleDisplayName,
@@ -46,7 +47,12 @@ public class UI_AccountTabPresenter
 
     public void Google()
     {
-        if (_linking || _working)
+        if (_linking)
+        {
+            if (LandLinkerServices.CanCancelGoogleSignIn) LandLinkerServices.CancelGoogleSignIn();
+            return;
+        }
+        if (_working)
             return;
         if (!LandLinkerServices.IsEnabled)
         {

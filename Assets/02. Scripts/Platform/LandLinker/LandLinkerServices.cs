@@ -3,8 +3,7 @@ using UnityEngine;
 
 /// <summary>
 /// 게임 코드가 부르는 코리게임즈 플랫폼 기능(클라우드 세이브, 구글 계정, 고객 문의, 계정 삭제, 법적 문서, 전면 광고, 분석)의 단일 입구.
-/// Android 빌드에서만 KORYGAMES 플랫폼 SDK에 연결되고, PC 등 다른 타겟에서는 아무 일도 하지 않는다
-/// (구현은 LandLinker/Android 폴더의 #if UNITY_ANDROID 코드). 게임 코드에는 플랫폼 분기를 두지 않는다.
+/// Android와 Windows Standalone(STOVE)에서 SDK에 연결하며, 광고는 Android에서만 사용한다.
 /// </summary>
 public static class LandLinkerServices
 {
@@ -23,22 +22,58 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_EDITOR
-            return PlatformCapability.EditorForceTouchUI;
-#elif UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return true;
 #else
-            // PC: enable after desktop Google sign-in is configured
             return false;
 #endif
         }
+    }
+
+    /// <summary>동의 창에서 광고 고지를 표시할지 여부.</summary>
+    public static bool AdsAvailable
+    {
+        get
+        {
+#if UNITY_ANDROID
+            return true;
+#else
+            return false;
+#endif
+        }
+    }
+
+    public static bool CanCancelGoogleSignIn
+    {
+        get
+        {
+#if UNITY_ANDROID || UNITY_STANDALONE
+            return LlPlatform.CanCancelGoogleSignIn;
+#else
+            return false;
+#endif
+        }
+    }
+
+    public static void CancelGoogleSignIn()
+    {
+#if UNITY_ANDROID || UNITY_STANDALONE
+        LlPlatform.CancelGoogleSignIn();
+#endif
+    }
+
+    public static void OpenStoreForUpdate()
+    {
+#if UNITY_ANDROID || UNITY_STANDALONE
+        Kory.Platform.KoryUpdateGate.OpenStore();
+#endif
     }
 
     public static ConsentState Consent
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.Consent;
 #else
             return ConsentState.Unknown;
@@ -55,7 +90,7 @@ public static class LandLinkerServices
     public static void GrantConsent()
     {
         ConsentPromptPending = false;
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.GrantConsentAndBoot();
 #endif
     }
@@ -63,7 +98,7 @@ public static class LandLinkerServices
     public static void DeclineConsent()
     {
         ConsentPromptPending = false;
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.DeclineConsent();
 #endif
     }
@@ -81,7 +116,7 @@ public static class LandLinkerServices
 
     public static void ResolveConflict(bool chooseGoogle)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.ResolveConflict(chooseGoogle);
 #endif
     }
@@ -93,7 +128,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.IsRunning;
 #else
             return false;
@@ -105,7 +140,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.CanOptIn;
 #else
             return false;
@@ -115,7 +150,7 @@ public static class LandLinkerServices
 
     public static void RequestConsentAndEnable()
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         RequestConsentPrompt();
 #endif
     }
@@ -124,7 +159,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.IsRunning && Kory.Platform.KorySession.Online;
 #else
             return false;
@@ -136,7 +171,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.PlayerId ?? "";
 #else
             return "";
@@ -148,7 +183,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.IsRunning && Kory.Platform.KoryGoogleAccount.Instance != null && Kory.Platform.KoryGoogleAccount.Instance.Available;
 #else
             return false;
@@ -160,7 +195,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return GoogleAvailable && Kory.Platform.KoryGoogleAccount.Instance.SignedIn;
 #else
             return false;
@@ -172,7 +207,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.GoogleLinked;
 #else
             return false;
@@ -184,7 +219,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return GoogleSignedIn ? Kory.Platform.KoryGoogleAccount.Instance.DisplayName : "";
 #else
             return "";
@@ -196,7 +231,7 @@ public static class LandLinkerServices
     {
         get
         {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
             return LlPlatform.PrivacyOptionsRequired;
 #else
             return false;
@@ -207,7 +242,7 @@ public static class LandLinkerServices
     /// <summary>구글 계정 로그인(연동). 결과 문구는 게임이 보여준다. (null = 성공)</summary>
     public static void SignInGoogle(Action<string> done)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.SignInGoogle(done);
 #else
         done?.Invoke("unavailable");
@@ -217,7 +252,7 @@ public static class LandLinkerServices
     /// <summary>서버 및 기기 계정 데이터 영구 삭제 (Google Play 계정 삭제 정책 준수)</summary>
     public static void DeleteAccount(Action<bool, string> done)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.DeleteAccount(done);
 #else
         done?.Invoke(false, "unavailable");
@@ -234,7 +269,7 @@ public static class LandLinkerServices
             return;
         }
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.SubmitSupportTicket(category, body, email, (ok, reference, url, error) =>
             done?.Invoke(new SupportTicketResult { Ok = ok, Reference = reference, ThreadUrl = url,
                 Error = ok ? SupportError.None : error == "rate_limited" ? SupportError.RateLimited :
@@ -246,7 +281,7 @@ public static class LandLinkerServices
 
     public static void ShowPrivacyOptions(Action done)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.ShowPrivacyOptions(done);
 #else
         done?.Invoke();
@@ -259,7 +294,7 @@ public static class LandLinkerServices
     /// <summary>스테이지 시작 (분석)</summary>
     public static void StageStarted(int stage)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         LlPlatform.Track("stage_start", ("stage", stage));
 #endif
     }
@@ -267,7 +302,7 @@ public static class LandLinkerServices
     /// <summary>한 판이 끝났을 때 (클리어/실패). 분석 기록 + 전면 광고 판정.</summary>
     public static void RunEnded(int stage, bool cleared, int stars, float seconds)
     {
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
         if (cleared)
         {
             LlPlatform.Track("stage_clear", ("stage", stage), ("stars", stars), ("seconds", (int)seconds));
@@ -276,6 +311,8 @@ public static class LandLinkerServices
         {
             LlPlatform.Track("stage_fail", ("stage", stage), ("seconds", (int)seconds));
         }
+#endif
+#if UNITY_ANDROID
         LlInterstitialAds.OnRunEnded(stage, seconds);
 #endif
     }

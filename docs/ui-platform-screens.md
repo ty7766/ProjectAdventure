@@ -6,7 +6,7 @@ PR #73의 첫 구현은 화면을 코드로 조립했다(`new GameObject`/`AddCo
 - 보이는 것은 전부 프리팹 안에 미리 놓여 있다. 스크립트는 `[SerializeField]`로 참조된 요소에 데이터를 채우고 켜고 끄기만 한다. 레이아웃·색·글자 크기·고정 문구를 코드에서 정하지 않는다.
 - 상황에 따라 바뀌는 문구(상태·오류)는 View의 `[SerializeField, TextArea] string` 필드에 기본값으로 두어 인스펙터에서 고친다. 로직(Presenter·서비스)에는 한국어 문구가 없다.
 - `GameObject.Find`, `transform.Find("경로")`, `FindFirstObjectByType`로 UI를 찾지 않는다. UnityEngine.Object에 `?.`/`??`를 쓰지 않는다.
-- 플랫폼 무관: UI 스크립트는 `#if UNITY_ANDROID` 밖에 있다. 기능 노출은 `LandLinkerServices`의 기능 플래그로만 정한다(지금은 Android에서만 켜짐, STOVE PC는 후속 PR에서 플래그만 켠다).
+- 플랫폼 무관: UI 스크립트는 플랫폼 `#if` 밖에 있다. 기능 노출은 `LandLinkerServices`의 기능 플래그로만 정한다(Android와 STOVE PC에서 켜짐).
 - 시스템 문구는 `~습니다`체. 요청은 `~해 주십시오`. 개발 용어(서버, FPS, AdMob, 오류 코드, ID 원문) 금지.
 - 글자: `BMJUA SDF`에 없는 기호(`·`, `…`, `•`)를 쓰지 않는다. 본문은 줄바꿈 허용(Wrap), 버튼·라벨만 한 줄.
 
@@ -57,6 +57,8 @@ UI_ConsentModal (RectTransform 전체 늘림, CanvasGroup)
 | 기기 정보 | 앱 버전, 기기 모델, 운영체제, 게임 실행 성능 |
 | 광고 | 광고 식별자(광고 표시와 효과 측정) |
 
+광고 항목과 Intro의 "광고 제공"은 `LandLinkerServices.AdsAvailable`(Android만 참)일 때만 보인다. View 참조 `_adItem`(세 번째 Item), `_intro`, 문구 `_introWithAds` / `_introWithoutAds`("클라우드 저장과 고객 문의를 위해 아래 정보를 처리합니다."). `Show(onAccept, onDecline, showAdDisclosure)`.
+
 Note: "동의하지 않아도 오프라인으로 플레이할 수 있습니다. 설정의 계정 탭에서 언제든 바꿀 수 있습니다."
 
 View API: `Show(Action onAccept, Action onDecline, Action onPolicy)`, `Hide()`. 표시 중 뒤 화면 입력 차단.
@@ -92,6 +94,8 @@ View API: `Show(Action onAccept, Action onDecline, Action onPolicy)`, `Hide()`. 
 3. 성공: "계정을 삭제했습니다" / "오프라인 상태로 처음부터 시작합니다." / [확인]
    실패: "계정을 삭제하지 못했습니다" / "네트워크 연결을 확인한 뒤 다시 시도해 주십시오." / [확인]
 
+PC(STOVE): 구글 연동은 시스템 브라우저에서 진행된다. 연결 중에는 StatusText "브라우저에서 로그인 중", GoogleButton "취소"(활성, `LandLinkerServices.CancelGoogleSignIn`). 취소·시간 초과는 실패 팝업을 띄우지 않는다.
+
 구글 연동 실패: "연동하지 못했습니다" / "잠시 후 다시 시도해 주십시오." / [확인]
 
 ## 5. 고객 문의 모달 `UI_SupportModal`
@@ -123,3 +127,8 @@ UI_SupportModal (전체, CanvasGroup)
 - 긴 값: 표시 이름 20자, 문의 본문 2000자, 이메일 60자로도 확인.
 - 네모 박스(없는 글리프)가 보이면 불합격.
 - 에디터 편집 모드에서 프리팹을 열었을 때 화면이 그대로 보여야 한다.
+
+## 7. 업데이트 게이트 (기존 GlobalUI 팝업, `UI_PlatformPromptsView`)
+- 필수 업데이트(`KoryUpdateGate.Required`): "업데이트가 필요합니다" / "새 버전이 나왔습니다. 스토어에서 최신 버전으로 업데이트한 뒤 다시 실행해 주십시오." / [업데이트] — 팝업을 닫지 않는다.
+- 선택 업데이트(`Available`, 실행당 1회): "새 버전이 있습니다" / "최신 버전으로 업데이트할 수 있습니다." / [업데이트(주)] [나중에]
+- 업데이트 버튼은 `KoryUpdateGate.OpenStore()`: Android는 Play 스토어, PC는 `KoryConfig.desktopStoreUrl`(STOVE 상점 https://store.onstove.com/ko/games/105336).

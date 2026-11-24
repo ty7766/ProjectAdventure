@@ -6,6 +6,7 @@ public struct AccountTabState
 {
     public bool Online;
     public bool Linking;
+    public bool CanCancel;
     public bool Working;
     public bool Linked;
     public string Name;
@@ -35,6 +36,7 @@ public class UI_AccountTabView : MonoBehaviour
     [SerializeField, TextArea] private string _offline = "오프라인 플레이 중";
     [SerializeField, TextArea] private string _guest = "게스트";
     [SerializeField, TextArea] private string _connecting = "연결 중";
+    [SerializeField, TextArea] private string _connectingBrowser = "브라우저에서 로그인 중";
     [SerializeField, TextArea] private string _linked = "연동됨";
     [SerializeField, TextArea] private string _goOnline = "온라인 전환";
     [SerializeField, TextArea] private string _link = "연동하기";
@@ -95,10 +97,11 @@ public class UI_AccountTabView : MonoBehaviour
         string id = state.Id;
         bool googleAvailable = state.GoogleAvailable;
         bool adPrivacy = state.AdPrivacy;
-        _googleStatusText.text = !online ? _offline : state.Linking ? _connecting : linked ? (string.IsNullOrEmpty(name) ? _linked : name) : _guest;
-        _googleButton.gameObject.SetActive(!linked);
-        _googleButtonLabel.text = !online ? _goOnline : _link;
-        _googleButton.interactable = !busy && (!online || googleAvailable);
+        bool canCancel = state.Linking && state.CanCancel;
+        _googleStatusText.text = canCancel ? _connectingBrowser : !online ? _offline : state.Linking ? _connecting : linked ? (string.IsNullOrEmpty(name) ? _linked : name) : _guest;
+        _googleButton.gameObject.SetActive(canCancel || !linked);
+        _googleButtonLabel.text = canCancel ? _cancel : !online ? _goOnline : _link;
+        _googleButton.interactable = canCancel || (!busy && (!online || googleAvailable));
         _accountIdRow.SetActive(online);
         _deleteRow.SetActive(online);
         _accountIdText.text = id;

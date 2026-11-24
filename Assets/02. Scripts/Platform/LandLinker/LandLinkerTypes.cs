@@ -11,7 +11,9 @@ public enum ConsentState
 public enum PlatformNotice
 {
     GoogleProgressRestored,
-    GoogleLinked
+    GoogleLinked,
+    UpdateRequired,
+    UpdateAvailable
 }
 
 public enum SupportError

@@ -3122,6 +3122,15 @@ MonoBehaviour:
     \uBCC4 {1}\uAC1C"
   _chooseGoogle: "\uAD6C\uAE00 \uACC4\uC815 \uAE30\uB85D"
   _chooseDevice: "\uC774 \uAE30\uAE30 \uAE30\uB85D"
+  _updateRequiredTitle: "\uC5C5\uB370\uC774\uD2B8\uAC00 \uD544\uC694\uD569\uB2C8\uB2E4"
+  _updateRequiredBody: "\uC0C8 \uBC84\uC804\uC774 \uB098\uC654\uC2B5\uB2C8\uB2E4.
+    \uC2A4\uD1A0\uC5B4\uC5D0\uC11C \uCD5C\uC2E0 \uBC84\uC804\uC73C\uB85C \uC5C5\uB370\uC774\uD2B8\uD55C
+    \uB4A4 \uB2E4\uC2DC \uC2E4\uD589\uD574 \uC8FC\uC2ED\uC2DC\uC624."
+  _updateAvailableTitle: "\uC0C8 \uBC84\uC804\uC774 \uC788\uC2B5\uB2C8\uB2E4"
+  _updateAvailableBody: "\uCD5C\uC2E0 \uBC84\uC804\uC73C\uB85C \uC5C5\uB370\uC774\uD2B8\uD560
+    \uC218 \uC788\uC2B5\uB2C8\uB2E4."
+  _update: "\uC5C5\uB370\uC774\uD2B8"
+  _later: "\uB098\uC911\uC5D0"
 --- !u!1 &1888524262309020793
 GameObject:
   m_ObjectHideFlags: 0
@@ -7075,10 +7084,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e2bb0e51479428468df5384118559da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UI_ConsentModalView
+  _intro: {fileID: 6673883691545608875}
+  _adItem: {fileID: 5830110516432014406}
   _root: {fileID: 2652810557966250741}
   _acceptButton: {fileID: 8903871169891637353}
   _declineButton: {fileID: 8554436999332721254}
   _policyButton: {fileID: 4676690233610440734}
+  _introWithAds: "\uD074\uB77C\uC6B0\uB4DC \uC800\uC7A5, \uACE0\uAC1D \uBB38\uC758,
+    \uAD11\uACE0 \uC81C\uACF5\uC744 \uC704\uD574 \uC544\uB798 \uC815\uBCF4\uB97C
+    \uCC98\uB9AC\uD569\uB2C8\uB2E4."
+  _introWithoutAds: "\uD074\uB77C\uC6B0\uB4DC \uC800\uC7A5\uACFC \uACE0\uAC1D \uBB38\uC758\uB97C
+    \uC704\uD574 \uC544\uB798 \uC815\uBCF4\uB97C \uCC98\uB9AC\uD569\uB2C8\uB2E4."
 --- !u!1 &5907128195577106136
 GameObject:
   m_ObjectHideFlags: 0
