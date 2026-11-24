@@ -1,4 +1,4 @@
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
 using System.Collections.Generic;
 using GameManager.Singleton;
 using Kory.Platform;

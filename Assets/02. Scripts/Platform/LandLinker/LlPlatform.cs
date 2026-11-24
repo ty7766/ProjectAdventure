@@ -1,4 +1,4 @@
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_STANDALONE
 using System;
 using System.Collections;
 using GameManager.Singleton;
@@ -7,9 +7,7 @@ using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 /// <summary>
-/// Android 빌드에서 KORYGAMES 플랫폼 SDK를 띄우고 게임과 연결한다. (게임 키 "ll")
-/// PC 빌드에는 컴파일되지 않는다. Resources/KoryConfig의 autoInitialize는 꺼 두고 여기서만 초기화하므로
-/// 다른 타겟에서는 SDK가 절대 시작되지 않는다.
+/// Android와 Windows Standalone(STOVE)에서 플랫폼 SDK를 연결한다. 광고는 Android에서만 사용한다.
 /// 또한 최초 실행 시 명시적 고지·동의(Prominent Disclosure)를 받은 뒤에만 SDK·분석·세션을 초기화한다.
 /// </summary>
 public static class LlPlatform
@@ -18,6 +16,7 @@ public static class LlPlatform
     private const string ConsentPrefKey = "kory.ll.consent.v1";
 
     private static bool s_unlinkedAfterDelete;
+    private static bool s_updateAvailableShown;
 
     public static bool IsRunning => KoryPlatform.IsInitialized && HasConsent;
 
@@ -43,6 +42,7 @@ public static class LlPlatform
     private static void Routes()
     {
         s_unlinkedAfterDelete = false;
+        s_updateAvailableShown = false;
         KoryRoutes.Config = KoryRoutes.GamePrefix + GameKey + "/config";
         KoryRoutes.Events = KoryRoutes.GamePrefix + GameKey + "/events";
     }
@@ -113,10 +113,44 @@ public static class LlPlatform
         KorySession.Changed += LandLinkerServices.RaiseStateChanged;
 
         KoryPlatform.Initialize(config);
+        KoryUpdateGate.Changed -= OnUpdateGateChanged;
+        KoryUpdateGate.Changed += OnUpdateGateChanged;
 
         LlCloudSave.Attach();
+#if UNITY_ANDROID
         LlInterstitialAds.Attach(KoryPlatform.Host);
+#endif
         KoryPlatform.Host.AddComponent<LlPlatformRunner>();
+    }
+
+    private static void OnUpdateGateChanged()
+    {
+        if (KoryUpdateGate.Required)
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.UpdateRequired));
+        else if (KoryUpdateGate.Available && !s_updateAvailableShown)
+        {
+            s_updateAvailableShown = true;
+            LlPlatformRunner.RunWhenUiReady(() => LandLinkerServices.RaiseNotice(PlatformNotice.UpdateAvailable));
+        }
+    }
+
+    public static bool CanCancelGoogleSignIn
+    {
+        get
+        {
+#if UNITY_STANDALONE || UNITY_EDITOR
+            return IsRunning && KoryGoogleAccount.Provider is KoryDesktopGoogleSignIn;
+#else
+            return false;
+#endif
+        }
+    }
+
+    public static void CancelGoogleSignIn()
+    {
+#if UNITY_STANDALONE || UNITY_EDITOR
+        if (KoryGoogleAccount.Provider is KoryDesktopGoogleSignIn) KoryDesktopGoogleSignIn.CancelPending();
+#endif
     }
 
     public static void Track(string name, params (string key, object value)[] props)

@@ -34,7 +34,7 @@
 
 ## 서버 (코리게임즈 플랫폼)
 - 서버·SDK는 `F:\repos\korygames-platform`(`server/games/ll/`, SDK `unity/com.korygames.platform`). 작업 전 그 저장소의 `CLAUDE.md`, `docs/server-rules.md`, `docs/migration-plan.md`를 읽는다. 게임 저장소에는 서버 코드가 없다.
-- 플랫폼 연동은 현재 Android만. STOVE PC판 연동(데스크톱 구글 로그인·PC 업데이트 게이트)은 후속 PR — UI는 `LandLinkerServices.AccountFeaturesAvailable` 플래그로만 노출을 정한다.
+- 플랫폼 연동은 Android와 Windows Standalone(STOVE PC). 온라인 코드 가드는 `UNITY_ANDROID || UNITY_STANDALONE`, 광고(AdMob·UMP·전면 광고)와 Play Games는 `UNITY_ANDROID`만. PC 구글 로그인은 SDK의 `KoryDesktopGoogleSignIn`(브라우저 OAuth, `KoryConfig.googleDesktopClientId`), PC 업데이트 게이트는 `desktopStoreUrl`(STOVE 상점). UI는 `LandLinkerServices`의 플래그(`AccountFeaturesAvailable`, `AdsAvailable`, `CanCancelGoogleSignIn`)로만 노출을 정한다.
 
 ## Git
 - `develop`에서 기능 브랜치, PR로 병합. 검증된 단계마다 경로를 지정해 커밋·푸시. 에디터 잡변경을 쌓아 두지 않는다. `git stash` 금지.
