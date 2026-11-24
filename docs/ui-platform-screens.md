@@ -130,5 +130,5 @@ UI_SupportModal (전체, CanvasGroup)
 
 ## 7. 업데이트 게이트 (기존 GlobalUI 팝업, `UI_PlatformPromptsView`)
 - 필수 업데이트(`KoryUpdateGate.Required`): "업데이트가 필요합니다" / "새 버전이 나왔습니다. 스토어에서 최신 버전으로 업데이트한 뒤 다시 실행해 주십시오." / [업데이트] — 팝업을 닫지 않는다.
-- 선택 업데이트(`Available`, 실행당 1회): "새 버전이 있습니다" / "스토어에서 최신 버전으로 업데이트할 수 있습니다." / [나중에] [업데이트]
+- 선택 업데이트(`Available`, 실행당 1회): "새 버전이 있습니다" / "최신 버전으로 업데이트할 수 있습니다." / [업데이트(주)] [나중에]
 - 업데이트 버튼은 `KoryUpdateGate.OpenStore()`: Android는 Play 스토어, PC는 `KoryConfig.desktopStoreUrl`(STOVE 상점 https://store.onstove.com/ko/games/105336).

@@ -18,6 +18,9 @@ MonoBehaviour:
   stagingBaseUrl: https://kory-staging.codingbot.kr
   requestTimeoutSeconds: 10
   appVersionCodeOverride: 0
+  googleDesktopClientId: 
+  desktopVersionCode: 0
+  desktopStoreUrl: https://store.onstove.com/ko/games/105336
   adMobAndroidAppId: ca-app-pub-4520592084396814~7394577073
   adMobRewardedUnitId: ca-app-pub-3940256099942544/5224354917
   adMobTestDeviceIds: []

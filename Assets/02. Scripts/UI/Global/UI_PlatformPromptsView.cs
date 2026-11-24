@@ -20,7 +20,7 @@ public class UI_PlatformPromptsView : MonoBehaviour
     [SerializeField, TextArea] private string _updateRequiredTitle = "업데이트가 필요합니다";
     [SerializeField, TextArea] private string _updateRequiredBody = "새 버전이 나왔습니다. 스토어에서 최신 버전으로 업데이트한 뒤 다시 실행해 주십시오.";
     [SerializeField, TextArea] private string _updateAvailableTitle = "새 버전이 있습니다";
-    [SerializeField, TextArea] private string _updateAvailableBody = "스토어에서 최신 버전으로 업데이트할 수 있습니다.";
+    [SerializeField, TextArea] private string _updateAvailableBody = "최신 버전으로 업데이트할 수 있습니다.";
     [SerializeField, TextArea] private string _update = "업데이트";
     [SerializeField, TextArea] private string _later = "나중에";
     private void OnEnable()
@@ -58,7 +58,7 @@ public class UI_PlatformPromptsView : MonoBehaviour
                 popup.ShowPopup(_updateRequiredTitle, _updateRequiredBody, (_update, LandLinkerServices.OpenStoreForUpdate));
                 break;
             case PlatformNotice.UpdateAvailable:
-                popup.ShowPopup(_updateAvailableTitle, _updateAvailableBody, (_later, () => popup.HidePopup()), (_update, () => { popup.HidePopup(); LandLinkerServices.OpenStoreForUpdate(); }));
+                popup.ShowPopup(_updateAvailableTitle, _updateAvailableBody, (_update, () => { popup.HidePopup(); LandLinkerServices.OpenStoreForUpdate(); }), (_later, () => popup.HidePopup()));
                 break;
         }
     }
